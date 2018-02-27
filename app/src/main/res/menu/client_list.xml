@@ -43,4 +43,8 @@
 			android:id="@+id/menu_read_smartcard"
 			custom:showAsAction="never"
 			android:title="Read smartcard"/>
+	<item
+			android:id="@+id/menu_write_smartcard"
+			custom:showAsAction="never"
+			android:title="Write smartcard"/>
 </menu>

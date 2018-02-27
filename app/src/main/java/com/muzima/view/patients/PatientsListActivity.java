@@ -42,6 +42,8 @@ import com.muzima.utils.Fonts;
 import com.muzima.utils.StringUtils;
 import com.muzima.utils.barcode.IntentIntegrator;
 import com.muzima.utils.barcode.IntentResult;
+import com.muzima.utils.smartcard.SmartCardIntentIntegrator;
+import com.muzima.utils.smartcard.SmartCardIntentResult;
 import com.muzima.view.BroadcastListenerActivity;
 import com.muzima.view.HelpActivity;
 import com.muzima.view.MainActivity;
@@ -59,6 +61,7 @@ import static com.muzima.utils.Constants.SEARCH_STRING_BUNDLE_KEY;
 
 public class PatientsListActivity extends BroadcastListenerActivity implements AdapterView.OnItemClickListener,
         ListAdapter.BackgroundListQueryTaskListener {
+    private static String TAG = "PatientsListActivity";
     public static final String COHORT_ID = "cohortId";
     public static final String COHORT_NAME = "cohortName";
     public static final String QUICK_SEARCH = "quickSearch";
@@ -284,6 +287,10 @@ public class PatientsListActivity extends BroadcastListenerActivity implements A
                 readSmartCard();
                 return true;
 
+            case R.id.menu_write_smartcard:
+                writeSmartCard();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -357,19 +364,13 @@ public class PatientsListActivity extends BroadcastListenerActivity implements A
     }
 
     public void readSmartCard() {
-        Intent intent = new Intent();
-        intent.setAction("org.kenyahmis.psmart.WRITE_DATA");
-        intent.setType("text/plain");
-        intent.putExtra("ACTION","WRITE");
-        intent.putExtra("WRITE_DATA","SHM_DATA_HERE");
-        PackageManager packageManager = getPackageManager();
-        if(intent.resolveActivity(packageManager) != null) {
-            startActivityForResult(intent, 99);
-            Toast.makeText(getApplicationContext(),"Started Read smartcard intent",Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(getApplicationContext(),"Cannot resolve intent",Toast.LENGTH_LONG).show();;
-        }
+        SmartCardIntentIntegrator integrator = new SmartCardIntentIntegrator(this);
+        integrator.initiateCardRead();
+    }
 
+    public void writeSmartCard() {
+        SmartCardIntentIntegrator integrator = new SmartCardIntentIntegrator(this);
+        integrator.initiateCardWrite("Dummy data");
     }
 
     @Override
@@ -378,8 +379,21 @@ public class PatientsListActivity extends BroadcastListenerActivity implements A
             if(resultCode == 0){
                 Toast.makeText(getApplicationContext(),"Request to write smartcard was successful",Toast.LENGTH_LONG).show();;
             } else {
-                Toast.makeText(getApplicationContext(),"Request to write smartcard was NOT successful",Toast.LENGTH_LONG).show();;
             }
+        }
+        SmartCardIntentResult intentResult = SmartCardIntentIntegrator.parseActivityResult(requestCode,resultCode,dataIntent);
+        if(intentResult != null){
+            if(intentResult.getMessage() == null ){
+                Toast.makeText(getApplicationContext(),"Request to Read/write smartcard was NOT successful",Toast.LENGTH_LONG).show();
+                Log.d(TAG,"Error accessing smartcard operation",intentResult.getErrors());
+            } else {
+                if(requestCode == SmartCardIntentIntegrator.SMARTCARD_READ_REQUEST_CODE){
+                    Toast.makeText(getApplicationContext(),"Request to Read smartcard was successful",Toast.LENGTH_LONG).show();
+                } else if (requestCode == SmartCardIntentIntegrator.SMARTCARD_WRITE_REQUEST_CODE){
+                    Toast.makeText(getApplicationContext(),"Request to write smartcard was successful",Toast.LENGTH_LONG).show();
+                }
+            }
+            return;
         }
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, dataIntent);
         if (scanningResult != null) {
