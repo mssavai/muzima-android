@@ -39,4 +39,8 @@
 			android:id="@+id/menu_dashboard"
 			custom:showAsAction="never"
 			android:title="@string/general_dashboard"/>
+	<item
+			android:id="@+id/menu_read_smartcard"
+			custom:showAsAction="never"
+			android:title="Read smartcard"/>
 </menu>

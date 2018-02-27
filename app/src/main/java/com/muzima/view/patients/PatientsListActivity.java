@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.SearchView;
+import android.widget.Toast;
 import com.muzima.MuzimaApplication;
 import com.muzima.R;
 import com.muzima.adapters.ListAdapter;
@@ -278,6 +280,10 @@ public class PatientsListActivity extends BroadcastListenerActivity implements A
                 launchCompleteFormsActivity();
                 return true;
 
+            case R.id.menu_read_smartcard:
+                readSmartCard();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -350,8 +356,31 @@ public class PatientsListActivity extends BroadcastListenerActivity implements A
         scanIntegrator.initiateScan();
     }
 
+    public void readSmartCard() {
+        Intent intent = new Intent();
+        intent.setAction("org.kenyahmis.psmart.WRITE_DATA");
+        intent.setType("text/plain");
+        intent.putExtra("ACTION","WRITE");
+        intent.putExtra("WRITE_DATA","SHM_DATA_HERE");
+        PackageManager packageManager = getPackageManager();
+        if(intent.resolveActivity(packageManager) != null) {
+            startActivityForResult(intent, 99);
+            Toast.makeText(getApplicationContext(),"Started Read smartcard intent",Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getApplicationContext(),"Cannot resolve intent",Toast.LENGTH_LONG).show();;
+        }
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent dataIntent) {
+        if(requestCode == 99){
+            if(resultCode == 0){
+                Toast.makeText(getApplicationContext(),"Request to write smartcard was successful",Toast.LENGTH_LONG).show();;
+            } else {
+                Toast.makeText(getApplicationContext(),"Request to write smartcard was NOT successful",Toast.LENGTH_LONG).show();;
+            }
+        }
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, dataIntent);
         if (scanningResult != null) {
             intentBarcodeResults = true;
