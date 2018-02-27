@@ -38,6 +38,7 @@ import com.muzima.adapters.ListAdapter;
 import com.muzima.adapters.patients.PatientsLocalSearchAdapter;
 import com.muzima.api.model.Patient;
 import com.muzima.controller.PatientController;
+import com.muzima.model.shr.SHRModel;
 import com.muzima.utils.Fonts;
 import com.muzima.utils.StringUtils;
 import com.muzima.utils.barcode.IntentIntegrator;
@@ -51,6 +52,8 @@ import com.muzima.view.forms.FormsActivity;
 import com.muzima.view.forms.RegistrationFormsActivity;
 import android.support.design.widget.FloatingActionButton;
 import com.muzima.view.preferences.SettingsActivity;
+
+import java.io.IOException;
 
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
@@ -370,35 +373,41 @@ public class PatientsListActivity extends BroadcastListenerActivity implements A
 
     public void writeSmartCard() {
         SmartCardIntentIntegrator integrator = new SmartCardIntentIntegrator(this);
-        integrator.initiateCardWrite("Dummy data");
+        SHRModel shrModel = SHRModel.createBlankSHRModel();
+        try {
+            integrator.initiateCardWrite(shrModel);
+        } catch (Exception e) {
+            Log.e(TAG,"Could not write card",e);
+            Toast.makeText(this,"Could not Write card: "+e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent dataIntent) {
-        if(requestCode == 99){
-            if(resultCode == 0){
-                Toast.makeText(getApplicationContext(),"Request to write smartcard was successful",Toast.LENGTH_LONG).show();;
-            } else {
-            }
-        }
-        SmartCardIntentResult intentResult = SmartCardIntentIntegrator.parseActivityResult(requestCode,resultCode,dataIntent);
-        if(intentResult != null){
-            if(intentResult.getMessage() == null ){
-                Toast.makeText(getApplicationContext(),"Request to Read/write smartcard was NOT successful",Toast.LENGTH_LONG).show();
-                Log.d(TAG,"Error accessing smartcard operation",intentResult.getErrors());
-            } else {
-                if(requestCode == SmartCardIntentIntegrator.SMARTCARD_READ_REQUEST_CODE){
-                    Toast.makeText(getApplicationContext(),"Request to Read smartcard was successful",Toast.LENGTH_LONG).show();
-                } else if (requestCode == SmartCardIntentIntegrator.SMARTCARD_WRITE_REQUEST_CODE){
-                    Toast.makeText(getApplicationContext(),"Request to write smartcard was successful",Toast.LENGTH_LONG).show();
+        try {
+            SmartCardIntentResult intentResult = SmartCardIntentIntegrator.parseActivityResult(requestCode, resultCode, dataIntent);
+            if (intentResult != null) {
+                if (intentResult.getSHRModel() == null) {
+                    Toast.makeText(getApplicationContext(), "Request to Read/write smartcard was NOT successful", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "Error accessing smartcard operation", intentResult.getErrors());
+                } else {
+                    if (requestCode == SmartCardIntentIntegrator.SMARTCARD_READ_REQUEST_CODE) {
+                        Toast.makeText(getApplicationContext(), "Request to Read smartcard was successful", Toast.LENGTH_LONG).show();
+                    } else if (requestCode == SmartCardIntentIntegrator.SMARTCARD_WRITE_REQUEST_CODE) {
+                        Toast.makeText(getApplicationContext(), "Request to write smartcard was successful", Toast.LENGTH_LONG).show();
+                    }
                 }
+                return;
             }
-            return;
-        }
-        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, dataIntent);
-        if (scanningResult != null) {
-            intentBarcodeResults = true;
-            searchView.setQuery(scanningResult.getContents(), false);
+            IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, dataIntent);
+            if (scanningResult != null) {
+                intentBarcodeResults = true;
+                searchView.setQuery(scanningResult.getContents(), false);
+            }
+        } catch (Exception e){
+            Log.e(TAG,"Could not retrieve result: ",e);
+            Toast.makeText(this,"Could not retrieve result: "+e.getMessage(), Toast.LENGTH_LONG).show();
+
         }
     }
 

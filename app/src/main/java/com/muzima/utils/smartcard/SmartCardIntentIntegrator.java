@@ -9,13 +9,15 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import com.muzima.utils.barcode.IntentResult;
+import com.muzima.model.shr.SHRModel;
+
+import java.io.IOException;
 
 public class SmartCardIntentIntegrator {
     private static String TAG = "CardIntentIntegrator";
-    public static String ACTION_READ_DATA = "org.kenyahmis.psmart.READ_DATA";
+    public static String ACTION_READ_DATA = "org.kenyahmis.psmart.ACTION_READ_DATA";
 
-    public static String ACTION_WRITE_DATA = "org.kenyahmis.psmart.WRITE_DATA";
+    public static String ACTION_WRITE_DATA = "org.kenyahmis.psmart.ACTION_WRITE_DATA";
     public static String EXTRA_AUTH_TOKEN = "AUTH_TOKEN";
     public static String AUTH_TOKEN_VALUE = "12345";
     public static String EXTRA_ERRORS = "errors";
@@ -35,21 +37,23 @@ public class SmartCardIntentIntegrator {
         startIntentActivityForResult(intent,SMARTCARD_READ_REQUEST_CODE);
 
     }
-    public void initiateCardWrite(String data){
+    public void initiateCardWrite(SHRModel shrModel) throws IOException {
         Intent intent = new Intent();
         intent.setAction(ACTION_WRITE_DATA);
         intent.putExtra(EXTRA_AUTH_TOKEN,AUTH_TOKEN_VALUE);
         intent.setType("text/plain");
         intent.putExtra("ACTION","WRITE");
-        intent.putExtra("WRITE_DATA",data);
+        String jsonSHRModel = SHRModel.createJsonSHRModel(shrModel);
+        intent.putExtra("WRITE_DATA",jsonSHRModel);
         startIntentActivityForResult(intent,SMARTCARD_WRITE_REQUEST_CODE);
     }
-    public static SmartCardIntentResult parseActivityResult(int requestCode, int resultCode, Intent intent) {
+    public static SmartCardIntentResult parseActivityResult(int requestCode, int resultCode, Intent intent) throws IOException{
         if (requestCode == SMARTCARD_READ_REQUEST_CODE || requestCode == SMARTCARD_WRITE_REQUEST_CODE) {
             SmartCardIntentResult result = new SmartCardIntentResult();
             if (resultCode == Activity.RESULT_OK) {
-                String message = intent.getStringExtra(EXTRA_MESSAGE);
-                result.setMessage(message);
+                String jsonSHRModel = intent.getStringExtra(EXTRA_MESSAGE);
+                SHRModel shrModel = SHRModel.createSHRModelFromJsonString(jsonSHRModel);
+                result.setSHRModel(shrModel);
             }else if (resultCode == Activity.RESULT_CANCELED) {
                 Bundle extras = intent.getExtras();
                 if(extras != null) {

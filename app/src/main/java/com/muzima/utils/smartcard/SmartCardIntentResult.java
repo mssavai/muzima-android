@@ -1,15 +1,17 @@
 package com.muzima.utils.smartcard;
 
+import com.muzima.model.shr.SHRModel;
+
 public class SmartCardIntentResult {
-    private String message;
+    private SHRModel shrModel;
     private Throwable errors;
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setSHRModel(SHRModel shrModel) {
+        this.shrModel = shrModel;
     }
 
-    public String getMessage() {
-        return message;
+    public SHRModel getSHRModel() {
+        return shrModel;
     }
 
     public void setErrors(Throwable errors) {
