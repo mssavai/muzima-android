@@ -27,5 +27,9 @@
         custom:showAsAction="never"
         android:title="@string/general_logout">
     </item>
+    <item
+        android:id="@+id/menu_show_shr_viewer"
+        custom:showAsAction="never"
+        android:title="Load SHR viewer"/>
 
 </menu>

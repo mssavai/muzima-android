@@ -19,7 +19,7 @@ public class SmartCardIntentIntegrator {
 
     public static String ACTION_WRITE_DATA = "org.kenyahmis.psmart.ACTION_WRITE_DATA";
     public static String EXTRA_AUTH_TOKEN = "AUTH_TOKEN";
-    public static String AUTH_TOKEN_VALUE = "12345";
+    public static String AUTH_TOKEN_VALUE = "123";
     public static String EXTRA_ERRORS = "errors";
     public static String EXTRA_MESSAGE = "message";
     public static int SMARTCARD_READ_REQUEST_CODE = 98;
@@ -27,6 +27,14 @@ public class SmartCardIntentIntegrator {
     Activity activity;
     public SmartCardIntentIntegrator(Activity activity){
         this.activity = activity;
+    }
+
+    public static boolean isReadRequest(int requestCode){
+        return requestCode == SMARTCARD_READ_REQUEST_CODE;
+    }
+
+    public static boolean isWriteRequest(int requestCode){
+        return requestCode == SMARTCARD_WRITE_REQUEST_CODE;
     }
 
     public void initiateCardRead(){
@@ -47,23 +55,20 @@ public class SmartCardIntentIntegrator {
         intent.putExtra("WRITE_DATA",jsonSHRModel);
         startIntentActivityForResult(intent,SMARTCARD_WRITE_REQUEST_CODE);
     }
-    public static SmartCardIntentResult parseActivityResult(int requestCode, int resultCode, Intent intent) throws IOException{
+    public static SmartCardIntentResult parseActivityResult(int requestCode, int resultCode, Intent intent) throws Exception{
         if (requestCode == SMARTCARD_READ_REQUEST_CODE || requestCode == SMARTCARD_WRITE_REQUEST_CODE) {
+            if(intent == null){
+                throw new Exception("Cannot get result intent");
+            }
+
             SmartCardIntentResult result = new SmartCardIntentResult();
             if (resultCode == Activity.RESULT_OK) {
                 String jsonSHRModel = intent.getStringExtra(EXTRA_MESSAGE);
                 SHRModel shrModel = SHRModel.createSHRModelFromJsonString(jsonSHRModel);
                 result.setSHRModel(shrModel);
             }else if (resultCode == Activity.RESULT_CANCELED) {
-                Bundle extras = intent.getExtras();
-                if(extras != null) {
-                    Throwable throwable = (Throwable) extras.getSerializable(EXTRA_ERRORS);
-                    result.setErrors(throwable);
-                } else {
-                    Throwable throwable = new Throwable("Error performing smartcard operation. " +
-                            "Could not determine specific error");
-                    result.setErrors(throwable);
-                }
+                //String error = intent.getStringExtra("error");
+                result.setErrors("There was error");
             }
             return result;
         }

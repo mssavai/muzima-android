@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
+
+    <string name="app_name">mUzima</string>
     <string name="app_title">Mfumo wa mUzima kwa watoa huduma za afya</string>
 
     <string name="confirm_duplicate_form_data_save">Hifadhi Data maradufu katika Fomu</string>

@@ -15,10 +15,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -40,20 +37,15 @@ import com.muzima.api.model.Patient;
 import com.muzima.controller.PatientController;
 import com.muzima.model.shr.SHRModel;
 import com.muzima.utils.Fonts;
-import com.muzima.utils.StringUtils;
 import com.muzima.utils.barcode.IntentIntegrator;
 import com.muzima.utils.barcode.IntentResult;
 import com.muzima.utils.smartcard.SmartCardIntentIntegrator;
 import com.muzima.utils.smartcard.SmartCardIntentResult;
 import com.muzima.view.BroadcastListenerActivity;
-import com.muzima.view.HelpActivity;
 import com.muzima.view.MainActivity;
 import com.muzima.view.forms.FormsActivity;
 import com.muzima.view.forms.RegistrationFormsActivity;
 import android.support.design.widget.FloatingActionButton;
-import com.muzima.view.preferences.SettingsActivity;
-
-import java.io.IOException;
 
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
@@ -389,7 +381,7 @@ public class PatientsListActivity extends BroadcastListenerActivity implements A
             if (intentResult != null) {
                 if (intentResult.getSHRModel() == null) {
                     Toast.makeText(getApplicationContext(), "Request to Read/write smartcard was NOT successful", Toast.LENGTH_LONG).show();
-                    Log.d(TAG, "Error accessing smartcard operation", intentResult.getErrors());
+                   // Log.d(TAG, "Error accessing smartcard operation", intentResult.getErrors());
                 } else {
                     if (requestCode == SmartCardIntentIntegrator.SMARTCARD_READ_REQUEST_CODE) {
                         Toast.makeText(getApplicationContext(), "Request to Read smartcard was successful", Toast.LENGTH_LONG).show();

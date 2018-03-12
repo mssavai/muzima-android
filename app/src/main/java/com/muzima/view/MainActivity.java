@@ -20,26 +20,37 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.Menu;
 import com.muzima.MuzimaApplication;
 import com.muzima.R;
+import com.muzima.api.model.Patient;
+import com.muzima.api.model.Tag;
 import com.muzima.api.model.User;
 import com.muzima.controller.CohortController;
 import com.muzima.controller.FormController;
 import com.muzima.controller.NotificationController;
 import com.muzima.controller.PatientController;
 import com.muzima.domain.Credentials;
+import com.muzima.model.AvailableForm;
+import com.muzima.model.collections.AvailableForms;
 import com.muzima.scheduler.RealTimeFormUploader;
 import com.muzima.service.WizardFinishPreferenceService;
 import com.muzima.view.cohort.CohortActivity;
+import com.muzima.view.forms.FormViewIntent;
 import com.muzima.view.forms.FormsActivity;
+import com.muzima.view.webviewapp.JavascriptAppWebViewActivitity;
 import com.muzima.view.forms.RegistrationFormsActivity;
 import com.muzima.view.notifications.NotificationsListActivity;
 import com.muzima.view.patients.PatientsListActivity;
 import org.apache.lucene.queryParser.ParseException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static com.muzima.utils.Constants.NotificationStatusConstants.NOTIFICATION_UNREAD;
 
@@ -166,6 +177,43 @@ public class MainActivity extends BroadcastListenerActivity {
         startActivity(intent);
     }
 
+    private AvailableForms getSHRViewerForm(FormController formController){
+        AvailableForms availableForms = null;
+        try {
+            List<String> tagUuids = new ArrayList<>();
+            List<Tag> tags = formController.getAllTags();
+            for(Tag tag:tags){
+                if(tag.getName().equalsIgnoreCase("shr_viewer")){
+                    tagUuids.add(tag.getUuid());
+                }
+            }
+            availableForms = formController.getAvailableFormByTags(tagUuids);
+        } catch (FormController.FormFetchException e) {
+            Log.e(TAG, "Error while retrieving registration forms from Lucene");
+        }
+        return availableForms;
+    }
+
+    private void startWebViewActivity(AvailableForm form) {
+        Intent intent = new Intent(this,JavascriptAppWebViewActivitity.class);
+        String appTitle = "SHR Editor/viewer";
+        intent.putExtra(JavascriptAppWebViewActivitity.APP_TITLE, appTitle);
+        intent.putExtra(JavascriptAppWebViewActivitity.APP_SOURCE_FORM, form);
+        startActivity(intent);
+    }
+
+    public void showSHRViewer(){
+        FormController formController = ((MuzimaApplication) getApplicationContext()).getFormController();
+        AvailableForms availableForms = getSHRViewerForm(formController);
+        if(availableForms.size() == 1){
+            startWebViewActivity(availableForms.get(0));
+        } else if(availableForms.size() == 0) {
+            Toast.makeText(this,"Could not find SHR Editor/viewer",Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this,"Could not uniquely identify SHR Editor/viewer",Toast.LENGTH_LONG).show();
+        }
+    }
+
     public class BackgroundQueryTask extends AsyncTask<Void, Void, HomeActivityMetadata> {
 
         @Override
@@ -245,6 +293,18 @@ public class MainActivity extends BroadcastListenerActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.dashboard, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_show_shr_viewer:
+                showSHRViewer();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void setupActionbar() {

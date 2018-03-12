@@ -200,6 +200,17 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="com.muzima.view.forms.FormsActivity"/>
         </activity>
+
+        <activity
+                android:name=".view.webviewapp.JavascriptAppWebViewActivitity"
+                android:label="@string/general_form"
+                android:configChanges="orientation|screenSize"
+                android:windowSoftInputMode="adjustResize"
+                android:parentActivityName="com.muzima.view.patients.PatientsListActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.muzima.view.forms.FormsActivity"/>
+        </activity>
         <activity
                 android:name=".view.patients.PatientSummaryActivity"
                 android:configChanges="orientation|screenSize"

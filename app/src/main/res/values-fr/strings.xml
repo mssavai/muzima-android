@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
+    <string name="app_name">mUzima</string>
     <string name="app_title">mUzima pour les fournisseurs de soins de santé</string>
 
     <string name="confirm_duplicate_form_data_save">Enregistrer les données dupliquées du formulaire </string>
     <string name="confirm_patient_id_exists">Le patient a-t-il un Identifiant (ID)?</string>
 
     <string name="default_form_register">Formulaires d\'inscription/enregistrement</string>
-
+    <string name="error_connection_data_download">Connection error occurred while downloading data
+    </string>
     <string name="error_action_allow">Opération interdite lorsque la synchronisation est en cours</string>
     <string name="error_audio_chose_activity_find">Erreur: Opération de sélection de l\'audio non trouvée</string>
     <string name="error_audio_play_activity_find">Erreur: Opération de jouer l\'Audio n\'est pas trouvée</string>
@@ -20,7 +22,6 @@
     <string name="error_concept_download">Impossible de télécharger des concepts</string>
     <string name="error_concept_fetch">Quelque chose a mal tourné lors de l\'extraction des concepts du repertoire local</string>
     <string name="error_concept_parse">Une erreur s\'est produite lors de l\'analyse des concepts dans le formulaire</string>
-    <string name="error_connection_unavailable">Une erreur de connexion est survenue lors du téléchargement des données</string>
     <string name="error_credential_invalid">Nom d\'utilisateur, Mot de passe et Combinaison du serveur non valide.</string>
     <string name="error_data_download">Une erreur est survenue lors du téléchargement de données depuis le serveur</string>
     <string name="error_data_save">Une erreur est survenue lors de l\'enregistrement des données dans le repertoire local</string>

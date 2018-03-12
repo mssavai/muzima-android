@@ -4,7 +4,7 @@ import com.muzima.model.shr.SHRModel;
 
 public class SmartCardIntentResult {
     private SHRModel shrModel;
-    private Throwable errors;
+    private String errors;
 
     public void setSHRModel(SHRModel shrModel) {
         this.shrModel = shrModel;
@@ -14,11 +14,15 @@ public class SmartCardIntentResult {
         return shrModel;
     }
 
-    public void setErrors(Throwable errors) {
+    public void setErrors(String errors) {
         this.errors = errors;
     }
 
-    public Throwable getErrors() {
+    public String getErrors() {
         return errors;
+    }
+
+    public boolean isSuccessResult(){
+        return shrModel != null;
     }
 }

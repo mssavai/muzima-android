@@ -225,6 +225,7 @@ public class FormController {
             List<Form> forms = formService.downloadFormsByName(StringUtils.EMPTY, lastSyncDate);
             LastSyncTime lastSyncTime = new LastSyncTime(APIName.DOWNLOAD_FORMS, sntpService.getLocalTime());
             lastSyncTimeService.saveLastSyncTime(lastSyncTime);
+            System.out.println("Downloaded forms"+forms.size());
             return forms;
         } catch (IOException e) {
             throw new FormFetchException(e);
@@ -257,6 +258,7 @@ public class FormController {
 
     public void updateAllForms(List<Form> forms) throws FormSaveException {
         try {
+            System.out.println("Updating forms"+forms.size());
             formService.updateForms(forms);
         } catch (IOException e) {
             throw new FormSaveException(e);
@@ -313,6 +315,7 @@ public class FormController {
     public void saveFormTemplates(List<FormTemplate> formTemplates) throws FormSaveException {
 
         try {
+            System.out.println("Saving form templates"+formTemplates.size());
             formService.saveFormTemplates(formTemplates);
         } catch (IOException e) {
             throw new FormSaveException(e);
