@@ -1,4 +1,4 @@
-package com.muzima.view.webviewapp;
+package com.muzima.view.webview;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,20 +11,14 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import com.muzima.MuzimaApplication;
 import com.muzima.R;
-import com.muzima.api.model.Form;
 import com.muzima.api.model.FormTemplate;
 import com.muzima.controller.FormController;
 import com.muzima.model.BaseForm;
 import com.muzima.model.shr.SHRModel;
 import com.muzima.utils.javascriptinterface.SharedHealthRecordViewerJavascriptInterface;
-import com.muzima.utils.javascriptinterface.WebViewJavascriptInterface;
 import com.muzima.utils.smartcard.SmartCardIntentIntegrator;
 import com.muzima.utils.smartcard.SmartCardIntentResult;
 import com.muzima.view.BroadcastListenerActivity;
-import com.muzima.view.forms.AudioComponent;
-import com.muzima.view.forms.BarCodeComponent;
-import com.muzima.view.forms.ImagingComponent;
-import com.muzima.view.forms.VideoComponent;
 import com.muzima.view.progressdialog.MuzimaProgressDialog;
 
 import static android.webkit.ConsoleMessage.MessageLevel.ERROR;
@@ -132,7 +126,7 @@ public class JavascriptAppWebViewActivitity extends BroadcastListenerActivity {
                 "</script>\n" +
                 "</body>\n" +
                 "</html>\n";
-        webView.loadDataWithBaseURL("file:///android_asset/www/forms/", html,//formTemplate.getHtml(),
+        webView.loadDataWithBaseURL("file:///android_asset/www/forms/", formTemplate.getHtml(),
                 "text/html", "UTF-8", "");
     }
 

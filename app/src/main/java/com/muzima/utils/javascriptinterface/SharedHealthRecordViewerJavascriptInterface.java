@@ -7,9 +7,8 @@ import com.muzima.api.model.Patient;
 import com.muzima.api.model.algorithm.PatientAlgorithm;
 import com.muzima.controller.PatientController;
 import com.muzima.utils.smartcard.SmartCardIntentIntegrator;
-import com.muzima.view.webviewapp.JavascriptAppWebViewActivitity;
+import com.muzima.view.webview.JavascriptAppWebViewActivitity;
 import net.minidev.json.JSONValue;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;

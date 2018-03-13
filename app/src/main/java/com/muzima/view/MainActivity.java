@@ -27,7 +27,6 @@ import android.widget.Toast;
 import android.view.Menu;
 import com.muzima.MuzimaApplication;
 import com.muzima.R;
-import com.muzima.api.model.Patient;
 import com.muzima.api.model.Tag;
 import com.muzima.api.model.User;
 import com.muzima.controller.CohortController;
@@ -40,9 +39,8 @@ import com.muzima.model.collections.AvailableForms;
 import com.muzima.scheduler.RealTimeFormUploader;
 import com.muzima.service.WizardFinishPreferenceService;
 import com.muzima.view.cohort.CohortActivity;
-import com.muzima.view.forms.FormViewIntent;
 import com.muzima.view.forms.FormsActivity;
-import com.muzima.view.webviewapp.JavascriptAppWebViewActivitity;
+import com.muzima.view.webview.JavascriptAppWebViewActivitity;
 import com.muzima.view.forms.RegistrationFormsActivity;
 import com.muzima.view.notifications.NotificationsListActivity;
 import com.muzima.view.patients.PatientsListActivity;
@@ -50,7 +48,6 @@ import org.apache.lucene.queryParser.ParseException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static com.muzima.utils.Constants.NotificationStatusConstants.NOTIFICATION_UNREAD;
 
