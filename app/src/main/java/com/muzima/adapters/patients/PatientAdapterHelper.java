@@ -11,6 +11,7 @@
 package com.muzima.adapters.patients;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import java.util.List;
 import static com.muzima.utils.DateUtils.getFormattedDate;
 
 public class PatientAdapterHelper extends ListAdapter<Patient> {
+    private static String TAG = PatientAdapterHelper.class.getSimpleName();
 
     public PatientAdapterHelper(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
@@ -48,7 +50,14 @@ public class PatientAdapterHelper extends ListAdapter<Patient> {
 
         holder = (ViewHolder) convertView.getTag();
 
-        holder.dateOfBirth.setText("DOB: " + getFormattedDate(patient.getBirthdate()));
+        String dob ="";
+        try{
+            dob = getFormattedDate(patient.getBirthdate());
+        } catch(NullPointerException e){
+            Log.e(TAG,"Cannot extract date",e);
+        }
+
+        holder.dateOfBirth.setText("DOB: " + dob);
         holder.identifier.setText(patient.getIdentifier());
         holder.name.setText(getPatientFullName(patient));
         holder.genderImg.setImageResource(getGenderImage(patient.getGender()));

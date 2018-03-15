@@ -14,7 +14,6 @@ import com.muzima.R;
 import com.muzima.api.model.FormTemplate;
 import com.muzima.controller.FormController;
 import com.muzima.model.BaseForm;
-import com.muzima.model.shr.SHRModel;
 import com.muzima.utils.javascriptinterface.SharedHealthRecordViewerJavascriptInterface;
 import com.muzima.utils.smartcard.SmartCardIntentIntegrator;
 import com.muzima.utils.smartcard.SmartCardIntentResult;
@@ -27,7 +26,7 @@ import static java.text.MessageFormat.format;
 public class JavascriptAppWebViewActivitity extends BroadcastListenerActivity {
     private static final String TAG = JavascriptAppWebViewActivitity.class.getSimpleName();
     public static final String PATIENT = "patient";
-    public static final String APP_INTERFACE = "appInterface";
+    public static final String APP_INTERFACE = "shrInterface";
     public static final String APP_TITLE = "appTitle";
     public static final String APP_SOURCE_FORM = "appSourceForm";
 
@@ -79,53 +78,6 @@ public class JavascriptAppWebViewActivitity extends BroadcastListenerActivity {
         getSettings( ).setBuiltInZoomControls(true);
         webView.addJavascriptInterface(webViewJavascriptInterface, APP_INTERFACE);
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        String html = "<!DOCTYPE html>\n" +
-                "<html>\n" +
-                "<head>\n" +
-                "  <link rel=\"stylesheet\" href=\"css/onsen/onsenui.css\">\n" +
-                "  <link rel=\"stylesheet\" href=\"css/onsen/onsen-css-components.min.css\">\n" +
-                "  <script src=\"js/onsen/onsenui.min.js\"></script>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "  <ons-navigator swipeable id=\"myNavigator\" page=\"page1.html\"></ons-navigator>\n" +
-                "\n" +
-                "<template id=\"page1.html\">\n" +
-                "  <ons-page id=\"page1\">\n" +
-                "    <ons-toolbar>\n" +
-                "      <div class=\"center\">Page 1</div>\n" +
-                "    </ons-toolbar>\n" +
-                "\n" +
-                "    <p>This is the first page.</p>\n" +
-                "\n" +
-                "    <ons-button id=\"push-button\">Push page</ons-button>\n" +
-                "  </ons-page>\n" +
-                "</template>\n" +
-                "\n" +
-                "<template id=\"page2.html\">\n" +
-                "  <ons-page id=\"page2\">\n" +
-                "    <ons-toolbar>\n" +
-                "      <div class=\"left\"><ons-back-button>Page 1</ons-back-button></div>\n" +
-                "      <div class=\"center\"></div>\n" +
-                "    </ons-toolbar>\n" +
-                "\n" +
-                "    <p>This is the second page.</p>\n" +
-                "  </ons-page>\n" +
-                "</template>\n" +
-                "<script>\n" +
-                "document.addEventListener('init', function(event) {\n" +
-                "  var page = event.target;\n" +
-                "\n" +
-                "  if (page.id === 'page1') {\n" +
-                "    page.querySelector('#push-button').onclick = function() {\n" +
-                "      document.querySelector('#myNavigator').pushPage('page2.html', {data: {title: 'Page 2'}});\n" +
-                "    };\n" +
-                "  } else if (page.id === 'page2') {\n" +
-                "    page.querySelector('ons-toolbar .center').innerHTML = page.data.title;\n" +
-                "  }\n" +
-                "});\n" +
-                "</script>\n" +
-                "</body>\n" +
-                "</html>\n";
         webView.loadDataWithBaseURL("file:///android_asset/www/forms/", formTemplate.getHtml(),
                 "text/html", "UTF-8", "");
     }
@@ -173,17 +125,16 @@ public class JavascriptAppWebViewActivitity extends BroadcastListenerActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent dataIntent) {
         try {
-            Log.e(TAG,"onActivityResult:DDDDDDDDDDDDDDDD: "+requestCode);
             SmartCardIntentResult intentResult = SmartCardIntentIntegrator.parseActivityResult(requestCode, resultCode, dataIntent);
             if(intentResult.isSuccessResult()) {
                 Log.e(TAG,"REQUEST SUCCESSFUL: ");
                 if (SmartCardIntentIntegrator.isReadRequest(requestCode)) {
                     Log.e(TAG,"READ REQUEST SUCCESSFUL: ");
-                    webViewJavascriptInterface.onReadSharedHealthRecordFromCardActivityResultSuccess(SHRModel.createJsonSHRModel(intentResult.getSHRModel()));
+                    webViewJavascriptInterface.onReadSharedHealthRecordFromCardActivityResultSuccess(intentResult.getSHRModel().getPlainSHRPayload());
                 } else if (SmartCardIntentIntegrator.isWriteRequest(requestCode)) {
                     Log.e(TAG,"WRITE REQUEST SUCCESSFUL: ");
 
-                    webViewJavascriptInterface.onWriteSharedHealthRecordFromCardActivityResultSuccess(SHRModel.createJsonSHRModel(intentResult.getSHRModel()));
+                    webViewJavascriptInterface.onWriteSharedHealthRecordFromCardActivityResultSuccess(intentResult.getSHRModel().getEncryptedSHRPayload());
                 }
             } else {
                 if(SmartCardIntentIntegrator.isReadRequest(requestCode)){

@@ -1,16 +1,16 @@
 package com.muzima.utils.smartcard;
 
-import com.muzima.model.shr.SHRModel;
+import com.muzima.api.model.SmartCardSharedHealthRecord;
 
 public class SmartCardIntentResult {
-    private SHRModel shrModel;
+    private SmartCardSharedHealthRecord shrModel;
     private String errors;
 
-    public void setSHRModel(SHRModel shrModel) {
+    public void setSHRModel(SmartCardSharedHealthRecord shrModel) {
         this.shrModel = shrModel;
     }
 
-    public SHRModel getSHRModel() {
+    public SmartCardSharedHealthRecord getSHRModel() {
         return shrModel;
     }
 

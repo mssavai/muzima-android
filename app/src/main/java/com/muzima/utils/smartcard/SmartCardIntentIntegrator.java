@@ -7,9 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Bundle;
 import android.util.Log;
-import com.muzima.model.shr.SHRModel;
+import com.muzima.api.model.SmartCardSharedHealthRecord;
 
 import java.io.IOException;
 
@@ -45,14 +44,13 @@ public class SmartCardIntentIntegrator {
         startIntentActivityForResult(intent,SMARTCARD_READ_REQUEST_CODE);
 
     }
-    public void initiateCardWrite(SHRModel shrModel) throws IOException {
+    public void initiateCardWrite(String shrModel) throws IOException {
         Intent intent = new Intent();
         intent.setAction(ACTION_WRITE_DATA);
         intent.putExtra(EXTRA_AUTH_TOKEN,AUTH_TOKEN_VALUE);
         intent.setType("text/plain");
         intent.putExtra("ACTION","WRITE");
-        String jsonSHRModel = SHRModel.createJsonSHRModel(shrModel);
-        intent.putExtra("WRITE_DATA",jsonSHRModel);
+        intent.putExtra("WRITE_DATA",shrModel);
         startIntentActivityForResult(intent,SMARTCARD_WRITE_REQUEST_CODE);
     }
     public static SmartCardIntentResult parseActivityResult(int requestCode, int resultCode, Intent intent) throws Exception{
@@ -62,10 +60,15 @@ public class SmartCardIntentIntegrator {
             }
 
             SmartCardIntentResult result = new SmartCardIntentResult();
-            if (resultCode == Activity.RESULT_OK) {
+            SmartCardSharedHealthRecord sharedHealthRecord = new SmartCardSharedHealthRecord();
+            if (requestCode == SMARTCARD_READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                 String jsonSHRModel = intent.getStringExtra(EXTRA_MESSAGE);
-                SHRModel shrModel = SHRModel.createSHRModelFromJsonString(jsonSHRModel);
-                result.setSHRModel(shrModel);
+                sharedHealthRecord.setPlainSHRPayload(jsonSHRModel);
+                result.setSHRModel(sharedHealthRecord);
+            }else if (requestCode == SMARTCARD_WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                String jsonSHRModel = intent.getStringExtra(EXTRA_MESSAGE);
+                sharedHealthRecord.setEncryptedSHRPayload(jsonSHRModel);
+                result.setSHRModel(sharedHealthRecord);
             }else if (resultCode == Activity.RESULT_CANCELED) {
                 //String error = intent.getStringExtra("error");
                 result.setErrors("There was error");

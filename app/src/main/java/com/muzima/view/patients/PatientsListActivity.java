@@ -35,7 +35,6 @@ import com.muzima.adapters.ListAdapter;
 import com.muzima.adapters.patients.PatientsLocalSearchAdapter;
 import com.muzima.api.model.Patient;
 import com.muzima.controller.PatientController;
-import com.muzima.model.shr.SHRModel;
 import com.muzima.utils.Fonts;
 import com.muzima.utils.barcode.IntentIntegrator;
 import com.muzima.utils.barcode.IntentResult;
@@ -278,14 +277,6 @@ public class PatientsListActivity extends BroadcastListenerActivity implements A
                 launchCompleteFormsActivity();
                 return true;
 
-            case R.id.menu_read_smartcard:
-                readSmartCard();
-                return true;
-
-            case R.id.menu_write_smartcard:
-                writeSmartCard();
-                return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -356,22 +347,6 @@ public class PatientsListActivity extends BroadcastListenerActivity implements A
         IntentIntegrator scanIntegrator = new IntentIntegrator(this);
 
         scanIntegrator.initiateScan();
-    }
-
-    public void readSmartCard() {
-        SmartCardIntentIntegrator integrator = new SmartCardIntentIntegrator(this);
-        integrator.initiateCardRead();
-    }
-
-    public void writeSmartCard() {
-        SmartCardIntentIntegrator integrator = new SmartCardIntentIntegrator(this);
-        SHRModel shrModel = SHRModel.createBlankSHRModel();
-        try {
-            integrator.initiateCardWrite(shrModel);
-        } catch (Exception e) {
-            Log.e(TAG,"Could not write card",e);
-            Toast.makeText(this,"Could not Write card: "+e.getMessage(), Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override

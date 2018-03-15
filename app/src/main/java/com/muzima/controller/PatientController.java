@@ -122,6 +122,14 @@ public class PatientController {
         }
     }
 
+    public Patient getPatientByIdentifier(String identifier) throws PatientLoadException {
+        try {
+            return patientService.getPatientByIdentifier(identifier);
+        } catch (IOException e) {
+            throw new PatientLoadException(e);
+        }
+    }
+
 
     public List<Patient> getPatientsForCohorts(String[] cohortUuids) throws PatientLoadException {
         List<Patient> allPatients = new ArrayList<Patient>();
