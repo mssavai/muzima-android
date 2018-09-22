@@ -10,6 +10,8 @@
 package com.muzima.adapters.cohort;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,16 +27,17 @@ import com.muzima.utils.Fonts;
  * Responsible for displaying Cohorts as list.
  */
 public abstract class CohortsAdapter extends ListAdapter<Cohort> {
-    protected CohortController cohortController;
-    protected BackgroundListQueryTaskListener backgroundListQueryTaskListener;
+    final CohortController cohortController;
+    BackgroundListQueryTaskListener backgroundListQueryTaskListener;
 
-    public CohortsAdapter(Context context, int textViewResourceId, CohortController cohortController) {
+    CohortsAdapter(Context context, int textViewResourceId, CohortController cohortController) {
         super(context, textViewResourceId);
         this.cohortController = cohortController;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
             LayoutInflater layoutInflater = LayoutInflater.from(getContext());
@@ -45,7 +48,7 @@ public abstract class CohortsAdapter extends ListAdapter<Cohort> {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.setTextToName(getItem(position).getName());
+        holder.setTextToName(getItem(position).getName() + "("+getItem(position).getSize()+ ")");
         return convertView;
     }
 
@@ -53,27 +56,45 @@ public abstract class CohortsAdapter extends ListAdapter<Cohort> {
         this.backgroundListQueryTaskListener = backgroundListQueryTaskListener;
     }
 
-    public class ViewHolder {
+     class ViewHolder {
         private CheckedTextView name;
         private ImageView downloadedImage;
+        private ImageView pendingUpdateImage;
 
-        public ViewHolder(View convertView) {
+         ViewHolder(View convertView) {
             this.downloadedImage = (ImageView) convertView.findViewById(R.id.downloadImg);
+            this.pendingUpdateImage = (ImageView) convertView.findViewById(R.id.pendingUpdateImg);
             this.name = (CheckedTextView) convertView
                     .findViewById(R.id.cohort_name);
         }
 
-        public void displayDownloadImage() {
+        void displayDownloadImage() {
             downloadedImage.setVisibility(View.VISIBLE);
         }
 
-        public void hideDownloadImage() {
+        void hideDownloadImage() {
             downloadedImage.setVisibility(View.GONE);
         }
 
-        public void setTextToName(String text) {
+        void displayPendingUpdateImage() {
+            pendingUpdateImage.setVisibility(View.VISIBLE);
+        }
+
+        void hidePendingUpdateImage() {
+            pendingUpdateImage.setVisibility(View.GONE);
+        }
+
+        void setTextToName(String text) {
             name.setText(text);
             name.setTypeface(Fonts.roboto_medium(getContext()));
         }
+
+         void setPendingUpdateTextColor(){
+             name.setTextColor(ContextCompat.getColor(getContext(),R.color.pending_resource_update_color));
+         }
+
+         void setDefaultTextColor(){
+             name.setTextColor(ContextCompat.getColor(getContext(),R.color.primary_white));
+         }
     }
 }

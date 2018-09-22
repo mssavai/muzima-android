@@ -14,13 +14,14 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import com.muzima.MuzimaApplication;
+import com.muzima.R;
 import com.muzima.controller.FormController;
 import com.muzima.utils.NetworkUtils;
 import com.muzima.view.forms.RealTimeUploadFormIntent;
 
 public class RealTimeFormUploader {
-    private static RealTimeFormUploader INSTANCE = new RealTimeFormUploader();
-    private static final String TAG = "RealTimeFormUploader";
+
+    private static final RealTimeFormUploader INSTANCE = new RealTimeFormUploader();
 
     public static RealTimeFormUploader getInstance() {
         return INSTANCE;
@@ -32,7 +33,7 @@ public class RealTimeFormUploader {
 
     public  void uploadAllCompletedForms(android.content.Context applicationContext){
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext);
-        if(preferences.getBoolean("realTimeSyncPreference", false)){
+        if(preferences.getBoolean(applicationContext.getResources().getString(R.string.preference_real_time_sync), false)){
             uploadAllFormsInBackgroundService(applicationContext);
         }
     }
@@ -44,7 +45,7 @@ public class RealTimeFormUploader {
                 new RealTimeUploadFormIntent(applicationContext).start();
             }
         } catch (FormController.FormFetchException e) {
-            Log.e(TAG, "Error while trying to access completed form data", e);
+            Log.e(getClass().getSimpleName(), "Error while trying to access completed form data", e);
         }
     }
 }

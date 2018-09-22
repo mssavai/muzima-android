@@ -34,6 +34,7 @@ import com.muzima.controller.ProviderController;
 import com.muzima.scheduler.RealTimeFormUploader;
 import com.muzima.service.HTMLFormObservationCreator;
 import com.muzima.service.MuzimaLoggerService;
+import com.muzima.service.MuzimaLocationService;
 import com.muzima.utils.Constants;
 import com.muzima.utils.StringUtils;
 import net.minidev.json.JSONValue;
@@ -50,20 +51,21 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import static com.muzima.utils.Constants.STANDARD_DATE_FORMAT;
 
-public class HTMLFormDataStore {
-    private static final String TAG = "FormDataStore";
 
-    private HTMLFormWebViewActivity formWebViewActivity;
-    private FormController formController;
-    private LocationController locationController;
-    private ConceptController conceptController;
-    private ObservationController observationController;
-    private FormData formData;
-    private ProviderController providerController;
-    private EncounterController encounterController;
-    private MuzimaApplication application;
-    private MuzimaSettingController settingController;
+class HTMLFormDataStore {
+
+    private final HTMLFormWebViewActivity formWebViewActivity;
+    private final FormController formController;
+    private final LocationController locationController;
+    private final ConceptController conceptController;
+    private final ObservationController observationController;
+    private final FormData formData;
+    private final ProviderController providerController;
+    private final EncounterController encounterController;
+    private final MuzimaApplication application;
+    private final MuzimaSettingController settingController;
 
     public HTMLFormDataStore(HTMLFormWebViewActivity formWebViewActivity,FormData formData, MuzimaApplication application) {
         this.formWebViewActivity = formWebViewActivity;
@@ -94,7 +96,6 @@ public class HTMLFormDataStore {
         jsonPayload = injectUserSystemIdToEncounterPayload(jsonPayload);
         formData.setJsonPayload(jsonPayload);
         formData.setStatus(status);
-
         boolean encounterDetailsValidityStatus = true;
         try {
             if(status.equals("complete")) {
@@ -115,7 +116,6 @@ public class HTMLFormDataStore {
                     formData.setEncounterDate(encounterDate);
                     formController.saveFormData(formData);
                     formWebViewActivity.setResult(FormsActivity.RESULT_OK);
-                    Log.i(TAG, "Saving form data ...");
                     if (!keepFormOpen) {
                         formWebViewActivity.finish();
                         if (status.equals("complete")) {
@@ -135,33 +135,33 @@ public class HTMLFormDataStore {
                 }
         } catch (FormController.FormDataSaveException e) {
             Toast.makeText(formWebViewActivity, formWebViewActivity.getString(R.string.error_form_save), Toast.LENGTH_SHORT).show( );
-            Log.e(TAG, "Exception occurred while saving form data", e);
+            Log.e(getClass().getSimpleName(), "Exception occurred while saving form data", e);
        // } catch (Exception e) {
             Toast.makeText(formWebViewActivity, formWebViewActivity.getString(R.string.error_form_save), Toast.LENGTH_SHORT).show( );
-            Log.e(TAG, "Exception occurred while saving form data", e);
+            Log.e(getClass().getSimpleName(), "Exception occurred while saving form data", e);
         }
     }
 
     @JavascriptInterface
-    public String getLocationNamesFromDevice() throws JSONException {
-        List<Location> locationsOnDevice = new ArrayList<Location>();
+    public String getLocationNamesFromDevice() {
+        List<Location> locationsOnDevice = new ArrayList<>();
         try {
             locationsOnDevice = locationController.getAllLocations();
         } catch (LocationController.LocationLoadException e) {
             Toast.makeText(formWebViewActivity, formWebViewActivity.getString(R.string.error_form_location_load), Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Exception occurred while loading locations", e);
+            Log.e(getClass().getSimpleName(), "Exception occurred while loading locations", e);
         }
         return JSONValue.toJSONString(locationsOnDevice);
     }
 
     @JavascriptInterface
-    public String getProviderNamesFromDevice() throws JSONException {
-        List<Provider> providersOnDevice = new ArrayList<Provider>();
+    public String getProviderNamesFromDevice() {
+        List<Provider> providersOnDevice = new ArrayList<>();
         try {
             providersOnDevice = providerController.getAllProviders();
         } catch (ProviderController.ProviderLoadException e) {
             Toast.makeText(formWebViewActivity, formWebViewActivity.getString(R.string.error_form_provider_load), Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Exception occurred while loading providers", e);
+            Log.e(getClass().getSimpleName(), "Exception occurred while loading providers", e);
             e.printStackTrace();
         }
         return JSONValue.toJSONString(providersOnDevice);
@@ -172,7 +172,7 @@ public class HTMLFormDataStore {
     {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(formWebViewActivity.getApplicationContext());
         boolean encounterProviderPreference = preferences.getBoolean("encounterProviderPreference", false);
-        List<Provider> providers = new ArrayList<Provider>();
+        List<Provider> providers = new ArrayList<>();
 
         if(encounterProviderPreference){
             MuzimaApplication applicationContext = (MuzimaApplication) formWebViewActivity.getApplicationContext();
@@ -198,11 +198,11 @@ public class HTMLFormDataStore {
         getFormParser().createAndPersistObservations(jsonPayload, formData.getUuid());
     }
 
-    private Date getEncounterDateFromForm(String jsonPayload){
+    public Date getEncounterDateFromForm(String jsonPayload){
         return getFormParser().getEncounterDateFromFormDate(jsonPayload);
     }
 
-    public HTMLFormObservationCreator getFormParser() {
+    HTMLFormObservationCreator getFormParser() {
         MuzimaApplication applicationContext = (MuzimaApplication) formWebViewActivity.getApplicationContext();
         return new HTMLFormObservationCreator(applicationContext);
     }
@@ -217,38 +217,35 @@ public class HTMLFormDataStore {
     }
 
     @JavascriptInterface
-    public String getConcepts() throws JSONException {
-        List<Concept> concepts = new ArrayList<Concept>();
+    public String getConcepts() {
+        List<Concept> concepts = new ArrayList<>();
         try {
             concepts = conceptController.getConcepts();
-        } catch (ConceptController.ConceptFetchException e) {
-            Log.e(TAG, "Exception occurred while loading concepts", e);
-        }
-        catch (Exception e){
-            Log.e(TAG, "Exception occurred while loading concepts", e);
+        } catch (ConceptController.ConceptFetchException | Exception e) {
+            Log.e(getClass().getSimpleName(), "Exception occurred while loading concepts", e);
         }
         return JSONValue.toJSONString(concepts);
     }
 
     @JavascriptInterface
-    public String getEncountersByPatientUuid(String patientuuid) throws JSONException {
-        List<Encounter> encounters = new ArrayList<Encounter>();
+    public String getEncountersByPatientUuid(String patientuuid) {
+        List<Encounter> encounters = new ArrayList<>();
         try {
             encounters = encounterController.getEncountersByPatientUuid(patientuuid);
         } catch (EncounterController.DownloadEncounterException e) {
-            Log.e(TAG, "Exception occurred while loading encounters", e);
+            Log.e(getClass().getSimpleName(), "Exception occurred while loading encounters", e);
         }
         catch (Exception e){
-            Log.e(TAG, "ExceptioJSONValuen occurred while loading encounters", e);
+            Log.e(getClass().getSimpleName(), "ExceptioJSONValuen occurred while loading encounters", e);
         }
         return JSONValue.toJSONString(encounters);
     }
 
     @JavascriptInterface
-    public String getEncounterTypes(String patientuuid) throws JSONException{
-        List<Encounter> encounters = new ArrayList<Encounter>();
-        List<Encounter> encountertypes = new ArrayList<Encounter>();
-        List<String> encounterTypeArray = new ArrayList<String>();
+    public String getEncounterTypes(String patientuuid) {
+        List<Encounter> encounters = new ArrayList<>();
+        List<Encounter> encountertypes = new ArrayList<>();
+        List<String> encounterTypeArray = new ArrayList<>();
         try {
             encounters = encounterController.getEncountersByPatientUuid(patientuuid);
             for(Encounter encounter:encounters){
@@ -257,47 +254,38 @@ public class HTMLFormDataStore {
                     encountertypes.add(encounter);
                 }
             }
-        } catch (EncounterController.DownloadEncounterException e) {
-            Log.e(TAG, "Exception occurred while loading encounterTypes", e);
-        }
-        catch (Exception e){
-            Log.e(TAG, "Exception occurred while loading encounterTypes", e);
+        } catch (EncounterController.DownloadEncounterException | Exception e) {
+            Log.e(getClass().getSimpleName(), "Exception occurred while loading encounterTypes", e);
         }
         return JSONValue.toJSONString(encountertypes);
     }
 
     @JavascriptInterface
     public String getObsByConceptId(String patientUuid,int conceptId) throws JSONException, ConceptController.ConceptFetchException {
-        List<Observation> observations = new ArrayList<Observation>();
+        List<Observation> observations = new ArrayList<>();
         try {
             observations = observationController.getObservationsByPatientuuidAndConceptId(patientUuid,conceptId);
-        } catch (ObservationController.LoadObservationException e) {
-            Log.e(TAG, "Exception occurred while loading observations", e);
-        }
-        catch (Exception e){
-            Log.e(TAG, "Exception occurred while loading observations", e);
+        } catch (ObservationController.LoadObservationException | Exception e) {
+            Log.e(getClass().getSimpleName(), "Exception occurred while loading observations", e);
         }
         return createObsJsonArray(observations);
     }
 
     @JavascriptInterface
     public String getObsByEncounterId(int encounterid) throws JSONException, ConceptController.ConceptFetchException {
-        List<Observation> observations = new ArrayList<Observation>();
+        List<Observation> observations = new ArrayList<>();
         try {
             observations = observationController.getObservationsByEncounterId(encounterid);
-        } catch (ObservationController.LoadObservationException e) {
-            Log.e(TAG, "Exception occurred while loading observations", e);
-        }
-        catch (Exception e){
-            Log.e(TAG, "Exception occurred while loading observations", e);
+        } catch (ObservationController.LoadObservationException | Exception e) {
+            Log.e(getClass().getSimpleName(), "Exception occurred while loading observations", e);
         }
         return createObsJsonArray(observations);
     }
 
     @JavascriptInterface
     public String getObsByEncounterType(String patientUuid,String encounterType) throws JSONException, ConceptController.ConceptFetchException {
-        List<Observation> observations = new ArrayList<Observation>();
-        List<Encounter> encounters=new ArrayList<Encounter>();
+        List<Observation> observations = new ArrayList<>();
+        List<Encounter> encounters= new ArrayList<>();
         try {
             encounters = encounterController.getEncountersByPatientUuid(patientUuid);
             for(Encounter enc:encounters){
@@ -305,21 +293,19 @@ public class HTMLFormDataStore {
                     observations.addAll(observationController.getObservationsByEncounterId(enc.getId()));
                 }
             }
-        } catch (ObservationController.LoadObservationException e) {
-            Log.e(TAG, "Exception occurred while loading observations", e);
+        } catch (ObservationController.LoadObservationException | Exception e) {
+            Log.e(getClass().getSimpleName(), "Exception occurred while loading observations", e);
         } catch (EncounterController.DownloadEncounterException e) {
-            Log.e(TAG, "Exception occurred while loading encounters", e);
-        } catch (Exception e){
-            Log.e(TAG, "Exception occurred while loading observations", e);
+            Log.e(getClass().getSimpleName(), "Exception occurred while loading encounters", e);
         }
         return createObsJsonArray(observations);
     }
 
-    public String createObsJsonArray(List<Observation> observations) throws JSONException, ConceptController.ConceptFetchException {
+    private String createObsJsonArray(List<Observation> observations) throws JSONException, ConceptController.ConceptFetchException {
         int i = 0;
         JSONArray arr = new JSONArray();
-        HashMap<String, JSONObject> map = new HashMap<String, JSONObject>( );
-        List<Concept> concepts =new ArrayList<Concept>();
+        HashMap<String, JSONObject> map = new HashMap<>();
+        List<Concept> concepts = new ArrayList<>();
         concepts = conceptController.getConcepts();
         for (Observation obs : observations) {
             String conceptName="";
@@ -329,7 +315,7 @@ public class HTMLFormDataStore {
                     conceptName = concept.getName();
                 }
             }
-            final String dateFormat = "dd-MM-yyyy";
+            final String dateFormat = STANDARD_DATE_FORMAT;
             SimpleDateFormat newDateFormat = new SimpleDateFormat("dd-MM-yy HH:mm:ss");
             Date d = null;
             try {
@@ -361,6 +347,14 @@ public class HTMLFormDataStore {
     }
 
     @JavascriptInterface
+    public String getGPSLocationData(){
+        MuzimaLocationService muzimaLocationService = new MuzimaLocationService(application);
+        return muzimaLocationService.getHardGPSData();
+    }
+
+
+
+    @JavascriptInterface
     public void checkForPossibleFormDuplicate(String formUuid, String encounterDateTime, String patientUuid,String encounterPayLoad) throws FormController.FormDataFetchException, JSONException {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(formWebViewActivity.getApplicationContext());
         boolean isDuplicateFormDataWarningPreferenceSet = preferences.getBoolean(formWebViewActivity.getResources().getString(R.string.preference_duplicate_form_data_key),HTMLFormWebViewActivity.IS_ALLOWED_FORM_DATA_DUPLICATION);
@@ -368,9 +362,9 @@ public class HTMLFormDataStore {
             JSONObject mainObject = new JSONObject(encounterPayLoad);
             JSONObject encounterObject = mainObject.getJSONObject("encounter");
             if (!(encounterObject.has("encounter.encounter_datetime"))) {
-                List<FormData> allFormData = new ArrayList<FormData>( );
-                List<FormData> incompleteForms = new ArrayList<FormData>( );
-                List<FormData> completeForms = new ArrayList<FormData>( );
+                List<FormData> allFormData = new ArrayList<>();
+                List<FormData> incompleteForms = new ArrayList<>();
+                List<FormData> completeForms = new ArrayList<>();
                 incompleteForms = formController.getAllFormDataByPatientUuid(patientUuid, Constants.STATUS_INCOMPLETE);
                 completeForms = formController.getAllFormDataByPatientUuid(patientUuid, Constants.STATUS_COMPLETE);
                 allFormData.addAll(incompleteForms);
@@ -386,7 +380,7 @@ public class HTMLFormDataStore {
                     try {
                         d = newDateFormat.parse(newDateFormat.format(encounterDate));
                     } catch (ParseException e) {
-                        e.printStackTrace( );
+                        Log.e(getClass().getSimpleName(),e.getMessage());
                     }
                     newDateFormat.applyPattern(dateFormat);
                     String convertedEncounterDate = newDateFormat.format(d);
@@ -404,11 +398,7 @@ public class HTMLFormDataStore {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(formWebViewActivity.getApplicationContext());
         String defaultLocationName = preferences.getString("defaultEncounterLocation",getStringResource("no_default_encounter_location"));
         String defaultValue = getStringResource("no_default_encounter_location");
-        if(defaultLocationName.equals(defaultValue)){
-            return false;
-        }else{
-            return true;
-        }
+        return !defaultLocationName.equals(defaultValue);
     }
     @JavascriptInterface
     public void logEvent(String tag, String details){
@@ -420,8 +410,8 @@ public class HTMLFormDataStore {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(formWebViewActivity.getApplicationContext());
         String defaultLocationName = preferences.getString("defaultEncounterLocation",getStringResource("no_default_encounter_location"));
         String defaultValue = getStringResource("no_default_encounter_location");
-        List<Location> defaultLocation = new ArrayList<Location>();
-        List<Location> locations = new ArrayList<Location>();
+        List<Location> defaultLocation = new ArrayList<>();
+        List<Location> locations = new ArrayList<>();
 
         locations = locationController.getAllLocations();
         if(!defaultLocationName.equals(defaultValue)){
@@ -435,22 +425,18 @@ public class HTMLFormDataStore {
         return JSONValue.toJSONString(locations);
     }
 
-    public boolean areMandatoryEncounterDetailsInForm(String jsonResponse) {
+    private boolean areMandatoryEncounterDetailsInForm(String jsonResponse) {
         try {
             JSONObject jsonObject = new JSONObject(jsonResponse);
             JSONObject jsonObjectInner = jsonObject.getJSONObject("encounter");
-            if(!(jsonObjectInner.has("encounter.provider_id")) || !(jsonObjectInner.has("encounter.encounter_datetime")) || !(jsonObjectInner.has("encounter.location_id"))){
-                return false;
-            }else{
-                return true;
-            }
+            return jsonObjectInner.has("encounter.provider_id") && jsonObjectInner.has("encounter.encounter_datetime") && jsonObjectInner.has("encounter.location_id");
         } catch (JSONException e) {
-            Log.e(TAG, "Error while parsing response JSON", e);
+            Log.e(getClass().getSimpleName(), "Error while parsing response JSON", e);
         }
         return false;
     }
 
-    public String injectUserSystemIdToEncounterPayload(String jsonPayload){
+    private String injectUserSystemIdToEncounterPayload(String jsonPayload){
         try {
             JSONObject jsonObject = new JSONObject(jsonPayload);
             JSONObject jsonObjectInner = jsonObject.getJSONObject("encounter");
@@ -462,19 +448,19 @@ public class HTMLFormDataStore {
             }
             return  jsonPayload;
         } catch (JSONException e) {
-            Log.e(TAG, "Error while parsing response JSON", e);
+            Log.e(getClass().getSimpleName(), "Error while parsing response JSON", e);
         }
 
         return jsonPayload;
     }
 
-    public String checkMisssingMandatoryEncounterDetails(String jsonPayLoad){
+    private String checkMisssingMandatoryEncounterDetails(String jsonPayLoad){
         String message = "";
         try {
             JSONObject jsonObject = new JSONObject(jsonPayLoad);
             JSONObject jsonObjectInner = null;
             if(!(jsonObject.has("encounter"))) {
-                Log.e(TAG, "No encounter details section in the form");
+                Log.e(getClass().getSimpleName(), "No encounter details section in the form");
             }else{
                 jsonObjectInner = jsonObject.getJSONObject("encounter");
                 if(!(jsonObjectInner.has("encounter.encounter_datetime"))){
@@ -499,7 +485,7 @@ public class HTMLFormDataStore {
                 return message;
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Error while parsing response JSON. Unparsable jsonPayLoad", e);
+            Log.e(getClass().getSimpleName(), "Error while parsing response JSON. Unparsable jsonPayLoad", e);
         }
         return null;
     }

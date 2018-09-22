@@ -12,16 +12,20 @@ package com.muzima.view.cohort;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import com.muzima.R;
+import com.muzima.adapters.cohort.CohortPagerAdapter;
 import com.muzima.adapters.cohort.SyncedCohortsAdapter;
 import com.muzima.api.model.Cohort;
 import com.muzima.controller.CohortController;
 import com.muzima.view.patients.PatientsListActivity;
 
 public class SyncedCohortsListFragment extends CohortListFragment implements AllCohortsListFragment.OnCohortDataDownloadListener {
-    private static final String TAG = "SyncedCohortsListFragment";
 
     public static SyncedCohortsListFragment newInstance(CohortController cohortController) {
         SyncedCohortsListFragment f = new SyncedCohortsListFragment();
@@ -36,7 +40,27 @@ public class SyncedCohortsListFragment extends CohortListFragment implements All
         }
         noDataMsg = getActivity().getResources().getString(R.string.info_no_cohort_download);
         noDataTip = getActivity().getResources().getString(R.string.hint_cohort_sync);
+
+        determineAndShowCohortUpdateAvailabilityAction();
         super.onCreate(savedInstanceState);
+    }
+
+    private void determineAndShowCohortUpdateAvailabilityAction(){
+        try {
+            if(cohortController.isUpdateAvailable()) {
+                Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.info_cohort_update, Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_dark))
+                        .setAction(R.string.general_update, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ((CohortActivity)getContext()).setCurrentView(CohortPagerAdapter.TAB_All);
+                            }
+                        })
+                        .show();
+            }
+        } catch (CohortController.CohortFetchException e) {
+            Log.e(getClass().getSimpleName(), "Cannot determine whether cohort update is available",e);
+        }
     }
 
     @Override
