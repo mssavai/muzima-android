@@ -13,6 +13,7 @@ package com.muzima.view.preferences;
 import android.content.Intent;
 import android.os.CountDownTimer;
 import com.muzima.MuzimaApplication;
+import com.muzima.service.MuzimaLoggerService;
 import com.muzima.service.TimeoutPreferenceService;
 import com.muzima.service.WizardFinishPreferenceService;
 import com.muzima.util.MuzimaLogger;
@@ -62,7 +63,7 @@ public class MuzimaTimer extends CountDownTimer {
     private void logOut()
     {
 
-        MuzimaLogger.log(muzimaApplication.getMuzimaContext(),"SESSION_TIMEOUT",
+        MuzimaLoggerService.log(muzimaApplication.getMuzimaContext(),"SESSION_TIMEOUT",
                 "{\"userId\":\"" +muzimaApplication.getAuthenticatedUser().getUsername()+"\"}");
         boolean isRunningInBackground = muzimaApplication.isRunningInBackground();
         boolean isWizardComplete = new WizardFinishPreferenceService(muzimaApplication).isWizardFinished();

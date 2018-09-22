@@ -40,10 +40,10 @@ import com.muzima.controller.SmartCardController;
 import com.muzima.domain.Credentials;
 import com.muzima.service.CohortPrefixPreferenceService;
 import com.muzima.service.LocalePreferenceService;
+import com.muzima.service.MuzimaLoggerService;
 import com.muzima.service.MuzimaSyncService;
 import com.muzima.service.SntpService;
 import com.muzima.util.Constants;
-import com.muzima.util.MuzimaLogger;
 import com.muzima.utils.StringUtils;
 import com.muzima.view.forms.FormWebViewActivity;
 import com.muzima.view.forms.HTMLFormWebViewActivity;
@@ -364,7 +364,7 @@ public class MuzimaApplication extends Application {
 
     public void logOut() {
         if(authenticatedUser != null) {
-            MuzimaLogger.log(getMuzimaContext(), "USER_LOGOUT",
+            MuzimaLoggerService.log(getMuzimaContext(), "USER_LOGOUT",
                     "{\"userId\":\"" + authenticatedUser.getUsername() + "\"}");
         }
         saveBeforeExit();

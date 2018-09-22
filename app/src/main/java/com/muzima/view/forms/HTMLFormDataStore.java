@@ -31,9 +31,9 @@ import com.muzima.controller.LocationController;
 import com.muzima.controller.ObservationController;
 import com.muzima.controller.MuzimaSettingController;
 import com.muzima.controller.ProviderController;
-import com.muzima.model.shr.kenyaemr.KenyaEmrSHRModel;
 import com.muzima.scheduler.RealTimeFormUploader;
 import com.muzima.service.HTMLFormObservationCreator;
+import com.muzima.service.MuzimaLoggerService;
 import com.muzima.utils.Constants;
 import com.muzima.utils.StringUtils;
 import net.minidev.json.JSONValue;
@@ -409,6 +409,10 @@ public class HTMLFormDataStore {
         }else{
             return true;
         }
+    }
+    @JavascriptInterface
+    public void logEvent(String tag, String details){
+        MuzimaLoggerService.log(((MuzimaApplication)formWebViewActivity.getApplicationContext()).getMuzimaContext(), tag,details);
     }
 
     @JavascriptInterface
