@@ -10,8 +10,10 @@
 
 package com.muzima.view.preferences.settings;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -49,10 +51,14 @@ import static com.muzima.utils.Constants.DataSyncServiceConstants.SyncStatusCons
 
 public class SettingsPreferenceFragment extends PreferenceFragment  implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private static final Integer SESSION_TIMEOUT_MINIMUM = 0;
+    private static final Integer SESSION_TIMEOUT_MAXIMUM = 500;
+
     private EditTextPreference serverPreference;
     private CheckBoxPreference encounterProviderPreference;
     private CheckBoxPreference realTimeSyncPreference;
     private CheckBoxPreference requireMedicalRecordNumberPreference;
+    private Activity mActivity;
 
 
     private String newURL;
@@ -97,8 +103,20 @@ public class SettingsPreferenceFragment extends PreferenceFragment  implements S
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 Integer timeOutInMin = Integer.valueOf(o.toString());
-                ((MuzimaApplication) getActivity().getApplication()).resetTimer(timeOutInMin);
-                return true;
+                if (timeOutInMin > SESSION_TIMEOUT_MINIMUM && timeOutInMin < SESSION_TIMEOUT_MAXIMUM) {
+                    ((MuzimaApplication) getActivity().getApplication()).resetTimer(timeOutInMin);
+                    return true;
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder
+                            .setCancelable(true)
+                            .setIcon(getResources().getDrawable(R.drawable.ic_warning))
+                            .setTitle(getResources().getString(R.string.general_caution))
+                            .setMessage(getResources().getString(R.string.warning_session_timeout))
+                            .setPositiveButton(getResources().getText(R.string.general_ok), null).create().show();
+                }
+                return false;
+
             }
         });
 
@@ -276,6 +294,15 @@ public class SettingsPreferenceFragment extends PreferenceFragment  implements S
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof Activity){
+            mActivity =(Activity) context;
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
@@ -324,7 +351,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment  implements S
             @Override
             public void handle(SharedPreferences sharedPreferences) {
                 if(NumberUtils.isNumber(sharedPreferences.getString(key, StringUtils.EMPTY))){
-                    LocationController locationController = ((MuzimaApplication) getActivity().getApplication()).getLocationController();
+                    LocationController locationController = ((MuzimaApplication) mActivity.getApplicationContext()).getLocationController();
                     List<Location> locations = new ArrayList<>();
                     try {
                         locations = locationController.getAllLocations();

@@ -10,6 +10,8 @@
 
 package com.muzima.view.forms;
 
+import android.location.LocationManager;
+import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -35,6 +37,8 @@ import com.muzima.api.model.Patient;
 import com.muzima.controller.FormController;
 import com.muzima.model.BaseForm;
 import com.muzima.model.FormWithData;
+import com.muzima.service.GPSFeaturePreferenceService;
+import com.muzima.service.MuzimaLocationService;
 import com.muzima.utils.Constants;
 import com.muzima.utils.audio.AudioResult;
 import com.muzima.utils.barcode.BarCodeScannerIntentIntegrator;
@@ -68,6 +72,7 @@ public class FormWebViewActivity extends BroadcastListenerActivity {
     private static final String ZIGGY_FILE_LOADER = "ziggyFileLoader";
     private static final String FORM = "form";
     private static final String DISCRIMINATOR = "discriminator";
+    private static final String MUZIMA_LOCATION_SERVICE = "muzimaGPSLocationInterface";
 
 
     private WebView webView;
@@ -102,6 +107,7 @@ public class FormWebViewActivity extends BroadcastListenerActivity {
         setContentView(R.layout.activity_form_webview);
         progressDialog = new MuzimaProgressDialog(this);
         showProgressBar("Loading...");
+
         try {
             setupFormData();
             setupWebView();
@@ -119,6 +125,33 @@ public class FormWebViewActivity extends BroadcastListenerActivity {
         super.onDestroy();
     }
 
+    public void isLocationServicesAvailable(){
+        GPSFeaturePreferenceService gpsFeaturePreferenceService = new GPSFeaturePreferenceService((MuzimaApplication) getApplication());
+        if(gpsFeaturePreferenceService.isGPSDataCollectionSettingEnabled()){
+            if (!MuzimaLocationService.isLocationServicesSwitchedOn) {
+                android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(getApplicationContext());
+                alertDialog.setTitle(getResources().getString(R.string.title_gps_location));
+                alertDialog.setMessage(getResources().getString(R.string.hint_gps_location_off));
+                alertDialog.setPositiveButton(getResources().getString(R.string.general_location_setting), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                    }
+                });
+
+                alertDialog.setNegativeButton(getResources().getString(R.string.general_cancel), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        processBackButtonPressed();
+                        dialog.cancel();
+                    }
+                });
+                android.support.v7.app.AlertDialog alert = alertDialog.create();
+                alert.show();
+            }
+        }
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (isFormComplete() && isEncounterForm()) {
@@ -133,6 +166,9 @@ public class FormWebViewActivity extends BroadcastListenerActivity {
 
     @Override
     protected void onResume() {
+
+        isLocationServicesAvailable();
+
         if (scanResultMap != null && !scanResultMap.isEmpty()) {
             String jsonMap = new JSONObject(scanResultMap).toString();
             Log.d(getClass().getSimpleName(), jsonMap);
@@ -296,6 +332,7 @@ public class FormWebViewActivity extends BroadcastListenerActivity {
         getSettings().setDomStorageEnabled(true);
 
         FormInstance formInstance = new FormInstance(form, formTemplate);
+
         webView.addJavascriptInterface(formInstance, FORM_INSTANCE);
         FormController formController = ((MuzimaApplication) getApplication()).getFormController();
         webView.addJavascriptInterface(new FormDataStore(this, formController, formData), REPOSITORY);

@@ -21,11 +21,13 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 
 apply plugin: 'com.android.application'
 apply from: "../artifacts.gradle"
+apply plugin: 'io.fabric'
 //apply plugin: 'com.google.gms.google-services'
 
 
@@ -41,8 +43,9 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 9
-        versionName "2.2.0"
+        versionCode 10
+        versionName "2.3.0"
+        vectorDrawables.useSupportLibrary = true
         manifestPlaceholders = [versionCode: defaultConfig.versionCode, versionName: defaultConfig.versionName]
 
         //mUzima-android code base is beyond method ref limit - Enabled multidex - disabled jumbo dex option.
@@ -77,9 +80,11 @@ repositories {
     maven { url "https://raw.github.com/muzima/muzima-maven/search-api" }
     maven { url "https://raw.github.com/muzima/muzima-maven/muzima-api" }
     maven { url 'https://jitpack.io' }
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 dependencies {
+    compile 'com.android.support:multidex:1.0.3'
     compile 'de.hdodenhof:circleimageview:1.2.1'
     compile group: 'com.madgag', name: 'scprov-jdk15on', version: '1.47.0.2'
     compile fileTree('lib/stickylistheaders-1.0.0.jar')
@@ -94,6 +99,7 @@ dependencies {
     compile group: 'lucene.transform', name: 'lucenetransform', version: '0.9.2.2'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.7.3'
     compile 'com.github.lguipeng:BubbleView:1.0.1'
+    compile 'com.google.android.gms:play-services-location:11.0.2'
     //compile 'com.google.firebase:firebase-core:16.0.1'
 
     compile(group: 'com.muzima', name: 'muzima-api', version: '1.1.4-logs') {
@@ -114,6 +120,10 @@ dependencies {
     }
     compile 'com.android.support:support-v13:27.1.1'
 
+    compile('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
+        transitive = true;
+    }
+
 
 
 }
@@ -121,3 +131,8 @@ task wrapper(type: Wrapper) {
     gradleVersion = '4.1'
 }
 
+configurations {
+    all {
+        exclude group: 'org.json', module: 'json'
+    }
+}

@@ -11,10 +11,6 @@
  * * Fieldset element where the input must be selected at least one.
  * * Message to be displayed when none of the elements in the fieldset is selected.
  */
- var getLastKnowGPSLocation = function () {
-    var lastKnowGPSLocation;
-    lastKnowGPSLocation = $.muzimaGPSLocationInterface.getLastKnowGPSLocation();
- }
 
 var validateSelected = function (source) {
     var errors = {};
@@ -94,6 +90,7 @@ var toggleValidationMessages = function (errors) {
         validator.showErrors(errors);
     }
 };
+
 /* End - Show and hide validation error messages */
 
 $(document).ready(function () {
@@ -228,6 +225,14 @@ $(document).ready(function () {
     };
 
     var save = function (status, keepFormOpen) {
+        if(status=="complete"){
+           /*Start of populating data entry completion timestamp before serializing the form*/
+            if($('.dataEntryCompletionTimeStamp').length){
+                var date = new Date();
+                $('.dataEntryCompletionTimeStamp').val(date.getTime());
+            }
+            /*Start of populating data entry completion timestamp*/
+        }
         var jsonData = JSON.stringify($('form').serializeEncounterForm());
         htmlDataStore.saveHTML(jsonData, status, keepFormOpen);
     };
@@ -362,14 +367,22 @@ $(document).ready(function () {
 
     /*Start - Initialize jQuery DateTimePicker */
     if ($.fn.datetimepicker) {
-       $('.datetimepicker').datetimepicker({
+        $('.datetimepicker').datetimepicker({
            format:'dd-mm-yyyy hh:ii',
            changeMonth: true,
            changeYear: true,
            step : 5,
-           autoclose : true,
-           defaultDate:new Date()
+           autoclose : true
        });
+       var dt = new Date();
+       var time = dt.getHours() + ":" + dt.getMinutes();
+       var dateFormat = "dd-mm-yy";
+       var currentDate = $.datepicker.formatDate(dateFormat, new Date());
+
+       var encounterDatetime = $('#encounter\\.encounter_datetime');
+       if ($(encounterDatetime).val() == "") {
+           $(encounterDatetime).val(currentDate+' '+time);
+       }
     }
     /*End - Initialize jQuery DateTimePicker */
 
@@ -464,7 +477,7 @@ $(document).ready(function () {
             var today = new Date(reference.getFullYear(), reference.getMonth(), reference.getDate());
             futureDateValidationFailureMessage = htmlDataStore.getStringResource("hint_future_date_validation_failure");
             return enteredDate > today;
-        }, "Please enter a date in the future."
+        }, futureDateValidationFailureMessage
     );
 
     // attach 'checkFutureDate' class to perform validation.
@@ -1055,7 +1068,17 @@ $(document).ready(function () {
         var shouldInclude = $(element).is(':visible');
         if (!shouldInclude) {
             var media = $(element).attr("name");
-            shouldInclude = media && media.indexOf("consultation") > -1;
+            var mediaValue = media && media.indexOf("consultation");
+            if(mediaValue > -1){
+                shouldInclude = true;
+            }
+
+            var classes = $(element).attr('class');
+            if(typeof classes != "undefined"){
+                if(classes.indexOf("serializable") > -1){
+                    shouldInclude = true;
+                }
+            }
         }
         return shouldInclude;
     }
@@ -1314,7 +1337,7 @@ $(document).ready(function () {
                 }
             }
             return false;
-        }, "Please provide a consultant from the list of possible consultants.");
+        }, consultationConsultantValidationFailureMessage);
 
     }
 
@@ -1323,12 +1346,6 @@ $(document).ready(function () {
         "valid-consultant-only": {validConsultantOnly: true}
     });
     /* End - validConsultantOnly*/
-
-    /*Capture updated gps location data  */
-    $(window).load(function(){
-        var gpsLocation = htmlDataStore.getLastKnowGPSLocation();
-    });
-
 
     /*Start of Checking For Possibility Of Duplicate Form on encounter Date change*/
     $("#encounter\\.encounter_datetime" ).change(function() {
@@ -1361,5 +1378,36 @@ $(document).ready(function () {
             $('[name="encounter\\.location_id"]').val(this.id);
         });
     }
+
     /*end of Setting Default encounter Location*/
+
+    /* Start populating gps location data */
+
+    if($('.cummulativeFormOpeningGPSData').length){
+        if($('.cummulativeFormOpeningGPSData').val().length){
+            var lastKnowGPSLocationJsonObj = htmlDataStore.getLastKnowGPSLocation("json-object");
+            var gpsLocationDataOnForm = $('.cummulativeFormOpeningGPSData').val();
+            gpsLocationDataOnForm = gpsLocationDataOnForm.trim();
+            lastKnowGPSLocationJsonObj = lastKnowGPSLocationJsonObj.trim();
+            if(gpsLocationDataOnForm.substring(0, 2) === "[{" && lastKnowGPSLocationJsonObj.substring(0, 1) === "{"){
+                var locationObj = JSON.parse(gpsLocationDataOnForm);
+                locationObj.push(JSON.parse(lastKnowGPSLocationJsonObj));
+                var newLocationData = JSON.stringify(locationObj);
+                $(".cummulativeFormOpeningGPSData").val(newLocationData);
+            }else{
+                var newLocationData = htmlDataStore.getLastKnowGPSLocation("json-array");
+                $(".cummulativeFormOpeningGPSData").val(newLocationData);
+            }
+        } else {
+            var lastKnowGPSLocationJsonArray = htmlDataStore.getLastKnowGPSLocation("json-array");
+            $(".cummulativeFormOpeningGPSData").val(lastKnowGPSLocationJsonArray);
+        }
+    }
+
+    /*Start of populating initial form opening timestamp*/
+    if($('.initialFormOpeningTimestamp').length && !$('.initialFormOpeningTimestamp').val().length){
+        var date = new Date();
+        $('.initialFormOpeningTimestamp').val(date.getTime());
+    }
+    /*end of populating initial form opening timestamp*/
 });
