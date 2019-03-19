@@ -17,7 +17,7 @@ public class MuzimaLoggerService {
                 MuzimaLogger.log(context, tag, details, deviceId);
                 return null;
             }
-        };
+        }.execute();
     }
 
 
