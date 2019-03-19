@@ -223,18 +223,44 @@ $(document).ready(function () {
         save("incomplete", false);
         return false;
     };
+    document.preSaveScheduledTasks = [];
+
+    var runPreSaveScheduledTasks = function(){
+        console.log("Resolving registered tasks");
+        var nextTask = null;
+        $.each(document.preSaveScheduledTasks, function(k,v){
+            if(nextTask != null){
+                new Promise((resolve, reject)=>{
+                    nextTask();
+                    resolve();
+                }).then(function(){
+                    nextTask = v;
+                });
+            } else {
+                nextTask = v;
+            }
+        });
+        nextTask();
+    }
 
     var save = function (status, keepFormOpen) {
-        if(status=="complete"){
-           /*Start of populating data entry completion timestamp before serializing the form*/
-            if($('.dataEntryCompletionTimeStamp').length){
-                var date = new Date();
-                $('.dataEntryCompletionTimeStamp').val(date.getTime());
+        new Promise((resolve, reject) => {
+            if(document.preSaveScheduledTasks.length > 0 && status == "complete"){
+                runPreSaveScheduledTasks();
             }
-            /*Start of populating data entry completion timestamp*/
-        }
-        var jsonData = JSON.stringify($('form').serializeEncounterForm());
-        htmlDataStore.saveHTML(jsonData, status, keepFormOpen);
+            resolve();
+        }).then(function(){
+            if(status=="complete"){
+               /*Start of populating data entry completion timestamp before serializing the form*/
+                if($('.dataEntryCompletionTimeStamp').length){
+                    var date = new Date();
+                    $('.dataEntryCompletionTimeStamp').val(date.getTime());
+                }
+                /*Start of populating data entry completion timestamp*/
+            }
+            var jsonData = JSON.stringify($('form').serializeEncounterForm());
+            htmlDataStore.saveHTML(jsonData, status, keepFormOpen);
+        });
     };
 
     var addValidationMessage = function () {
