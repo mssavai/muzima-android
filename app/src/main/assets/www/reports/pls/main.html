@@ -1,0 +1,43 @@
+<ons-page>
+    <ons-toolbar>
+        <div class="left">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        <div class="right">
+            <ons-toolbar-button  onclick="openMenu()">
+                <ons-icon icon="md-menu"></ons-icon>
+            </ons-toolbar-button>
+        </div>
+    </ons-toolbar>
+    <ons-row style="margin: 10% auto;">
+        <ons-col style="text-align: center;">
+            <h3>Choose report to view</h3>
+        </ons-col>
+    </ons-row>
+    <div class="main_page_tab_btn_div">
+        <ons-button style="width:70%" modifier="cta" onclick="loadActivityViewer('work_day_length.html')">
+            Work day length
+        </ons-button>
+    </div>
+    <div class="main_page_tab_btn_div">
+        <ons-button style="width:70%" modifier="cta" onclick="loadActivityViewer('patients_seen.html')">
+            No. of Patients seen
+        </ons-button>
+    </div>
+    <div class="main_page_tab_btn_div">
+        <ons-button style="width:70%" modifier="cta" onclick="loadActivityViewer('encounter_length.html')">
+            Encounter length
+        </ons-button>
+    </div>
+    <script>
+        const loadActivityViewer = (viewerName) => {
+            // if (loggingInterface.isCurrentUserProvider()) {
+            //     loggingInterface.navigateToPage(viewerName);
+            // } else {
+            //     loggingInterface.setNextPageToNavigate(viewerName);
+            //     loggingInterface.navigateToPage('select_provider.html');
+            // }
+            loggingInterface.navigateToPage(viewerName);
+
+        }
+
+    </script>
+</ons-page>

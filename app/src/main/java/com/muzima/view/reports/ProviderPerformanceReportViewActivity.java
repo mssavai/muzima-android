@@ -1,7 +1,7 @@
 
 /*
- * Copyright (c) 2014 - 2018. The Trustees of Indiana University, Moi University
- * and Vanderbilt University Medical Center.
+ * Copyright (c) The Trustees of Indiana University, Moi University
+ * and Vanderbilt University Medical Center. All Rights Reserved.
  *
  * This version of the code is licensed under the MPL 2.0 Open Source license
  * with additional health care disclaimer.
@@ -24,19 +24,25 @@ import com.muzima.api.model.FormTemplate;
 import com.muzima.api.model.Provider;
 import com.muzima.model.AvailableForm;
 import com.muzima.controller.FormController;
+import com.muzima.utils.StringUtils;
 import com.muzima.utils.javascriptinterface.FormDataJavascriptInterface;
+import com.muzima.utils.javascriptinterface.PerformanceLoggingJavascriptInterface;
 import com.muzima.view.BroadcastListenerActivity;
 import com.muzima.view.progressdialog.MuzimaProgressDialog;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
 import static android.webkit.ConsoleMessage.MessageLevel.ERROR;
 import static java.text.MessageFormat.format;
 
 
-public class ProviderReportViewActivity extends BroadcastListenerActivity {
-    public static final String REPORT = "SelectedReport";
-    public Provider provider;
+public class ProviderPerformanceReportViewActivity extends ProviderReportViewActivity {
     private MuzimaProgressDialog progressDialog;
     private FormTemplate reportTemplate;
+    private WebView webView;
+    private Stack<String > navigationStack;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,11 +56,16 @@ public class ProviderReportViewActivity extends BroadcastListenerActivity {
         } catch (FormController.FormFetchException e) {
             Log.e(getClass().getSimpleName(),"Could not obtain report template");
         }
+
+        setUpNavigationStack();
         setupWebView();
     }
 
+    private void setUpNavigationStack(){
+        navigationStack = new Stack<>();
+    }
+
     private void setupWebView() {
-        WebView webView;
         webView = findViewById(R.id.webView);
         webView.setWebChromeClient(createWebChromeClient( ));
 
@@ -66,27 +77,94 @@ public class ProviderReportViewActivity extends BroadcastListenerActivity {
 
         webView.addJavascriptInterface(new FormDataJavascriptInterface((MuzimaApplication) getApplicationContext()),
                 "formDataInterface");
+        webView.addJavascriptInterface(new PerformanceLoggingJavascriptInterface(ProviderPerformanceReportViewActivity.this),
+                "loggingInterface");
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 
-        webView.loadDataWithBaseURL("file:///android_asset/www/forms/", prePopulateData( ),
-                "text/html", "UTF-8", "");
+        //webView.loadDataWithBaseURL("file:///android_asset/www/reports/", prePopulateData( ),
+           //     "text/html", "UTF-8", "");
+        webView.getSettings().setAllowFileAccessFromFileURLs(true);
+
+        Map<String, String> customHeaders = new HashMap<String, String>();
+        customHeaders.put("loading","true");
+        webView.loadUrl("file:///android_asset/www/reports/pls/index.html");
     }
 
-    private String prePopulateData() {
-        if (reportTemplate != null) {
-            return reportTemplate.getHtml();
+    public void loadLandingPage(){
+        loadPage("main.html", false);
+    }
+
+    public void reloadCurrentPage(){
+        if (!navigationStack.isEmpty()) {
+            String currentPageId = navigationStack.pop();
+            loadPage(currentPageId,false);
         }
-        return null;
+    }
+
+    public void loadLoginPage(){
+        loadPage("login.html", false);
+    }
+
+    public void loadPage(final String pageId, boolean isBackNavigation){
+        if(isBackNavigation || navigationStack.isEmpty() || !StringUtils.equals(pageId,navigationStack.peek())) {
+            if(pageId.equals("main.html")){
+                navigationStack.empty();
+                navigationStack.removeAllElements();
+            }
+            try {
+                webView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        webView.loadUrl("javascript:document.loadPage('" + pageId + "')");
+                    }
+                });
+
+                if (!isBackNavigation || navigationStack.isEmpty()) {
+                    navigationStack.push(pageId);
+                }
+            } catch (Error e) {
+                Log.e("ProviderReportsView", "Can't load page", e);
+            } catch (Exception e) {
+                Log.e("ProviderReportsView", "Can't load page", e);
+            }
+        }
+    }
+
+    public void popTopPage(){
+        if(navigationStack.size()>0) {
+            navigationStack.pop();
+        }
+    }
+    public boolean navigateToPreviousPage(){
+        boolean canNavigateToPreviousPage = false;
+        if(navigationStack.size()>1){
+            canNavigateToPreviousPage = true;
+
+            navigationStack.pop();
+            String backPage = navigationStack.peek();
+            loadPage(backPage, true);
+        }
+        return canNavigateToPreviousPage;
+    }
+
+    public void exit(){
+        finish();
     }
 
     private WebChromeClient createWebChromeClient() {
         return new WebChromeClient() {
+            boolean isLandingPageLoaded = false;
 
             @Override
             public void onProgressChanged(WebView view, int progress) {
-                ProviderReportViewActivity.this.setProgress(progress * 1000);
+                ProviderPerformanceReportViewActivity.this.setProgress(progress * 1000);
                 if (progress == 100) {
                     progressDialog.dismiss( );
+
+                    if(!isLandingPageLoaded) {
+                        loadLandingPage();
+                        isLandingPageLoaded = true;
+                    }
                 }
             }
 
@@ -110,6 +188,13 @@ public class ProviderReportViewActivity extends BroadcastListenerActivity {
             progressDialog.dismiss( );
         }
         super.onDestroy( );
+    }
+
+    @Override
+    public void onBackPressed(){
+        if(!navigateToPreviousPage()){
+            super.onBackPressed();
+        }
     }
 }
 

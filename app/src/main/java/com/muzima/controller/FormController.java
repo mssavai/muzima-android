@@ -15,6 +15,7 @@ import android.util.Log;
 import com.muzima.MuzimaApplication;
 import com.muzima.api.model.APIName;
 import com.muzima.api.model.Encounter;
+import com.muzima.api.model.EncounterType;
 import com.muzima.api.model.Form;
 import com.muzima.api.model.FormData;
 import com.muzima.api.model.FormTemplate;
@@ -65,7 +66,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import static com.muzima.utils.Constants.FORM_DISCRIMINATOR_PROVIDER_REPORT;
 import static com.muzima.utils.Constants.FORM_DISCRIMINATOR_REGISTRATION;
 import static com.muzima.utils.Constants.FORM_JSON_DISCRIMINATOR_CONSULTATION;
 import static com.muzima.utils.Constants.FORM_JSON_DISCRIMINATOR_GENERIC_REGISTRATION;
@@ -137,6 +140,53 @@ public class FormController {
     public AvailableForms getAvailableFormByTags(List<String> tagsUuid, boolean alwaysIncludeRegistrationForms) throws FormFetchException {
         try {
             List<Form> allForms = formService.getAllForms();
+            boolean isreportpresent = false;
+            String reportName = "Performance reports";
+
+            for(Form form:allForms){
+                if(reportName.equalsIgnoreCase(form.getName())) {
+                    isreportpresent = true;
+                    break;
+                }
+            }
+
+            if(!isreportpresent) {
+                final Form form = new Form();
+                form.setDescription("Shows work related performance reports for health workers");
+                form.setName(reportName);
+                form.setVersion("report");
+                form.setDiscriminator(FORM_DISCRIMINATOR_PROVIDER_REPORT);
+                form.setUuid(UUID.randomUUID().toString());
+
+                EncounterType encounterType = new EncounterType();
+                encounterType.setId(100);
+                encounterType.setName("PerformanceStatisticsViewer");
+                encounterType.setUuid(UUID.randomUUID().toString());
+                form.setEncounterType(encounterType);
+                Tag tag = new Tag();
+                tag.setName("PerformanceStatisticsViewer");
+                tag.setUuid("uuid");
+                Tag[] tags = {tag};
+                form.setTags(tags);
+
+
+                final FormTemplate formTemplate = new FormTemplate();
+                String html = "html";
+                formTemplate.setHtml(html);
+                formTemplate.setUuid(form.getUuid());
+
+                try {
+                    saveAllForms(new ArrayList<Form>() {{
+                        add(form);
+                    }});
+                    saveFormTemplates(new ArrayList<FormTemplate>() {{
+                        add(formTemplate);
+                    }});
+                } catch (FormSaveException e) {
+                    Log.e("Error saving report", "  ", e);
+                }
+                allForms = formService.getAllForms();
+            }
             List<Form> filteredForms = filterFormsByTags(allForms, tagsUuid, alwaysIncludeRegistrationForms);
             AvailableForms availableForms = new AvailableForms();
             for (Form filteredForm : filteredForms) {

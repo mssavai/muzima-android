@@ -1,0 +1,51 @@
+<ons-page id="activity_count">
+    <div class="content" style="margin-top:5%">
+        <ons-row>
+            <ons-col >
+                <h5 style="text-align: center" >Work day length</h5>
+            </ons-col>
+        </ons-row>
+        <ons-row>
+            <ons-col >
+
+                <table id="ps_table1" class="highlight responsive-table">
+                </table>
+            </ons-col>
+        </ons-row>
+    </div>
+
+    <script type="text/javascript">
+
+        var chartData = loggingInterface.getChartData(1);
+        chartData = JSON.parse(chartData);
+
+        var html = "";
+        var dataLength = chartData.datasets[0].data.length;
+        var tableHeader = "<tr><td>"+dataLength+"</td>";
+        chartData.labels.forEach(function(label,index){
+            if(index < dataLength) {
+                tableHeader += "<td><b>" + label + "</b></td>";
+            }
+        });
+        tableHeader += "<td><b>TOTAL</b></td>";
+        tableHeader += "</tr>";
+        html +=tableHeader;
+
+        chartData.datasets.forEach(function(dataset){
+            var datasetHtml = "<tr style='background-color: " +dataset.tableBackgroundColor+ "'>" +
+                "<td>" + dataset.label + "</td>";
+
+            var total = 0;
+            dataset.data.forEach(function (dataItem) {
+                datasetHtml += "<td>" + dataItem + "</td>";
+                total += dataItem;
+            });
+            datasetHtml += "<td>" + total + "</td></tr>";
+            html += datasetHtml;
+        });
+
+        var tableElement = document.getElementById("ps_table1");
+        tableElement.innerHTML = html;
+
+    </script>
+</ons-page>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/onsenui.css">
+    <link rel="stylesheet" href="css/onsen-css-components.min.css">
+    <link rel="stylesheet" href="css/chartjs/2.8.0/Chart.min.css">
+    <link rel="stylesheet" href="css/material-design-iconic-font/css/material-design-iconic-font.min.css" />
+    <link type="text/css" rel="stylesheet" href="css/materialize/1.0.0/materialize.min.css"  media="screen,projection"/>
+          crossorigin="anonymous">
+    <script src="js/onsenui.min.js"></script>
+    <script src="js/chartjs/2.8.0/Chart.min.js"></script>
+    <script type="text/javascript" src="js/materialize/1.0.0/materialize.min.js"></script>
+</head>
+<body>
+<ons-page id="activity_count">
+    <ons-toolbar>
+        <div class="left">
+            <ons-toolbar-button onclick="loggingInterface.decrementReportWeekOffset()">
+                <ons-icon icon="md-chevron-left"></ons-icon>
+                <ons-icon icon="md-chevron-left"></ons-icon>
+            </ons-toolbar-button>
+            <span class="reportPeriodLabel"></span>
+            <ons-toolbar-button class="incrementReportPeriodButton" onclick="loggingInterface.incrementReportWeekOffset()">
+                <ons-icon icon="md-chevron-right"></ons-icon>
+                <ons-icon icon="md-chevron-right"></ons-icon>
+            </ons-toolbar-button>
+        </div>
+        <div class="right">
+            <ons-toolbar-button  onclick="openMenu()">
+                <ons-icon icon="md-menu"></ons-icon>
+            </ons-toolbar-button>
+        </div>
+    </ons-toolbar>
+    <ons-tabbar swipeable position="auto">
+        <ons-tab  label="Graph"
+                 icon="md-trending-up" class="graphTab"  page="patients_seen_graph1.html" tabindex="1">wgregre
+        </ons-tab>
+        <ons-tab onclick =  label="Table"  page="patients_seen_graph2.html"
+                 icon="md-border-all" class="tableTab" tabindex="2">rwger
+        </ons-tab>
+    </ons-tabbar>
+    <script>
+        var tabs = document.querySelector('ons-tabbar');
+        var activeTab = "tableTab";
+        console.log(tabs.getActiveTabIndex());
+        //tabs.forEach(function(element){
+            if(activeTab == "tableTab"){
+                tabs.setActiveTab(0);
+            } else {
+                tabs.setActiveTab(0);
+            }
+        //});
+    </script>
+</ons-page>
+
+
+</body>
+</html>

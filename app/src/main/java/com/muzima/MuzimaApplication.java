@@ -33,6 +33,7 @@ import com.muzima.controller.ConceptController;
 import com.muzima.controller.EncounterController;
 import com.muzima.controller.FormController;
 import com.muzima.controller.LocationController;
+import com.muzima.controller.MuzimaLogsController;
 import com.muzima.controller.MuzimaSettingController;
 import com.muzima.controller.NotificationController;
 import com.muzima.controller.ObservationController;
@@ -101,6 +102,7 @@ public class MuzimaApplication extends MultiDexApplication {
     private SetupConfigurationController setupConfigurationController;
     private MuzimaSettingController settingsController;
     private SmartCardController smartCardController;
+    private MuzimaLogsController muzimaLogsController;
     private MuzimaTimer muzimaTimer;
     private static final String APP_DIR = "/data/data/com.muzima";
     private SntpService sntpService;
@@ -351,6 +353,7 @@ public class MuzimaApplication extends MultiDexApplication {
         }
         return settingsController;
     }
+
     public SmartCardController getSmartCardController() {
         if(smartCardController == null){
             try {
@@ -360,6 +363,17 @@ public class MuzimaApplication extends MultiDexApplication {
             }
         }
         return smartCardController;
+    }
+
+    public MuzimaLogsController getMuzimaLogsController() {
+        if(muzimaLogsController == null){
+            try {
+                muzimaLogsController = new MuzimaLogsController(muzimaContext.getLogStatisticService());
+            } catch (IOException e){
+                throw new RuntimeException(e);
+            }
+        }
+        return muzimaLogsController;
     }
 
     public void resetTimer(int timeOutInMin) {

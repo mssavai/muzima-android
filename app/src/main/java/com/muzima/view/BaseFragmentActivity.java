@@ -38,7 +38,7 @@ public class BaseFragmentActivity extends AppCompatActivity {
     private void setActionBar() {
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null){
-            supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayHomeAsUpEnabled(false);
             supportActionBar.setDisplayShowTitleEnabled(true);
         }
     }
