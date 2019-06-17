@@ -8,10 +8,10 @@
     <link rel="stylesheet" href="css/chartjs/2.8.0/Chart.min.css">
     <link rel="stylesheet" href="css/material-design-iconic-font/css/material-design-iconic-font.min.css"/>
     <link type="text/css" rel="stylesheet" href="css/materialize/1.0.0/materialize.min.css"  media="screen,projection"/>
-          crossorigin="anonymous">
     <script src="js/onsenui.min.js"></script>
     <script src="js/chartjs/2.8.0/Chart.min.js"></script>
     <script type="text/javascript" src="js/materialize/1.0.0/materialize.min.js"></script>
+
 </head>
 <body>
 <ons-splitter>
@@ -19,12 +19,12 @@
 
         <ons-page>
             <ons-list>
-                <ons-list-item>
+                <ons-list-item tappable>
                     Report period:
                     <ons-list>
-                        <ons-list-item onclick="loggingInterface.showWeeklyReports()" tappable>
+                        <ons-list-item onclick="loggingInterface.setCurrentReportPeriodAsWeekly()" tappable>
                             <label class="left">
-                                <ons-radio name="visualization_period" input-id="weekly" checked></ons-radio>
+                                <ons-radio name="visualization_period" input-id="weekly"></ons-radio>
                             </label>
                             <label for="weekly">
                                 Show weekly reports
@@ -38,6 +38,12 @@
                                 Show monthly reports
                             </label>
                         </ons-list-item>
+                    </ons-list>
+                </ons-list-item>
+                <ons-list-item id="providerSelection">
+                    Select Providers:
+                    <ons-list id="providerList">
+
                     </ons-list>
                 </ons-list-item>
                 <ons-list-item onclick="loggingInterface.navigateToPage('settings.html')" tappable>
@@ -131,6 +137,84 @@
         } else {
             tabbar.setActiveTab(0);
         }
+    }
+
+    document.querySelector('ons-splitter-side').addEventListener('postclose', function() {
+        loggingInterface.reloadCurrentPage();
+    })
+
+    const selectedProviders = [];
+    const toggleSelectedProvider = function(value){
+        var index = selectedProviders.indexOf(value);
+        if(index > -1){
+
+            console.log("Removing: "+value);
+            selectedProviders.splice(index,1);
+        } else {
+            console.log("Adding: "+value);
+            selectedProviders.push(value);
+        }
+        console.log(selectedProviders);
+    }
+    const addSelectedProvider = function(value){
+        var index = selectedProviders.indexOf(value);
+        if(index == -1){
+            selectedProviders.push(value);
+            console.log("Adding: "+value);
+        }
+    }
+    const isProviderSelected = function(value){
+        return selectedProviders.indexOf(value) > -1;
+    }
+
+    const getChartData = function(chartType){
+        var chartData = loggingInterface.getChartData(chartType);
+        chartData = JSON.parse(chartData);
+        if(loggingInterface.isCurrentUserSupervisor()) {
+            var filteredDataSets = [];
+            chartData.datasets.forEach(function(dataset){
+                if(!isProviderSelected(dataset.id)){
+                    filteredDataSets.push(dataset);
+                }
+            });
+            chartData.datasets = filteredDataSets;
+        }
+
+        return chartData;
+    }
+
+
+    var providerSelectorElement = document.getElementById("providerSelection");
+    if(loggingInterface.isCurrentUserSupervisor()){
+        //addSelectedProvider("ayeung");
+        var providerListSelectionHtml = "<ons-list-item tappable>\n" +
+            "<label class=\"left\">" +
+            "<ons-checkbox name=\"provider\" onchange=\"toggleSelectedProvider('ayeung')\"" +
+            "input-id=\"ayeung\"" +
+            "checked></ons-checkbox>" +
+            "Ada Yeung" +
+            "</label>" +
+            "</ons-list-item>";
+        var providers = loggingInterface.getProviders();
+        providers = JSON.parse(providers);
+        providers.forEach(function(provider){
+            addSelectedProvider(provider.username);
+            providerListSelectionHtml += "<ons-list-item tappable>\n" +
+                "<label class=\"left\">\n" +
+
+                "<ons-checkbox name=\"provider\" onchange=\"toggleSelectedProvider('"+provider.username+"')\"" +
+                "input-id=\""+provider.username+"\"" +
+                "></ons-checkbox>" +
+                provider.name +
+                "</label>" +
+                "</ons-list-item>";
+            console.log(providerListSelectionHtml);
+        });
+        var providerListElement = document.getElementById("providerList");
+        providerListElement.innerHTML = providerListSelectionHtml;
+        providerSelectorElement.style.display = 'show';
+    } else {
+        providerSelectorElement.style.display = 'none';
     }
 
 </script>

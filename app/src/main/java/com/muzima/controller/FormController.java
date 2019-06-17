@@ -141,7 +141,7 @@ public class FormController {
         try {
             List<Form> allForms = formService.getAllForms();
             boolean isreportpresent = false;
-            String reportName = "Performance reports";
+            String reportName = "Provider performance monitoring reports";
 
             for(Form form:allForms){
                 if(reportName.equalsIgnoreCase(form.getName())) {

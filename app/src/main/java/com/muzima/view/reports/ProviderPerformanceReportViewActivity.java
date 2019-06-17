@@ -22,6 +22,7 @@ import com.muzima.MuzimaApplication;
 import com.muzima.R;
 import com.muzima.api.model.FormTemplate;
 import com.muzima.api.model.Provider;
+import com.muzima.domain.Credentials;
 import com.muzima.model.AvailableForm;
 import com.muzima.controller.FormController;
 import com.muzima.utils.StringUtils;
@@ -43,10 +44,14 @@ public class ProviderPerformanceReportViewActivity extends ProviderReportViewAct
     private FormTemplate reportTemplate;
     private WebView webView;
     private Stack<String > navigationStack;
+    private Credentials credentials;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        credentials = new Credentials(this);
+
         setContentView(R.layout.activity_form_webview);
         progressDialog = new MuzimaProgressDialog(this);
         FormController formController = ((MuzimaApplication) getApplicationContext()).getFormController();
@@ -84,6 +89,7 @@ public class ProviderPerformanceReportViewActivity extends ProviderReportViewAct
         //webView.loadDataWithBaseURL("file:///android_asset/www/reports/", prePopulateData( ),
            //     "text/html", "UTF-8", "");
         webView.getSettings().setAllowFileAccessFromFileURLs(true);
+        webView.getSettings().setBlockNetworkLoads(false);
 
         Map<String, String> customHeaders = new HashMap<String, String>();
         customHeaders.put("loading","true");
@@ -92,6 +98,21 @@ public class ProviderPerformanceReportViewActivity extends ProviderReportViewAct
 
     public void loadLandingPage(){
         loadPage("main.html", false);
+    }
+
+    public void loadMapsPage(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                navigationStack.push("map");
+                webView.loadUrl("file:///android_asset/www/reports/pls/map.html");
+            }
+        });
+    }
+
+    public boolean isCurrentPageMapsPage(){
+        String currentPage = navigationStack.peek();
+        return StringUtils.equals("map",currentPage);
     }
 
     public void reloadCurrentPage(){
@@ -138,11 +159,22 @@ public class ProviderPerformanceReportViewActivity extends ProviderReportViewAct
     public boolean navigateToPreviousPage(){
         boolean canNavigateToPreviousPage = false;
         if(navigationStack.size()>1){
+
             canNavigateToPreviousPage = true;
 
-            navigationStack.pop();
-            String backPage = navigationStack.peek();
-            loadPage(backPage, true);
+            if(isCurrentPageMapsPage()){
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setupWebView();
+                    }
+                });
+            } else {
+                navigationStack.pop();
+                String backPage = navigationStack.peek();
+                loadPage(backPage, true);
+            }
         }
         return canNavigateToPreviousPage;
     }
@@ -195,6 +227,10 @@ public class ProviderPerformanceReportViewActivity extends ProviderReportViewAct
         if(!navigateToPreviousPage()){
             super.onBackPressed();
         }
+    }
+
+    public String getUsername(){
+        return credentials.getUserName();
     }
 }
 

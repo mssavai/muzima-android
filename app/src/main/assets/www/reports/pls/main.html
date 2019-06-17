@@ -27,14 +27,13 @@
             Encounter length
         </ons-button>
     </div>
+    <div class="main_page_tab_btn_div">
+        <ons-button style="width:70%" modifier="cta" onclick="loggingInterface.loadMapsPage()">
+            Activity map
+        </ons-button>
+    </div>
     <script>
         const loadActivityViewer = (viewerName) => {
-            // if (loggingInterface.isCurrentUserProvider()) {
-            //     loggingInterface.navigateToPage(viewerName);
-            // } else {
-            //     loggingInterface.setNextPageToNavigate(viewerName);
-            //     loggingInterface.navigateToPage('select_provider.html');
-            // }
             loggingInterface.navigateToPage(viewerName);
 
         }

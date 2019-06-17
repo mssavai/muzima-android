@@ -4,7 +4,6 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import com.muzima.MuzimaApplication;
 import com.muzima.api.model.LogStatistic;
-import com.muzima.utils.DateUtils;
 import com.muzima.utils.StringUtils;
 import com.muzima.view.reports.ProviderPerformanceReportViewActivity;
 import net.minidev.json.JSONArray;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +29,12 @@ public class PerformanceLoggingJavascriptInterface {
     public PerformanceLoggingJavascriptInterface(ProviderPerformanceReportViewActivity providerReportViewActivity){
         this.providerReportViewActivity = providerReportViewActivity;
         this.muzimaApplication = (MuzimaApplication) providerReportViewActivity.getApplicationContext();
+        javascriptAppContext.setUserRoleForUsername(providerReportViewActivity.getUsername());
+    }
+
+    @JavascriptInterface
+    public void loadMapsPage(){
+        providerReportViewActivity.loadMapsPage();
     }
 
     @JavascriptInterface
@@ -50,8 +54,49 @@ public class PerformanceLoggingJavascriptInterface {
     }
 
     @JavascriptInterface
-    public  boolean isCurrentUserSupervisor(){
+    public  static boolean isCurrentUserSupervisor(){
         return javascriptAppContext.isSupervisor();
+    }
+
+    @JavascriptInterface
+    public String getProviders(){
+        return getProvidersAsArray().toJSONString();
+    }
+
+    public static JSONArray getProvidersAsArray(){
+        JSONArray providers = new JSONArray();
+
+        JSONObject object3 = new JSONObject();
+        object3.put("username","benard");
+        object3.put("name","Benard Mokaya");
+        providers.add(object3);
+
+        JSONObject object4 = new JSONObject();
+        object4.put("username","joan");
+        object4.put("name","Joan Nakibuuka");
+        providers.add(object4);
+
+        JSONObject object5 = new JSONObject();
+        object5.put("username","priscilla");
+        object5.put("name","Priscilla Balirwa");
+        providers.add(object5);
+
+        JSONObject object1 = new JSONObject();
+        object1.put("username","sthaiya");
+        object1.put("name","Mbugua Sam");
+        providers.add(object1);
+
+        JSONObject object6 = new JSONObject();
+        object6.put("username","owino");
+        object6.put("name","Owino Samuel");
+        providers.add(object6);
+
+        JSONObject object2 = new JSONObject();
+        object2.put("username","simon");
+        object2.put("name","Simon Savai");
+        providers.add(object2);
+
+        return providers;
     }
 
     @JavascriptInterface
@@ -98,11 +143,27 @@ public class PerformanceLoggingJavascriptInterface {
     @JavascriptInterface
     public String getChartData(int chartType){
         if(javascriptAppContext.isCurrentReportPeriodMonthly()) {
+            System.out.println("Is Monthly");
             int offset = javascriptAppContext.getMonthlyReportPeriodOffset();
-            return ChartDataUtils.getChartData(offset, "monthly", chartType);
+            return ChartDataUtils.getChartData(offset, "monthly", chartType, providerReportViewActivity.getUsername());
         } else {
+            System.out.println("Is Not Monthly");
             int offset = javascriptAppContext.getWeeklyReportPeriodOffset();
-            return ChartDataUtils.getChartData(offset, "weekly", chartType);
+            return ChartDataUtils.getChartData(offset, "weekly", chartType, providerReportViewActivity.getUsername());
+        }
+    }
+
+    @JavascriptInterface
+    public String getMapData(){
+        int chartType = 4;
+        if(javascriptAppContext.isCurrentReportPeriodMonthly()) {
+            System.out.println("Is Monthly");
+            int offset = javascriptAppContext.getMonthlyReportPeriodOffset();
+            return ChartDataUtils.getChartData(offset, "monthly", chartType, providerReportViewActivity.getUsername());
+        } else {
+            System.out.println("Is Not Monthly");
+            int offset = javascriptAppContext.getWeeklyReportPeriodOffset();
+            return ChartDataUtils.getChartData(offset, "weekly", chartType, providerReportViewActivity.getUsername());
         }
     }
 
@@ -165,13 +226,16 @@ public class PerformanceLoggingJavascriptInterface {
         providerReportViewActivity.loadLandingPage();
     }
     @JavascriptInterface
-    public void showWeeklyReports(){
+    public void setCurrentReportPeriodAsWeekly(){
         javascriptAppContext.setCurrentReportPeriodAsWeekly();
-        providerReportViewActivity.reloadCurrentPage();
     }
     @JavascriptInterface
-    public void showMonthlyReports(){
+    public void setCurrentReportPeriodAsMonthly(){
         javascriptAppContext.setCurrentReportPeriodAsMonthly();
+    }
+
+    @JavascriptInterface
+    public void reloadCurrentPage(){
         providerReportViewActivity.reloadCurrentPage();
     }
 
@@ -211,7 +275,14 @@ public class PerformanceLoggingJavascriptInterface {
         JavascriptAppContext(){
             appContext = new HashMap();
             setContextPropertyValue(IS_LOGGED_IN_PROPERTY, false);
-            setContextPropertyValue(USER_ROLE_PROPERTY, SUPERVISOR_USER_ROLE);
+        }
+
+        void setUserRoleForUsername(String userName){
+            if(userName.equalsIgnoreCase("admin")){
+                setContextPropertyValue(USER_ROLE_PROPERTY, SUPERVISOR_USER_ROLE);
+            } else {
+                setContextPropertyValue(USER_ROLE_PROPERTY, PROVIDER_USER_ROLE);
+            }
         }
 
         void setContextPropertyValue(String property, Object value){
@@ -352,7 +423,7 @@ public class PerformanceLoggingJavascriptInterface {
 
     static class CalendarUtils{
 
-        static private SimpleDateFormat weeklyDateFormatter = new SimpleDateFormat("EEE-dd, MMM");
+        static private SimpleDateFormat weeklyDateFormatter = new SimpleDateFormat("EEE dd MMM");
 
         static int getMonthLength(int monthOffset){
             Calendar calendar = Calendar.getInstance();
@@ -466,8 +537,38 @@ public class PerformanceLoggingJavascriptInterface {
     }
 
     static class ChartDataUtils{
-        private final static Map<Integer,String> chartData = new HashMap();
+        private static String username = "";
+        private static Map<Integer,String> chartData = new HashMap();
+        private static String createMapData(int offset, String mode){
+            int entries = (mode.equals("weekly"))?
+                    CalendarUtils.getWeekLength(offset) : CalendarUtils.getMonthLength(offset);
+            JSONArray mapData = new JSONArray();
+            JSONArray jsonArray = getProvidersAsArray();
+            for (Object jsonObject1:jsonArray){
+                System.out.println(">>>> Creating locations for : "+((JSONObject)jsonObject1).get("name"));
+                JSONObject providerObject = new JSONObject();
+                providerObject.put("label",((JSONObject)jsonObject1).get("name"));
+                JSONArray coordinates = new JSONArray();
+                for (int i=1; i<=entries; i++){
+                    int items = getRandom(30);
+                    for(int j=1;j<items;j++){
+                        JSONObject coordinate = new JSONObject();
+
+                        Random random = new Random();
+                        coordinate.put("lat",-1*random.nextFloat());
+                        coordinate.put("lng",34+random.nextFloat());
+                        coordinates.add(coordinate);
+                    }
+                }
+                providerObject.put("locations",coordinates);
+                mapData.add(providerObject);
+            }
+            return mapData.toJSONString();
+        }
         private static String createChartData(int offset, String mode, int chartType){
+            if(chartType == 4){
+                return createMapData(offset,mode);
+            }
             int entries = (mode.equals("weekly"))?
                     CalendarUtils.getWeekLength(offset) : CalendarUtils.getMonthLength(offset);
             int limit = 16*chartType-8;
@@ -479,21 +580,57 @@ public class PerformanceLoggingJavascriptInterface {
 
             JSONArray dataSets = new JSONArray();
 
-            JSONObject self = new JSONObject();
-            self.put("label","Actual");
-            self.put("backgroundColor","rgba(255, 99, 132, 0.2)");
-            self.put("tableBackgroundColor","rgba(255, 99, 132, 0.4)");
-            self.put("borderColor","rgba(255, 99, 132, 1)");
-            self.put("borderWidth","1");
-            JSONArray selfData = new JSONArray();
-            for (int i=1; i<=entries; i++){
-                selfData.add(getRandom(limit));
+            if(isCurrentUserSupervisor()){
+                JSONObject self = new JSONObject();
+                self.put("label","Ada Yeung");
+                self.put("id","ayeung");
+                self.put("backgroundColor","rgba(255, 99, 132, 0.2)");
+                self.put("tableBackgroundColor","rgba(255, 99, 132, 0.4)");
+                self.put("borderColor","rgba(255, 99, 132, 1)");
+                self.put("borderWidth","1");
+                JSONArray selfData = new JSONArray();
+                for (int i=1; i<=entries; i++){
+                    selfData.add(getRandom(limit));
+                }
+                self.put("data",selfData);
+                dataSets.add(self);
+                JSONArray jsonArray = getProvidersAsArray();
+                for (Object jsonObject1:jsonArray){
+                    String rgb = getRandom(255)+", "+getRandom(255)+", "+getRandom(255);
+                    JSONObject providerObject = new JSONObject();
+                    providerObject.put("label",((JSONObject)jsonObject1).get("name"));
+                    providerObject.put("id",((JSONObject)jsonObject1).get("username"));
+                    providerObject.put("type","line");
+                    providerObject.put("fill","false");
+                    providerObject.put("borderColor","rgba("+rgb+", 1)");
+                    providerObject.put("pointBorderColor","rgba("+rgb+", 1)");
+                    providerObject.put("tableBackgroundColor","rgba("+rgb+", 0.4)");
+                    JSONArray providerObjectData = new JSONArray();
+                    for (int i=1; i<=entries; i++){
+                        providerObjectData.add(getRandom(limit));
+                    }
+                    providerObject.put("data",providerObjectData);
+                    dataSets.add(providerObject);
+                }
+            } else {
+                JSONObject self = new JSONObject();
+                self.put("label","Simon Savai");
+                self.put("id","savai");
+                self.put("backgroundColor","rgba(255, 99, 132, 0.2)");
+                self.put("tableBackgroundColor","rgba(255, 99, 132, 0.4)");
+                self.put("borderColor","rgba(255, 99, 132, 1)");
+                self.put("borderWidth","1");
+                JSONArray selfData = new JSONArray();
+                for (int i=1; i<=entries; i++){
+                    selfData.add(getRandom(limit));
+                }
+                self.put("data",selfData);
+                dataSets.add(self);
             }
-            self.put("data",selfData);
-            dataSets.add(self);
 
             JSONObject average = new JSONObject();
             average.put("label","Team average");
+            average.put("id","average");
             average.put("type","line");
             average.put("fill","false");
             average.put("borderColor","rgba(10, 159, 64, 1)");
@@ -508,6 +645,7 @@ public class PerformanceLoggingJavascriptInterface {
 
             JSONObject expected = new JSONObject();
             expected.put("label","Expected");
+            expected.put("id","expected");
             expected.put("type","line");
             expected.put("fill","false");
             expected.put("borderColor","rgba(75, 192, 192, 1)");
@@ -525,7 +663,11 @@ public class PerformanceLoggingJavascriptInterface {
             return jsonObject.toJSONString();
         }
 
-        static String getChartData(int offset, String mode, int chartType){
+        static String getChartData(int offset, String mode, int chartType, String loggedInUser){
+            if(!loggedInUser.equalsIgnoreCase(username)){
+                username = loggedInUser;
+                chartData = new HashMap<>();
+            }
             int dataTypeOffset = mode.equals("monthly")? (2*chartType + 2)*100 : (2*chartType + 1)*100;
 
             if(!chartData.containsKey(offset+dataTypeOffset)) {

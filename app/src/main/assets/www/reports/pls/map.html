@@ -1,18 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/custom.css">
     <link rel="stylesheet" href="css/onsenui.css">
     <link rel="stylesheet" href="css/onsen-css-components.min.css">
-    <link rel="stylesheet" href="css/chartjs/2.8.0/Chart.min.css">
     <link rel="stylesheet" href="css/material-design-iconic-font/css/material-design-iconic-font.min.css"/>
     <link type="text/css" rel="stylesheet" href="css/materialize/1.0.0/materialize.min.css"  media="screen,projection"/>
     <script src="js/onsenui.min.js"></script>
-    <script src="js/chartjs/2.8.0/Chart.min.js"></script>
     <script type="text/javascript" src="js/materialize/1.0.0/materialize.min.js"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDaVjEJijwSaMCfNj8UOBg2wun_xr4PEOI"></script>
-
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+         * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 <body>
 <ons-splitter>
@@ -57,69 +69,70 @@
         </ons-page>
     </ons-splitter-side>
     <ons-splitter-content>
-        <ons-navigator id="navigator">
+        <ons-navigator id="onsnavigator">
             <ons-page>
-                <ons-row style="margin: 10% auto;">
-                    <ons-col style="text-align: center;">
-                        <h3>Performance reports viewer</h3>
-                    </ons-col>
-                </ons-row>
+                <ons-toolbar>
+                    <div class="left">
+                        <ons-toolbar-button onclick="loggingInterface.decrementReportPeriodOffset()">
+                            <ons-icon icon="md-chevron-left"></ons-icon>
+                            <ons-icon icon="md-chevron-left"></ons-icon>
+                        </ons-toolbar-button>
+                        <span class="reportPeriodLabel"></span>
+                        <ons-toolbar-button class="incrementReportPeriodButton" onclick="loggingInterface.incrementReportPeriodOffset()">
+                            <ons-icon icon="md-chevron-right"></ons-icon>
+                            <ons-icon icon="md-chevron-right"></ons-icon>
+                        </ons-toolbar-button>
+                    </div>
+                    <div class="right">
+                        <ons-toolbar-button  onclick="openMenu()">
+                            <ons-icon icon="md-menu"></ons-icon>
+                        </ons-toolbar-button>
+                    </div>
+                </ons-toolbar>
+
+                <div id="map"></div>
             </ons-page>
         </ons-navigator>
     </ons-splitter-content>
 </ons-splitter>
 
-<div class="main_page_tab_btn_div">
-    <ons-button style="width:70%" modifier="cta" onclick="loadActivityViewer('main.html')">
-        Main
-    </ons-button>
-</div>
 <script>
-    const navigator = document.querySelector('#navigator');
-    document.loadPage = function(pageToLoad)
-    {
-        if (pageToLoad != null && pageToLoad != '') {
-            navigator.resetToPage(pageToLoad);
-        }
 
-        var sideMenuElement = document.getElementById("menu");
-        if(pageToLoad == "login.html"){
-            if(sideMenuElement.hasAttribute("swipeable")){
-                sideMenuElement.removeAttribute("swipeable");
-            }
-        } else if(!sideMenuElement.hasAttribute("swipeable")){
-            sideMenuElement.setAttribute("swipeable");
-        }
+    var map;
 
-        if(document.querySelector('ons-splitter-side').isOpen) {
-            document.querySelector('ons-splitter-side').close();
-        }
+    function initMap() {
+        var mapData = loggingInterface.getMapData();
+        mapData = JSON.parse(mapData);
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 7,
+            center: new google.maps.LatLng(-0.10221,34.76171),
+        });
+
+        var markers = [];
+        mapData.map(function(data,i){
+            console.log(data.label);
+            var m = data.locations.map(function(location, j) {
+                console.log(j+" "+data.label.charAt(0));
+                return new google.maps.Marker({
+                    position: location,
+                    label: data.label.charAt(0)
+                });
+            });
+            markers = markers.concat(m);
+        });
+
+
+        var markerCluster = new MarkerClusterer(map, markers,
+            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+
     }
-
-    const loadActivityViewer = (viewerName) =>
-    {
-        document.loadPage(viewerName);
-    }
-
-    document.navigateBack = function(){
-        navigator.popPage();
-    }
-
+</script>
+<script>
     const openMenu = function() {
         var menu = document.getElementById('menu');
         menu.open();
     };
 
-    const getRandom = function(factor){
-        return Math.floor(Math.random() * factor);
-    }
-
-    const getRandomRgbColor = function(opacity){
-        var r =  Math.floor(Math.random() * 255);
-        var g =  Math.floor(Math.random() * 255);
-        var b =  Math.floor(Math.random() * 255);
-        return 'rgba('+ r +',' + g +',' + b + ',' + opacity +')';
-    }
 
     const refreshReportPeriodDisplayString = function(){
         var reportPeriodString = loggingInterface.getReportPeriodDisplayString();
@@ -138,18 +151,29 @@
                 buttons[i].removeAttribute("disabled");
             }
         }
-
-        var tabbar = document.querySelector('ons-tabbar');
-        var activeTab = loggingInterface.getActiveTab();
-        console.log("activeTab = "+activeTab);
-        console.log(tabbar.getActiveTabIndex());
-        if(activeTab == "tableTab"){
-            tabbar.setActiveTab(0);
-        } else {
-            tabbar.setActiveTab(0);
-        }
     }
 
+
+    document.loadPage = function(pageToLoad)
+    {
+        var navigator = document.querySelector('#onsnavigator');
+        if (pageToLoad != null && pageToLoad != '') {
+            navigator.resetToPage(pageToLoad);
+        }
+
+        var sideMenuElement = document.getElementById("menu");
+        if(pageToLoad == "login.html"){
+            if(sideMenuElement.hasAttribute("swipeable")){
+                sideMenuElement.removeAttribute("swipeable");
+            }
+        } else if(!sideMenuElement.hasAttribute("swipeable")){
+            sideMenuElement.setAttribute("swipeable");
+        }
+
+        if(document.querySelector('ons-splitter-side').isOpen) {
+            document.querySelector('ons-splitter-side').close();
+        }
+    }
     document.querySelector('ons-splitter-side').addEventListener('postclose', function() {
         loggingInterface.reloadCurrentPage();
     })
@@ -176,22 +200,6 @@
     }
     const isProviderSelected = function(value){
         return selectedProviders.indexOf(value) > -1;
-    }
-
-    const getChartData = function(chartType){
-        var chartData = loggingInterface.getChartData(chartType);
-        chartData = JSON.parse(chartData);
-        if(loggingInterface.isCurrentUserSupervisor()) {
-            var filteredDataSets = [];
-            chartData.datasets.forEach(function(dataset){
-                if(!isProviderSelected(dataset.id)){
-                    filteredDataSets.push(dataset);
-                }
-            });
-            chartData.datasets = filteredDataSets;
-        }
-
-        return chartData;
     }
 
 
@@ -227,6 +235,14 @@
     } else {
         providerSelectorElement.style.display = 'none';
     }
+
+    refreshReportPeriodDisplayString();
+
+</script>
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDaVjEJijwSaMCfNj8UOBg2wun_xr4PEOI&callback=initMap">
 </script>
 </body>
 </html>

@@ -16,12 +16,12 @@
 
     <script type="text/javascript">
 
-        var chartData = loggingInterface.getChartData(3);
-        chartData = JSON.parse(chartData);
+        var chartData = getChartData(3);
+        //chartData = JSON.parse(chartData);
 
         var html = "";
         var dataLength = chartData.datasets[0].data.length;
-        var tableHeader = "<tr><td></td>";
+        var tableHeader = "<tr style='background-color:rgba(120,120,120,0.3)'><td></td>";
         chartData.labels.forEach(function(label,index){
             if(index < dataLength) {
                 tableHeader += "<td><b>" + label + "</b></td>";

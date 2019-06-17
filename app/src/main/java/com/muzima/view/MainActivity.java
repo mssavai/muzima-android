@@ -41,6 +41,7 @@ import com.muzima.view.forms.FormsActivity;
 import com.muzima.view.forms.RegistrationFormsActivity;
 import com.muzima.view.notifications.NotificationsListActivity;
 import com.muzima.view.patients.PatientsListActivity;
+import com.muzima.view.reports.ProviderReportListActivity;
 import org.apache.lucene.queryParser.ParseException;
 
 import static com.muzima.utils.Constants.NotificationStatusConstants.NOTIFICATION_UNREAD;
@@ -148,6 +149,14 @@ public class MainActivity extends BroadcastListenerActivity {
     }
 
     /**
+     * Called when the user clicks the Clients area or Search Clients Button
+     */
+    public void providerReports(View view) {
+        Intent intent = new Intent(this, ProviderReportListActivity.class);
+        startActivity(intent);
+    }
+
+    /**
      * Called when the user clicks the Forms area
      */
     public void formsList(View view) {
@@ -188,6 +197,7 @@ public class MainActivity extends BroadcastListenerActivity {
                 homeActivityMetadata.syncedPatients = patientController.countAllPatients();
                 homeActivityMetadata.incompleteForms = formController.countAllIncompleteForms();
                 homeActivityMetadata.completeAndUnsyncedForms = formController.countAllCompleteForms();
+                homeActivityMetadata.totalProviderReports = formController.getProviderReports().size();
 
                 // Notifications
                 User authenticatedUser = ((MuzimaApplication) getApplicationContext()).getAuthenticatedUser();
@@ -216,20 +226,24 @@ public class MainActivity extends BroadcastListenerActivity {
 
         @Override
         protected void onPostExecute(HomeActivityMetadata homeActivityMetadata) {
-            TextView cohortsDescriptionView = mMainView.findViewById(R.id.cohortDescription);
-            cohortsDescriptionView.setText(getString(R.string.hint_dashboard_cohorts_description,
-                    homeActivityMetadata.syncedCohorts, homeActivityMetadata.totalCohorts));
+//            TextView cohortsDescriptionView = mMainView.findViewById(R.id.cohortDescription);
+//            cohortsDescriptionView.setText(getString(R.string.hint_dashboard_cohorts_description,
+//                    homeActivityMetadata.syncedCohorts, homeActivityMetadata.totalCohorts));
 
-            ImageView cortUpdateAvailable = (ImageView) mMainView.findViewById(R.id.pendingUpdateImg);
-            if(homeActivityMetadata.isCohortUpdateAvailable){
-                cortUpdateAvailable.setVisibility(View.VISIBLE);
-            } else {
-                cortUpdateAvailable.setVisibility(View.GONE);
-            }
+//            ImageView cortUpdateAvailable = (ImageView) mMainView.findViewById(R.id.pendingUpdateImg);
+//            if(homeActivityMetadata.isCohortUpdateAvailable){
+//                cortUpdateAvailable.setVisibility(View.VISIBLE);
+//            } else {
+//                cortUpdateAvailable.setVisibility(View.GONE);
+//            }
 
             TextView patientDescriptionView = mMainView.findViewById(R.id.patientDescription);
             patientDescriptionView.setText(getString(R.string.hint_dashboard_clients_description,
                     homeActivityMetadata.syncedPatients));
+
+            TextView providerReportDescriptionView = mMainView.findViewById(R.id.providerReportDescription);
+            providerReportDescriptionView.setText(getString(R.string.hint_dashboard_clients_description,
+                    homeActivityMetadata.totalProviderReports));
 
             TextView formsDescription = mMainView.findViewById(R.id.formDescription);
             formsDescription.setText(getString(R.string.hint_dashboard_forms_description,
@@ -253,6 +267,7 @@ public class MainActivity extends BroadcastListenerActivity {
         int completeAndUnsyncedForms;
         int newNotifications;
         int totalNotifications;
+        int totalProviderReports;
         boolean isCohortUpdateAvailable;
     }
 

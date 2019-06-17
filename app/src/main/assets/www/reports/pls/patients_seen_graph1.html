@@ -1,21 +1,19 @@
 <ons-page id="activity_count">
-    <div class="content" style="margin:5% auto auto;">
+    <div class="content">
         <ons-row>
-            <ons-col >
+            <ons-col>
                 <h5 style="text-align: center" >Number of Patients seen</h5>
             </ons-col>
         </ons-row>
         <ons-row>
-            <ons-col >
+            <ons-col>
                 <canvas id="ps_graph2" width="30" height="30"></canvas>
             </ons-col>
         </ons-row>
     </div>
     <script type="text/javascript">
 
-        var chartData = loggingInterface.getChartData(2);
-        chartData = JSON.parse(chartData);
-
+        var chartData = getChartData(2);
 
         var ctx = document.getElementById('ps_graph2');
         var myChart = new Chart(ctx, {

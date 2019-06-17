@@ -63,7 +63,7 @@ public class ProviderReportListActivity extends BroadcastListenerActivity implem
         //reportsAdapter.cancelBackgroundTask();
         AvailableForm report = reportsAdapter.getItem(position);
         Intent intent;
-        if("Performance reports".equalsIgnoreCase(report.getName())){
+        if("Provider performance monitoring reports".equalsIgnoreCase(report.getName())){
             intent = new Intent(this, ProviderPerformanceReportViewActivity.class);
         } else {
             intent = new Intent(this, ProviderReportViewActivity.class);
