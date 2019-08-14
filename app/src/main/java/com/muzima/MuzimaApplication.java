@@ -146,7 +146,7 @@ public class MuzimaApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         //ACRA.init(this);
-        Fabric.with(this, new Crashlytics());
+        //Fabric.with(this, new Crashlytics());
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Security.removeProvider("AndroidOpenSSL");
         }
@@ -170,10 +170,13 @@ public class MuzimaApplication extends MultiDexApplication {
     public User getAuthenticatedUser() {
         try {
             if (authenticatedUser == null) {
+                System.out.println("Auth user is Null");
                 muzimaContext.openSession();
-                if (muzimaContext.isAuthenticated())
+                if (muzimaContext.isAuthenticated()) {
+
+                    System.out.println("Auth user is : "+authenticatedUser.getUsername() + " - "+authenticatedUser.getSystemId());
                     authenticatedUser = muzimaContext.getAuthenticatedUser();
-                else {
+                } else {
                     Credentials cred = new Credentials(getApplicationContext());
                     String[] credentials = cred.getCredentialsArray();
                     String username = credentials[0];
@@ -186,6 +189,8 @@ public class MuzimaApplication extends MultiDexApplication {
 
 
                     authenticatedUser = muzimaContext.getAuthenticatedUser();
+                    System.out.println("Auth user2 is : "+authenticatedUser.getUsername() + " - "+authenticatedUser.getSystemId());
+
                 }
                 muzimaContext.closeSession();
             }
@@ -193,6 +198,8 @@ public class MuzimaApplication extends MultiDexApplication {
             muzimaContext.closeSession();
             throw new RuntimeException(e);
         }
+        System.out.println("Returning Auth user is : "+authenticatedUser.getUsername() + " - "+authenticatedUser.getSystemId());
+
         return authenticatedUser;
     }
 

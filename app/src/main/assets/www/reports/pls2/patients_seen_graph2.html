@@ -1,0 +1,52 @@
+<ons-page id="activity_count">
+    <div class="content" style="margin-top:5%">
+        <ons-row>
+            <ons-col >
+                <h5 style="text-align: center" >Number of Patients seen</h5>
+            </ons-col>
+        </ons-row>
+        <ons-row>
+            <ons-col >
+
+                <table id="ps_table2" class="highlight responsive-table">
+                </table>
+            </ons-col>
+        </ons-row>
+    </div>
+
+    <script type="text/javascript">
+
+        var chartData = getChartData("patients_seen");
+        var labels = getChartDataDates();
+        var datasets = extractDataSets(chartData);
+
+        var html = "";
+        var dataLength = datasets[0].data.length;
+        var tableHeader = "<tr style='background-color:rgba(120,120,120,0.3)'><td></td>";
+        labels.forEach(function(label,index){
+            if(index < dataLength) {
+                tableHeader += "<td><b>" + label + "</b></td>";
+            }
+        });
+        tableHeader += "<td><b>TOTAL</b></td>";
+        tableHeader += "</tr>";
+        html +=tableHeader;
+
+        datasets.forEach(function(dataset){
+            var datasetHtml = "<tr style='background-color: " +dataset.tableBackgroundColor+ "'>" +
+                "<td><b>" + dataset.label + "</b></td>";
+
+            var total = 0;
+            dataset.data.forEach(function (dataItem) {
+                datasetHtml += "<td>" + dataItem + "</td>";
+                total += dataItem;
+            });
+            datasetHtml += "<td>" + total + "</td></tr>";
+            html += datasetHtml;
+        });
+
+        var tableElement = document.getElementById("ps_table2");
+        tableElement.innerHTML = html;
+
+    </script>
+</ons-page>

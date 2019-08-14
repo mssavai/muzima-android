@@ -65,6 +65,8 @@ public class ProviderReportListActivity extends BroadcastListenerActivity implem
         Intent intent;
         if("Provider performance monitoring reports".equalsIgnoreCase(report.getName())){
             intent = new Intent(this, ProviderPerformanceReportViewActivity.class);
+        } else if("Provider performance monitoring reports2".equalsIgnoreCase(report.getName())){
+            intent = new Intent(this, ProviderPerformanceReportViewActivity2.class);
         } else {
             intent = new Intent(this, ProviderReportViewActivity.class);
         }

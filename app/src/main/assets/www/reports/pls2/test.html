@@ -69,7 +69,7 @@
         </ons-page>
     </ons-splitter-side>
     <ons-splitter-content>
-        <ons-navigator id="onsnavigator">
+        <ons-navigator id="navigator">
             <ons-page>
                 <ons-toolbar>
                     <div class="left">
@@ -78,7 +78,9 @@
                             <ons-icon icon="md-chevron-left"></ons-icon>
                         </ons-toolbar-button>
                         <span class="reportPeriodLabel"></span>
-                        <ons-toolbar-button class="incrementReportPeriodButton" onclick="loggingInterface.incrementReportPeriodOffset()">
+                        <ons-toolbar-button
+                                class="incrementReportPeriodButton"
+                                onclick="loggingInterface.incrementReportPeriodOffset()">
                             <ons-icon icon="md-chevron-right"></ons-icon>
                             <ons-icon icon="md-chevron-right"></ons-icon>
                         </ons-toolbar-button>
@@ -102,12 +104,14 @@
 
     function initMap() {
         var mapData = loggingInterface.getMapData();
+        //mapData = '[{"label":"Ada","locations":[{"lat":"-0.10221","lng":"34.76171"}]}]';
         mapData = JSON.parse(mapData);
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: 7,
             center: new google.maps.LatLng(-0.10221,34.76171),
         });
 
+       // mapData.locations = [{lat:-0.10221,lng:34.76171}]
         var markers = [];
         mapData.map(function(data,i){
             console.log(data.label);
@@ -118,7 +122,7 @@
                     label: data.label.charAt(0)
                 });
             });
-            markers = markers.concat(m);
+            markers.push(m);
         });
 
 
@@ -127,12 +131,52 @@
 
     }
 </script>
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDaVjEJijwSaMCfNj8UOBg2wun_xr4PEOI&callback=initMap">
+</script>
 <script>
+    const navigator = document.querySelector('#navigator');
+    document.loadPage = function(pageToLoad)
+    {
+        if (pageToLoad != null && pageToLoad != '') {
+            navigator.resetToPage(pageToLoad);
+        }
+
+        var sideMenuElement = document.getElementById("menu");
+        if(pageToLoad == "login.html"){
+            if(sideMenuElement.hasAttribute("swipeable")){
+                sideMenuElement.removeAttribute("swipeable");
+            }
+        } else if(!sideMenuElement.hasAttribute("swipeable")){
+            sideMenuElement.setAttribute("swipeable");
+        }
+
+        if(document.querySelector('ons-splitter-side').isOpen) {
+            document.querySelector('ons-splitter-side').close();
+        }
+    }
+
+    document.navigateBack = function(){
+        navigator.popPage();
+    }
+
     const openMenu = function() {
         var menu = document.getElementById('menu');
         menu.open();
     };
 
+    const getRandom = function(factor){
+        return Math.floor(Math.random() * factor);
+    }
+
+    const getRandomRgbColor = function(opacity){
+        var r =  Math.floor(Math.random() * 255);
+        var g =  Math.floor(Math.random() * 255);
+        var b =  Math.floor(Math.random() * 255);
+        return 'rgba('+ r +',' + g +',' + b + ',' + opacity +')';
+    }
 
     const refreshReportPeriodDisplayString = function(){
         var reportPeriodString = loggingInterface.getReportPeriodDisplayString();
@@ -151,29 +195,18 @@
                 buttons[i].removeAttribute("disabled");
             }
         }
-    }
 
-
-    document.loadPage = function(pageToLoad)
-    {
-        var navigator = document.querySelector('#onsnavigator');
-        if (pageToLoad != null && pageToLoad != '') {
-            navigator.resetToPage(pageToLoad);
-        }
-
-        var sideMenuElement = document.getElementById("menu");
-        if(pageToLoad == "login.html"){
-            if(sideMenuElement.hasAttribute("swipeable")){
-                sideMenuElement.removeAttribute("swipeable");
-            }
-        } else if(!sideMenuElement.hasAttribute("swipeable")){
-            sideMenuElement.setAttribute("swipeable");
-        }
-
-        if(document.querySelector('ons-splitter-side').isOpen) {
-            document.querySelector('ons-splitter-side').close();
+        var tabbar = document.querySelector('ons-tabbar');
+        var activeTab = loggingInterface.getActiveTab();
+        console.log("activeTab = "+activeTab);
+        console.log(tabbar.getActiveTabIndex());
+        if(activeTab == "tableTab"){
+            tabbar.setActiveTab(0);
+        } else {
+            tabbar.setActiveTab(0);
         }
     }
+
     document.querySelector('ons-splitter-side').addEventListener('postclose', function() {
         loggingInterface.reloadCurrentPage();
     })
@@ -200,6 +233,22 @@
     }
     const isProviderSelected = function(value){
         return selectedProviders.indexOf(value) > -1;
+    }
+
+    const getChartData = function(chartType){
+        var chartData = loggingInterface.getChartData(chartType);
+        chartData = JSON.parse(chartData);
+        if(loggingInterface.isCurrentUserSupervisor()) {
+            var filteredDataSets = [];
+            chartData.datasets.forEach(function(dataset){
+                if(!isProviderSelected(dataset.id)){
+                    filteredDataSets.push(dataset);
+                }
+            });
+            chartData.datasets = filteredDataSets;
+        }
+
+        return chartData;
     }
 
 
@@ -236,13 +285,6 @@
         providerSelectorElement.style.display = 'none';
     }
 
-    refreshReportPeriodDisplayString();
-
-</script>
-<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
-</script>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBy41-d7Btm50DYUd9fNuUy7tzIPzGZRBg&callback=initMap">
 </script>
 </body>
 </html>

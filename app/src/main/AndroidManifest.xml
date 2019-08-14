@@ -340,6 +340,15 @@
                     android:value="com.muzima.view.MainActivity" />
         </activity>
         <activity
+                android:name=".view.reports.ProviderPerformanceReportViewActivity2"
+                android:configChanges="orientation|screenSize"
+                android:label="Performance monitoring reports"
+                android:parentActivityName=".view.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.muzima.view.MainActivity" />
+        </activity>
+        <activity
                 android:name=".view.reports.ProviderReportViewActivity"
                 android:configChanges="orientation|screenSize"
                 android:label="Provider Reports"

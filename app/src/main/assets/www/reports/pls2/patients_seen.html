@@ -1,0 +1,35 @@
+<ons-page id="activity_count">
+    <ons-toolbar>
+        <div class="left">
+            <ons-toolbar-button onclick="loggingInterface.decrementReportPeriodOffset()">
+                <ons-icon icon="md-chevron-left"></ons-icon>
+                <ons-icon icon="md-chevron-left"></ons-icon>
+            </ons-toolbar-button>
+            <span class="reportPeriodLabel"></span>
+            <ons-toolbar-button class="incrementReportPeriodButton" onclick="loggingInterface.incrementReportPeriodOffset()">
+                <ons-icon icon="md-chevron-right"></ons-icon>
+                <ons-icon icon="md-chevron-right"></ons-icon>
+            </ons-toolbar-button>
+        </div>
+        <div class="right">
+            <ons-toolbar-button  onclick="openMenu()">
+                <ons-icon icon="md-menu"></ons-icon>
+            </ons-toolbar-button>
+        </div>
+    </ons-toolbar>
+    <ons-tabbar swipeable position="auto">
+        <ons-tab page="patients_seen_graph1.html" onclick = "loggingInterface.setActiveTab('graphTab')" label="Graph"
+                 icon="md-trending-up" class="graphTab" active>
+        </ons-tab>
+        <ons-tab page="patients_seen_graph2.html" onclick = "loggingInterface.setActiveTab('tableTab')" label="Table"
+                 icon="md-border-all" class="tableTab"
+        >
+        </ons-tab>
+    </ons-tabbar>
+    <script>
+        ons.getScriptPage().onInit = function() {
+            refreshReportPeriodDisplayString();
+
+        };
+    </script>
+</ons-page>

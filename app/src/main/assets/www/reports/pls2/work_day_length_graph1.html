@@ -1,0 +1,38 @@
+<ons-page id="activity_count">
+    <div class="content" style="margin:5% auto auto;">
+        <ons-row>
+            <ons-col >
+                <h5 style="text-align: center" >Work day length</h5>
+            </ons-col>
+        </ons-row>
+        <ons-row>
+            <ons-col >
+                <canvas id="ps_graph1" width="30" height="30"></canvas>
+            </ons-col>
+        </ons-row>
+    </div>
+    <script type="text/javascript">
+
+        var chartData = getChartData("work_day_length");
+        var labels = getChartDataDates();
+        var datasets = extractDataSets(chartData);
+
+        var ctx = document.getElementById('ps_graph1');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+</ons-page>

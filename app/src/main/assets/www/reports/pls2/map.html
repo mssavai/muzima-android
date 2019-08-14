@@ -18,11 +18,8 @@
         #map {
             height: 100%;
         }
-        /* Optional: Makes the sample page fill the window. */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
+        .toolbarItem{
+            font-size:0.8em;
         }
     </style>
 </head>
@@ -68,34 +65,32 @@
             </ons-list>
         </ons-page>
     </ons-splitter-side>
-    <ons-splitter-content>
-        <ons-navigator id="onsnavigator">
-            <ons-page>
-                <ons-toolbar>
-                    <div class="left">
-                        <ons-toolbar-button onclick="loggingInterface.decrementReportPeriodOffset()">
-                            <ons-icon icon="md-chevron-left"></ons-icon>
-                            <ons-icon icon="md-chevron-left"></ons-icon>
-                        </ons-toolbar-button>
-                        <span class="reportPeriodLabel"></span>
-                        <ons-toolbar-button class="incrementReportPeriodButton" onclick="loggingInterface.incrementReportPeriodOffset()">
-                            <ons-icon icon="md-chevron-right"></ons-icon>
-                            <ons-icon icon="md-chevron-right"></ons-icon>
-                        </ons-toolbar-button>
-                    </div>
-                    <div class="right">
-                        <ons-toolbar-button  onclick="openMenu()">
-                            <ons-icon icon="md-menu"></ons-icon>
-                        </ons-toolbar-button>
-                    </div>
-                </ons-toolbar>
+    <ons-splitter-content id="content" >
+        <ons-page>
+            <ons-toolbar class="mytoolbar">
+                <div class="left">
+                    <ons-toolbar-button class="toolbarItem" onclick="loggingInterface.decrementReportPeriodOffset()">
+                        <ons-icon icon="md-chevron-left"></ons-icon>
+                        <ons-icon icon="md-chevron-left"></ons-icon>
+                    </ons-toolbar-button>
+                    <span class="reportPeriodLabel toolbarItem"></span>
+                    <ons-toolbar-button class="incrementReportPeriodButton toolbarItem" onclick="loggingInterface.incrementReportPeriodOffset()">
+                        <ons-icon icon="md-chevron-right"></ons-icon>
+                        <ons-icon icon="md-chevron-right"></ons-icon>
+                    </ons-toolbar-button>
+                </div>
+                <div class="right">
+                    <ons-toolbar-button class="toolbarItem"  onclick="openMenu()">
+                        <ons-icon icon="md-menu"></ons-icon>
+                    </ons-toolbar-button>
+                </div>
+            </ons-toolbar>
 
-                <div id="map"></div>
-            </ons-page>
-        </ons-navigator>
+            <div id="map"></div>
+        </ons-page>
     </ons-splitter-content>
-</ons-splitter>
 
+</ons-splitter>
 <script>
 
     var map;
@@ -182,11 +177,8 @@
     const toggleSelectedProvider = function(value){
         var index = selectedProviders.indexOf(value);
         if(index > -1){
-
-            console.log("Removing: "+value);
             selectedProviders.splice(index,1);
         } else {
-            console.log("Adding: "+value);
             selectedProviders.push(value);
         }
         console.log(selectedProviders);
@@ -195,46 +187,64 @@
         var index = selectedProviders.indexOf(value);
         if(index == -1){
             selectedProviders.push(value);
-            console.log("Adding: "+value);
         }
     }
     const isProviderSelected = function(value){
         return selectedProviders.indexOf(value) > -1;
     }
 
+    const getChartData = function(chartType){
+        var chartData = loggingInterface.getChartData(chartType);
+        chartData = JSON.parse(chartData);
+
+        return chartData;
+    }
+
+    const getChartDataDates = function(){
+        var dates = loggingInterface.getChartDataDates();
+        return JSON.parse(dates);
+    }
+
+    var systemStatistics = ["average","expected"];
 
     var providerSelectorElement = document.getElementById("providerSelection");
-    if(loggingInterface.isCurrentUserSupervisor()){
-        //addSelectedProvider("ayeung");
-        var providerListSelectionHtml = "<ons-list-item tappable>\n" +
-            "<label class=\"left\">" +
-            "<ons-checkbox name=\"provider\" onchange=\"toggleSelectedProvider('ayeung')\"" +
-            "input-id=\"ayeung\"" +
-            "checked></ons-checkbox>" +
-            "Ada Yeung" +
-            "</label>" +
-            "</ons-list-item>";
-        var providers = loggingInterface.getProviders();
-        providers = JSON.parse(providers);
-        providers.forEach(function(provider){
-            addSelectedProvider(provider.username);
-            providerListSelectionHtml += "<ons-list-item tappable>\n" +
-                "<label class=\"left\">\n" +
 
-                "<ons-checkbox name=\"provider\" onchange=\"toggleSelectedProvider('"+provider.username+"')\"" +
-                "input-id=\""+provider.username+"\"" +
-                "></ons-checkbox>" +
-                provider.name +
-                "</label>" +
-                "</ons-list-item>";
-            console.log(providerListSelectionHtml);
-        });
-        var providerListElement = document.getElementById("providerList");
-        providerListElement.innerHTML = providerListSelectionHtml;
-        providerSelectorElement.style.display = 'show';
-    } else {
+    var isSupervisor = loggingInterface.isCurrentUserSupervisor();
+    var providerListSelectionHtml = "";
+    var providers = loggingInterface.getProviders();
+    providers = JSON.parse(providers);
+    providers.forEach(function(provider){
+        if(systemStatistics.indexOf(provider.id) > -1){
+            addSelectedProvider(provider.id);
+        } else {
+            if (isSupervisor){
+                var checked = provider.isLoggedIn === "true" ? "checked" : "";
+                if (checked === "checked") {
+                    addSelectedProvider(provider.id);
+                }
+                providerListSelectionHtml += "<ons-list-item tappable>\n" +
+                    "<label class=\"left\">\n" +
+
+                    "<ons-checkbox " + checked + " name=\"provider\" onchange=\"toggleSelectedProvider('" + provider.id + "')\"" +
+                    "input-id=\"" + provider.id + "\"" +
+                    "></ons-checkbox>" +
+                    provider.full_name + " (" + provider.id + ")" +
+                    "</label>" +
+                    "</ons-list-item>";
+            } else if(provider.isLoggedIn === "true") {
+                addSelectedProvider(provider.id);
+            }
+        }
+    });
+
+    if(!isSupervisor){
         providerSelectorElement.style.display = 'none';
     }
+
+    var providerListElement = document.getElementById("providerList");
+    providerListElement.innerHTML = providerListSelectionHtml;
+    providerSelectorElement.style.display = 'show';
+
 
     refreshReportPeriodDisplayString();
 

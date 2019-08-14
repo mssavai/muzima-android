@@ -1,18 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/custom.css">
     <link rel="stylesheet" href="css/onsenui.css">
     <link rel="stylesheet" href="css/onsen-css-components.min.css">
-    <link rel="stylesheet" href="css/chartjs/2.8.0/Chart.min.css">
     <link rel="stylesheet" href="css/material-design-iconic-font/css/material-design-iconic-font.min.css"/>
     <link type="text/css" rel="stylesheet" href="css/materialize/1.0.0/materialize.min.css"  media="screen,projection"/>
     <script src="js/onsenui.min.js"></script>
-    <script src="js/chartjs/2.8.0/Chart.min.js"></script>
     <script type="text/javascript" src="js/materialize/1.0.0/materialize.min.js"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDaVjEJijwSaMCfNj8UOBg2wun_xr4PEOI"></script>
-
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+         * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+        .toolbar{
+            font-size:0.8em;
+        }
+    </style>
 </head>
 <body>
 <ons-splitter>
@@ -56,177 +65,67 @@
             </ons-list>
         </ons-page>
     </ons-splitter-side>
-    <ons-splitter-content>
-        <ons-navigator id="navigator">
-            <ons-page>
-                <ons-row style="margin: 10% auto;">
-                    <ons-col style="text-align: center;">
-                        <h3>Performance reports viewer</h3>
-                    </ons-col>
-                </ons-row>
-            </ons-page>
-        </ons-navigator>
+    <ons-splitter-content id="content" >
+        <ons-page>
+            <ons-toolbar>
+                <div class="left">
+                    <ons-toolbar-button onclick="loggingInterface.decrementReportPeriodOffset()">
+                        <ons-icon icon="md-chevron-left"></ons-icon>
+                        <ons-icon icon="md-chevron-left"></ons-icon>
+                    </ons-toolbar-button>
+                    <span class="reportPeriodLabel">24th August 2019</span>
+                    <ons-toolbar-button class="incrementReportPeriodButton" onclick="loggingInterface.incrementReportPeriodOffset()">
+                        <ons-icon icon="md-chevron-right"></ons-icon>
+                        <ons-icon icon="md-chevron-right"></ons-icon>
+                    </ons-toolbar-button>
+                </div>
+                <div class="right">
+                    <ons-toolbar-button  onclick="openMenu()">
+                        <ons-icon icon="md-menu"></ons-icon>
+                    </ons-toolbar-button>
+                </div>
+            </ons-toolbar>
+
+            <div id="map"></div>
+        </ons-page>
     </ons-splitter-content>
+
 </ons-splitter>
-
-<div class="main_page_tab_btn_div">
-    <ons-button style="width:70%" modifier="cta" onclick="loadActivityViewer('main.html')">
-        Main
-    </ons-button>
-</div>
 <script>
-    const navigator = document.querySelector('#navigator');
-    document.loadPage = function(pageToLoad)
-    {
-        if (pageToLoad != null && pageToLoad != '') {
-            navigator.resetToPage(pageToLoad);
-        }
 
-        var sideMenuElement = document.getElementById("menu");
-        if(pageToLoad == "login.html"){
-            if(sideMenuElement.hasAttribute("swipeable")){
-                sideMenuElement.removeAttribute("swipeable");
-            }
-        } else if(!sideMenuElement.hasAttribute("swipeable")){
-            sideMenuElement.setAttribute("swipeable");
-        }
+    var map;
 
-        if(document.querySelector('ons-splitter-side').isOpen) {
-            document.querySelector('ons-splitter-side').close();
-        }
-    }
-
-    const loadActivityViewer = (viewerName) =>
-    {
-        document.loadPage(viewerName);
-    }
-
-    document.navigateBack = function(){
-        navigator.popPage();
-    }
-
-    const openMenu = function() {
-        var menu = document.getElementById('menu');
-        menu.open();
-    };
-
-    const getRandom = function(factor){
-        return Math.floor(Math.random() * factor);
-    }
-
-    const getRandomRgbColor = function(opacity){
-        var r =  Math.floor(Math.random() * 255);
-        var g =  Math.floor(Math.random() * 255);
-        var b =  Math.floor(Math.random() * 255);
-        return 'rgba('+ r +',' + g +',' + b + ',' + opacity +')';
-    }
-
-    const refreshReportPeriodDisplayString = function(){
-        var reportPeriodString = loggingInterface.getReportPeriodDisplayString();
-        var labels = document.getElementsByClassName('reportPeriodLabel');
-        for (i = 0; i < labels.length; i++) {
-            labels[i].innerHTML = reportPeriodString;
-        }
-
-        var buttons = document.getElementsByClassName('incrementReportPeriodButton');
-        if(loggingInterface.getReportPeriodOffset() == 0){
-            for (i = 0; i < buttons.length; i++) {
-                buttons[i].setAttribute("disabled","disabled");
-            }
-        } else {
-            for (i = 0; i < buttons.length; i++) {
-                buttons[i].removeAttribute("disabled");
-            }
-        }
-
-        var tabbar = document.querySelector('ons-tabbar');
-        var activeTab = loggingInterface.getActiveTab();
-        console.log("activeTab = "+activeTab);
-        console.log(tabbar.getActiveTabIndex());
-        if(activeTab == "tableTab"){
-            tabbar.setActiveTab(0);
-        } else {
-            tabbar.setActiveTab(0);
-        }
-    }
-
-    document.querySelector('ons-splitter-side').addEventListener('postclose', function() {
-        loggingInterface.reloadCurrentPage();
-    })
-
-    const selectedProviders = [];
-    const toggleSelectedProvider = function(value){
-        var index = selectedProviders.indexOf(value);
-        if(index > -1){
-
-            console.log("Removing: "+value);
-            selectedProviders.splice(index,1);
-        } else {
-            console.log("Adding: "+value);
-            selectedProviders.push(value);
-        }
-        console.log(selectedProviders);
-    }
-    const addSelectedProvider = function(value){
-        var index = selectedProviders.indexOf(value);
-        if(index == -1){
-            selectedProviders.push(value);
-            console.log("Adding: "+value);
-        }
-    }
-    const isProviderSelected = function(value){
-        return selectedProviders.indexOf(value) > -1;
-    }
-
-    const getChartData = function(chartType){
-        var chartData = loggingInterface.getChartData(chartType);
-        chartData = JSON.parse(chartData);
-        if(loggingInterface.isCurrentUserSupervisor()) {
-            var filteredDataSets = [];
-            chartData.datasets.forEach(function(dataset){
-                if(!isProviderSelected(dataset.id)){
-                    filteredDataSets.push(dataset);
-                }
-            });
-            chartData.datasets = filteredDataSets;
-        }
-
-        return chartData;
-    }
-
-
-    var providerSelectorElement = document.getElementById("providerSelection");
-    if(loggingInterface.isCurrentUserSupervisor()){
-        //addSelectedProvider("ayeung");
-        var providerListSelectionHtml = "<ons-list-item tappable>\n" +
-            "<label class=\"left\">" +
-            "<ons-checkbox name=\"provider\" onchange=\"toggleSelectedProvider('ayeung')\"" +
-            "input-id=\"ayeung\"" +
-            "checked></ons-checkbox>" +
-            "Ada Yeung" +
-            "</label>" +
-            "</ons-list-item>";
-        var providers = loggingInterface.getProviders();
-        providers = JSON.parse(providers);
-        providers.forEach(function(provider){
-            addSelectedProvider(provider.username);
-            providerListSelectionHtml += "<ons-list-item tappable>\n" +
-                "<label class=\"left\">\n" +
-
-                "<ons-checkbox name=\"provider\" onchange=\"toggleSelectedProvider('"+provider.username+"')\"" +
-                "input-id=\""+provider.username+"\"" +
-                "></ons-checkbox>" +
-                provider.name +
-                "</label>" +
-                "</ons-list-item>";
-            console.log(providerListSelectionHtml);
+    function initMap() {
+        // var mapData = loggingInterface.getMapData();
+        // mapData = JSON.parse(mapData);
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 7,
+            center: new google.maps.LatLng(-0.10221,34.76171),
         });
-        var providerListElement = document.getElementById("providerList");
-        providerListElement.innerHTML = providerListSelectionHtml;
-        providerSelectorElement.style.display = 'show';
-    } else {
-        providerSelectorElement.style.display = 'none';
+        //
+        // var markers = [];
+        // mapData.map(function(data,i){
+        //     console.log(data.label);
+        //     var m = data.locations.map(function(location, j) {
+        //         console.log(j+" "+data.label.charAt(0));
+        //         return new google.maps.Marker({
+        //             position: location,
+        //             label: data.label.charAt(0)
+        //         });
+        //     });
+        //     markers = markers.concat(m);
+        // });
+        //
+        //
+        // var markerCluster = new MarkerClusterer(map, markers,
+        //     {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+
     }
+</script>
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBy41-d7Btm50DYUd9fNuUy7tzIPzGZRBg&callback=initMap">
 </script>
 </body>
 </html>
