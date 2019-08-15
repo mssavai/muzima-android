@@ -116,8 +116,14 @@ public class ProviderPerformanceReportViewActivity2 extends ProviderReportViewAc
 
     public void reloadCurrentPage(){
         if (!navigationStack.isEmpty()) {
+            boolean isCurrentPageMapsPage = isCurrentPageMapsPage();
             String currentPageId = navigationStack.pop();
-            loadPage(currentPageId,false);
+            System.out.println("Reloading "+currentPageId);
+            if(isCurrentPageMapsPage) {
+                loadMapsPage();
+            } else {
+                loadPage(currentPageId, false);
+            }
         }
     }
 

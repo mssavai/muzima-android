@@ -2,13 +2,13 @@
     <div class="content" style="margin-top:5%">
         <ons-row>
             <ons-col >
-                <h5 style="text-align: center" >Work day length</h5>
+                <h5 style="text-align: center" >Work day length (Hours)</h5>
             </ons-col>
         </ons-row>
         <ons-row>
             <ons-col >
 
-                <table id="ps_table1" class="highlight responsive-table">
+                <table id="ps_table1" class="centered highlight">
                 </table>
             </ons-col>
         </ons-row>
@@ -41,6 +41,11 @@
                 datasetHtml += "<td>" + dataItem + "</td>";
                 total += dataItem;
             });
+
+            if(total % 1 != 0){
+                total = total.toFixed(1);
+            }
+
             datasetHtml += "<td>" + total + "</td></tr>";
             html += datasetHtml;
         });

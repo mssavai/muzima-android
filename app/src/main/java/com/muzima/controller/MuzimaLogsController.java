@@ -8,6 +8,9 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 import java.io.IOException;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,7 +31,7 @@ public class MuzimaLogsController {
         providers.add("bmokaya");
         providers.add(currentUser.getUsername() != null ? currentUser.getUsername() : currentUser.getSystemId());
 
-        int entries = 10;
+        int entries = 30;
         List<String> datesList = getDatesStringList(entries);
 
         List<LogStatistic> logStatistics = new ArrayList<>();
@@ -60,10 +63,13 @@ public class MuzimaLogsController {
 
                             put("activity_locations", new JSONArray() {{
                                     final Random random = new Random();
+                                    final Time time = new Time(random.nextLong());
+                                    final DateFormat dateFormat = new SimpleDateFormat("hh:mm a");
                                     for (int i = 0; i < patientsSeen; i++) {
                                         add(new JSONObject() {{
                                             put("lat",-1*random.nextFloat());
                                             put("lng",34+random.nextFloat());
+                                            put("encounter_date",reFormatDate(date) + ", " + dateFormat.format(time));
                                         }});
                                     }
                                 }}
@@ -109,6 +115,21 @@ public class MuzimaLogsController {
         }
         return logStatistics;
     }
+
+
+
+    private String reFormatDate(String dateString){
+        SimpleDateFormat weeklyDateFormatter = new SimpleDateFormat("EEE dd MMM");
+        SimpleDateFormat logsDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String reformattedDateString = null;
+        try {
+            reformattedDateString = weeklyDateFormatter.format(logsDateFormat.parse(dateString));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return reformattedDateString;
+    }
+
     private List<String> getDatesStringList(int entries){
         List<String> datesStringList =  new ArrayList();
         Calendar calendar = Calendar.getInstance();
@@ -145,6 +166,20 @@ public class MuzimaLogsController {
         JSONArray providers = new JSONArray();
 
         providers.add(new JSONObject(){{
+            put("id","average");
+            put("full_name","Average Performance");
+            put("role","extras");
+            put("color","0, 127, 132");
+            put("isLoggedIn","false");
+        }});
+        providers.add(new JSONObject(){{
+            put("id","expected");
+            put("full_name","Expected Performance");
+            put("role","extras");
+            put("color","93, 27, 232");
+            put("isLoggedIn","false");
+        }});
+        providers.add(new JSONObject(){{
             String username = currentUser.getUsername() != null ? currentUser.getUsername() : currentUser.getSystemId();
             put("id",username);
             put("full_name",currentUser.getGivenName() + " " + currentUser.getFamilyName());
@@ -174,20 +209,6 @@ public class MuzimaLogsController {
             put("full_name","Benard Mokaya");
             put("role","provider");
             put("color","100, 60, 32");
-            put("isLoggedIn","false");
-        }});
-        providers.add(new JSONObject(){{
-            put("id","expected");
-            put("full_name","Expected Performance");
-            put("role","extras");
-            put("color","93, 27, 232");
-            put("isLoggedIn","false");
-        }});
-        providers.add(new JSONObject(){{
-            put("id","average");
-            put("full_name","Average Performance");
-            put("role","extras");
-            put("color","0, 127, 132");
             put("isLoggedIn","false");
         }});
         details.put("providers",providers);

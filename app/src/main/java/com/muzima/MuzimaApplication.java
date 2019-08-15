@@ -170,11 +170,9 @@ public class MuzimaApplication extends MultiDexApplication {
     public User getAuthenticatedUser() {
         try {
             if (authenticatedUser == null) {
-                System.out.println("Auth user is Null");
                 muzimaContext.openSession();
                 if (muzimaContext.isAuthenticated()) {
 
-                    System.out.println("Auth user is : "+authenticatedUser.getUsername() + " - "+authenticatedUser.getSystemId());
                     authenticatedUser = muzimaContext.getAuthenticatedUser();
                 } else {
                     Credentials cred = new Credentials(getApplicationContext());
@@ -187,9 +185,7 @@ public class MuzimaApplication extends MultiDexApplication {
                         muzimaContext.authenticate(username, password, server, false);
                     }
 
-
                     authenticatedUser = muzimaContext.getAuthenticatedUser();
-                    System.out.println("Auth user2 is : "+authenticatedUser.getUsername() + " - "+authenticatedUser.getSystemId());
 
                 }
                 muzimaContext.closeSession();
@@ -198,7 +194,6 @@ public class MuzimaApplication extends MultiDexApplication {
             muzimaContext.closeSession();
             throw new RuntimeException(e);
         }
-        System.out.println("Returning Auth user is : "+authenticatedUser.getUsername() + " - "+authenticatedUser.getSystemId());
 
         return authenticatedUser;
     }

@@ -479,8 +479,18 @@ public class PerformanceLoggingJavascriptInterface {
         static List<String> getDatesStringList(int offset, String mode){
             if(mode.equals("monthly")){
                 return getMonthlyDatesStringList(offset);
+            } else if(mode.equals("daily")){
+                return getDailyDatesStringList(offset);
             }
             return getWeeklyDatesStringList(offset);
+        }
+
+        static List<String> getDailyDatesStringList(int dayOffset){
+            List<String> datesStringList =  new ArrayList();
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DATE,dayOffset);
+            datesStringList.add(weeklyDateFormatter.format(calendar.getTime()));
+            return datesStringList;
         }
 
         static List<String> getWeeklyDatesStringList(int weekOffset){

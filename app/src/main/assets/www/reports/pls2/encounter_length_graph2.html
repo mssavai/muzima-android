@@ -2,7 +2,7 @@
     <div class="content" style="margin-top:5%">
         <ons-row>
             <ons-col >
-                <h5 style="text-align: center" >Encounter length</h5>
+                <h5 style="text-align: center" >Encounter length (Minutes)</h5>
             </ons-col>
         </ons-row>
         <ons-row>
@@ -41,6 +41,11 @@
                 datasetHtml += "<td>" + dataItem + "</td>";
                 total += dataItem;
             });
+
+            if(total % 1 != 0){
+                total = total.toFixed(1);
+            }
+
             datasetHtml += "<td>" + total + "</td></tr>";
             html += datasetHtml;
         });

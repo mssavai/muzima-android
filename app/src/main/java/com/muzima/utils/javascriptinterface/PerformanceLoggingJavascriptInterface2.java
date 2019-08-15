@@ -6,7 +6,6 @@ import com.muzima.MuzimaApplication;
 import com.muzima.api.model.LogStatistic;
 import com.muzima.controller.MuzimaLogsController;
 import com.muzima.util.JsonUtils;
-import com.muzima.view.reports.ProviderPerformanceReportViewActivity;
 import com.muzima.view.reports.ProviderPerformanceReportViewActivity2;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -16,7 +15,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,22 +47,6 @@ public class PerformanceLoggingJavascriptInterface2 {
     }
 
     @JavascriptInterface
-    public void setSelectedProvider(String providerId){
-        javascriptAppContext.setSelectedProvider(providerId);
-        providerReportViewActivity.popTopPage();
-    }
-
-    @JavascriptInterface
-    public String getSelectedProvider(){
-        return javascriptAppContext.getSelectedProvider();
-    }
-
-    @JavascriptInterface
-    public  boolean hasSelectedProvider(){
-        return javascriptAppContext.hasSelectedProvider();
-    }
-
-    @JavascriptInterface
     public  static boolean isCurrentUserSupervisor(){
         return javascriptAppContext.isSupervisor();
     }
@@ -77,44 +59,6 @@ public class PerformanceLoggingJavascriptInterface2 {
             return providers.toJSONString();
         }
         return "[]";
-
-        //return getProvidersAsArray().toJSONString();
-    }
-
-    public static JSONArray getProvidersAsArray(){
-        JSONArray providers = new JSONArray();
-
-        JSONObject object3 = new JSONObject();
-        object3.put("username","benard");
-        object3.put("name","Benard Mokaya");
-        providers.add(object3);
-
-        JSONObject object4 = new JSONObject();
-        object4.put("username","joan");
-        object4.put("name","Joan Nakibuuka");
-        providers.add(object4);
-
-        JSONObject object5 = new JSONObject();
-        object5.put("username","priscilla");
-        object5.put("name","Priscilla Balirwa");
-        providers.add(object5);
-
-        JSONObject object1 = new JSONObject();
-        object1.put("username","sthaiya");
-        object1.put("name","Mbugua Sam");
-        providers.add(object1);
-
-        JSONObject object6 = new JSONObject();
-        object6.put("username","owino");
-        object6.put("name","Owino Samuel");
-        providers.add(object6);
-
-        JSONObject object2 = new JSONObject();
-        object2.put("username","simon");
-        object2.put("name","Simon Savai");
-        providers.add(object2);
-
-        return providers;
     }
 
     @JavascriptInterface
@@ -150,6 +94,7 @@ public class PerformanceLoggingJavascriptInterface2 {
 
     @JavascriptInterface
     public void incrementReportPeriodOffset(){
+        System.out.println("Incrementing......");
         javascriptAppContext.incrementReportPeriodOffset();
         providerReportViewActivity.reloadCurrentPage();
     }
@@ -181,6 +126,8 @@ public class PerformanceLoggingJavascriptInterface2 {
         String mode = "weekly";
         if(javascriptAppContext.isCurrentReportPeriodMonthly()){
             mode = "monthly";
+        } else if(javascriptAppContext.isCurrentReportPeriodDaily()){
+            mode = "daily";
         }
         labels.addAll(PerformanceLoggingJavascriptInterface.CalendarUtils.getDatesStringList(datesOffset, mode));
         return labels.toJSONString();
@@ -218,10 +165,17 @@ public class PerformanceLoggingJavascriptInterface2 {
     public void navigateToLandingPage(){
         providerReportViewActivity.loadLandingPage();
     }
+
+    @JavascriptInterface
+    public void setCurrentReportPeriodAsDaily(){
+        javascriptAppContext.setCurrentReportPeriodAsDaily();
+    }
+
     @JavascriptInterface
     public void setCurrentReportPeriodAsWeekly(){
         javascriptAppContext.setCurrentReportPeriodAsWeekly();
     }
+
     @JavascriptInterface
     public void setCurrentReportPeriodAsMonthly(){
         javascriptAppContext.setCurrentReportPeriodAsMonthly();
@@ -237,18 +191,43 @@ public class PerformanceLoggingJavascriptInterface2 {
         if(javascriptAppContext.isCurrentReportPeriodMonthly()){
             int offset = javascriptAppContext.getMonthlyReportPeriodOffset();
             return CalendarUtils.getMonthlyDateRangeString(offset);
+        } else if(javascriptAppContext.isCurrentReportPeriodDaily()){
+            int offset = javascriptAppContext.getDailyReportPeriodOffset();
+            return CalendarUtils.getDailyDateRangeString(offset);
         }
         int offset = javascriptAppContext.getWeeklyReportPeriodOffset();
         return CalendarUtils.getWeeklyDateRangeString(offset);
     }
 
     @JavascriptInterface
-    public void exit(){
-        javascriptAppContext.exit();
-        //ToDo: save javascriptAppContext
-        javascriptAppContext.setSelectedProvider(null);
+    public boolean isCurrentReportPeriodDaily(){
+        return javascriptAppContext.isCurrentReportPeriodDaily();
+    }
 
-        providerReportViewActivity.exit();
+    @JavascriptInterface
+    public boolean isCurrentReportPeriodWeekly(){
+        return javascriptAppContext.isCurrentReportPeriodWeekly();
+    }
+
+    @JavascriptInterface
+    public boolean isCurrentReportPeriodMonthly(){
+        return javascriptAppContext.isCurrentReportPeriodMonthly();
+    }
+
+    @JavascriptInterface
+    public void saveSelectedProviders(String selectedProviders){
+        System.out.println("selectedProviders");
+        System.out.println(selectedProviders);
+        javascriptAppContext.setSelectedProviders(selectedProviders);
+    }
+
+    @JavascriptInterface
+    public String getSelectedProviders(){
+        if(javascriptAppContext.hasSelectedProviders()) {
+            return javascriptAppContext.getSelectedProviders();
+        } else {
+            return "[]";
+        }
     }
 
     static class JavascriptAppContext {
@@ -256,9 +235,11 @@ public class PerformanceLoggingJavascriptInterface2 {
         String USER_ROLE_PROPERTY = "userRole";
         String PROVIDER_USER_ROLE = "provider";
         String SUPERVISOR_USER_ROLE = "supervisor";
-        String SELECTED_PROVIDER_PROPERTY = "selectedProvider";
+        String SELECTED_PROVIDERS = "selectedProviders";
         String NEXT_PAGE_TO_NAVIGATE = "nextPageToNavigate";
         String REPORT_PERIOD = "reportPeriod";
+        String DAILY_REPORT_PERIOD = "daily";
+        String DAILY_REPORT_PERIOD_OFFSET = "dailyReportPeriodOffset";
         String WEEKLY_REPORT_PERIOD = "weekly";
         String WEEKLY_REPORT_PERIOD_OFFSET = "weeklyReportPeriodOffset";
         String MONTHLY_REPORT_PERIOD = "monthly";
@@ -286,17 +267,17 @@ public class PerformanceLoggingJavascriptInterface2 {
             return appContext.get(property);
         }
 
-        void setSelectedProvider(String providerId){
-            appContext.put(SELECTED_PROVIDER_PROPERTY, providerId);
+        void setSelectedProviders(String selectedProviders){
+            appContext.put(SELECTED_PROVIDERS, selectedProviders);
         }
 
-        String getSelectedProvider(){
-            return (String) appContext.get(SELECTED_PROVIDER_PROPERTY);
+        String getSelectedProviders(){
+            return (String) appContext.get(SELECTED_PROVIDERS);
         }
 
-        boolean hasSelectedProvider(){
-            return appContext.containsKey(SELECTED_PROVIDER_PROPERTY)
-                    && getSelectedProvider() != null;
+        boolean hasSelectedProviders(){
+            return appContext.containsKey(SELECTED_PROVIDERS)
+                    && getSelectedProviders() != null;
         }
 
         void setNextPageToNavigate(String nextPageId){
@@ -331,6 +312,10 @@ public class PerformanceLoggingJavascriptInterface2 {
             return (String) getContextValueByProperty(USER_ROLE_PROPERTY);
         }
 
+        void setCurrentReportPeriodAsDaily(){
+            setContextPropertyValue(REPORT_PERIOD,DAILY_REPORT_PERIOD);
+        }
+
         void setCurrentReportPeriodAsWeekly(){
             setContextPropertyValue(REPORT_PERIOD,WEEKLY_REPORT_PERIOD);
         }
@@ -339,6 +324,9 @@ public class PerformanceLoggingJavascriptInterface2 {
             setContextPropertyValue(REPORT_PERIOD,MONTHLY_REPORT_PERIOD);
         }
 
+        boolean isCurrentReportPeriodDaily(){
+            return DAILY_REPORT_PERIOD.equals(getContextValueByProperty(REPORT_PERIOD));
+        }
         boolean isCurrentReportPeriodWeekly(){
             return WEEKLY_REPORT_PERIOD.equals(getContextValueByProperty(REPORT_PERIOD));
         }
@@ -350,6 +338,8 @@ public class PerformanceLoggingJavascriptInterface2 {
         void incrementReportPeriodOffset(){
             if(isCurrentReportPeriodMonthly()){
                 incrementMonthlyReportPeriodOffset();
+            } else if(isCurrentReportPeriodDaily()){
+                incrementDailyReportPeriodOffset();
             } else {
                 incrementWeeklyReportPeriodOffset();
             }
@@ -358,6 +348,8 @@ public class PerformanceLoggingJavascriptInterface2 {
         void decrementReportPeriodOffset(){
             if(isCurrentReportPeriodMonthly()){
                 decrementMonthlyReportPeriodOffset();
+            } else if(isCurrentReportPeriodDaily()){
+                decrementDailyReportPeriodOffset();
             } else {
                 decrementWeeklyReportPeriodOffset();
             }
@@ -366,9 +358,33 @@ public class PerformanceLoggingJavascriptInterface2 {
         int getReportPeriodOffset(){
             if(isCurrentReportPeriodMonthly()){
                 return getMonthlyReportPeriodOffset();
+            } else if(isCurrentReportPeriodDaily()){
+                return getDailyReportPeriodOffset();
             } else {
                 return getWeeklyReportPeriodOffset();
             }
+        }
+
+        //ToDo: refactor these methods to take report period as parameter
+        void setDailyReportPeriodOffset(int dailyReportPeriodOffset){
+            setContextPropertyValue(DAILY_REPORT_PERIOD_OFFSET,dailyReportPeriodOffset);
+        }
+
+        void decrementDailyReportPeriodOffset(){
+            int offset = getDailyReportPeriodOffset()-1;
+            setDailyReportPeriodOffset(offset);
+        }
+
+        void incrementDailyReportPeriodOffset(){
+            int offset = getDailyReportPeriodOffset()+1;
+            setDailyReportPeriodOffset(offset);
+        }
+
+        int getDailyReportPeriodOffset(){
+            if(appContext.containsKey(DAILY_REPORT_PERIOD_OFFSET)) {
+                return (int) getContextValueByProperty(DAILY_REPORT_PERIOD_OFFSET);
+            }
+            return 0;
         }
 
         void setWeeklyReportPeriodOffset(int weeklyReportPeriodOffset){
@@ -457,7 +473,16 @@ public class PerformanceLoggingJavascriptInterface2 {
             return dateRange.toString();
         }
 
-        static String reFormatDate(String dateString){
+        public static String getDailyDateRangeString(int dayOffset){
+            String dateRange = "";
+            List<String> dates = getDatesStringList(dayOffset, "daily");
+            for(String date:dates){
+                dateRange = date;
+            }
+            return dateRange;
+        }
+
+        public static String reFormatDate(String dateString){
             SimpleDateFormat logsDateFormat = new SimpleDateFormat("dd-MM-yyyy");
             String reformattedDateString = null;
             try {
@@ -465,14 +490,25 @@ public class PerformanceLoggingJavascriptInterface2 {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+
             return reformattedDateString;
         }
 
         static List<String> getDatesStringList(int offset, String mode){
             if(mode.equals("monthly")){
                 return getMonthlyDatesStringList(offset);
+            } else if(mode.equals("daily")){
+                return getDailyDatesStringList(offset);
             }
             return getWeeklyDatesStringList(offset);
+        }
+
+        static List<String> getDailyDatesStringList(int dayOffset){
+            List<String> datesStringList =  new ArrayList();
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DATE,dayOffset);
+            datesStringList.add(weeklyDateFormatter.format(calendar.getTime()));
+            return datesStringList;
         }
 
         static List<String> getWeeklyDatesStringList(int weekOffset){
@@ -552,12 +588,10 @@ public class PerformanceLoggingJavascriptInterface2 {
             final JSONObject activityLocationsCollection = new JSONObject();
 
             List providerConfigsList = JsonUtils.readAsObjectList(config.getDetails(),"$['providers']");
-            System.out.println("providerConfigsList : " + providerConfigsList.size());
 
             for(LogStatistic logStatistic:logStatistics){
                 String providerId = logStatistic.getProviderId();
                 if(providerId != null && !patientsSeenCollection.containsKey(providerId)){
-                    System.out.println("Not contains key: "+providerId);
                     patientsSeenCollection.put(providerId,new JSONObject(){{
                         put("data",new JSONObject());
                     }});
@@ -575,18 +609,14 @@ public class PerformanceLoggingJavascriptInterface2 {
                     for(Object provider:providerConfigsList){
                         JSONObject providerConfig = (JSONObject)provider;
 
-                        System.out.println("In Config for: "+providerConfig.get("id"));
                         if(providerConfig.get("id") != null && providerConfig.get("id").equals(providerId)){
 
                             for(String key:providerConfig.keySet()) {
-                                System.out.println("Key: "+key + " Value: "+providerConfig.get(key));
                                 ((JSONObject) patientsSeenCollection.get(providerId)).put(key, providerConfig.get(key));
                                 ((JSONObject) workDayLengthCollection.get(providerId)).put(key, providerConfig.get(key));
                                 ((JSONObject) encounterLengthCollection.get(providerId)).put(key, providerConfig.get(key));
                                 ((JSONObject) activityLocationsCollection.get(providerId)).put(key, providerConfig.get(key));
                             }
-                        } else {
-                            System.out.println("No color for "+providerId);
                         }
 
 
@@ -596,7 +626,6 @@ public class PerformanceLoggingJavascriptInterface2 {
                 final String activityDateString = CalendarUtils.reFormatDate(logStatistic.getDate());
                 
                 final double patientsSeenValue = (Double) JsonUtils.readAsObject(logStatistic.getDetails(),"$['patients_seen']");
-                System.out.println("Value in : "+logStatistic.getDetails() + " IS "+patientsSeenValue);
                 ((JSONObject)((JSONObject)patientsSeenCollection.get(providerId)).get("data")).put(activityDateString,patientsSeenValue);
                 
                 final double workDayLengthValue = (Double) JsonUtils.readAsObject(logStatistic.getDetails(),"$['work_day_length']");
@@ -625,8 +654,6 @@ public class PerformanceLoggingJavascriptInterface2 {
 
         static String getChartData(String chartType){
             if(chartData != null && chartData.containsKey(chartType)) {
-                System.out.println("chartType: "+chartType);
-                System.out.println((chartData.get(chartType)).toJSONString());
                 return (chartData.get(chartType)).toJSONString();
             }
             return null;

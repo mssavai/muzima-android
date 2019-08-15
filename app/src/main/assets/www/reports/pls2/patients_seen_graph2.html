@@ -41,6 +41,10 @@
                 datasetHtml += "<td>" + dataItem + "</td>";
                 total += dataItem;
             });
+
+            if(total % 1 != 0){
+                total = total.toFixed(1);
+            }
             datasetHtml += "<td>" + total + "</td></tr>";
             html += datasetHtml;
         });
