@@ -44,10 +44,10 @@ public class MuzimaLogsController {
                 final double workDayLength = getRandom(8)+0.0;
                 totalWorkdayLength += workDayLength;
 
-                final double averageEncounterLength = getRandom(60)+0.0;
+                final double averageEncounterLength = getRandom(35)+0.0;
                 totalAverageEncounterLength += averageEncounterLength;
 
-                final double patientsSeen = getRandom(20)+0.0;
+                final double patientsSeen = getRandom(12)+0.0;
                 totalPatientsSeen += patientsSeen;
 
                 logStatistics.add(new LogStatistic() {
@@ -63,10 +63,10 @@ public class MuzimaLogsController {
 
                             put("activity_locations", new JSONArray() {{
                                     final Random random = new Random();
-                                    final Time time = new Time(random.nextLong());
                                     final DateFormat dateFormat = new SimpleDateFormat("hh:mm a");
                                     for (int i = 0; i < patientsSeen; i++) {
                                         add(new JSONObject() {{
+                                            Time time = new Time(random.nextLong());
                                             put("lat",-1*random.nextFloat());
                                             put("lng",34+random.nextFloat());
                                             put("encounter_date",reFormatDate(date) + ", " + dateFormat.format(time));

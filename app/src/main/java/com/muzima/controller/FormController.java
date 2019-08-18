@@ -158,25 +158,16 @@ public class FormController {
                 form.setDiscriminator(FORM_DISCRIMINATOR_PROVIDER_REPORT);
                 form.setUuid(UUID.randomUUID().toString());
 
-                final Form form2 = new Form();
-                form2.setDescription("Shows work related performance reports for health workers");
-                form2.setName(reportName+"2");
-                form2.setVersion("report");
-                form2.setDiscriminator(FORM_DISCRIMINATOR_PROVIDER_REPORT);
-                form2.setUuid(UUID.randomUUID().toString());
-
                 EncounterType encounterType = new EncounterType();
                 encounterType.setId(100);
                 encounterType.setName("PerformanceStatisticsViewer");
                 encounterType.setUuid(UUID.randomUUID().toString());
                 form.setEncounterType(encounterType);
-                form2.setEncounterType(encounterType);
                 Tag tag = new Tag();
                 tag.setName("PerformanceStatisticsViewer");
                 tag.setUuid("uuid");
                 Tag[] tags = {tag};
                 form.setTags(tags);
-                form2.setTags(tags);
 
 
                 final FormTemplate formTemplate = new FormTemplate();
@@ -184,18 +175,12 @@ public class FormController {
                 formTemplate.setHtml(html);
                 formTemplate.setUuid(form.getUuid());
 
-                final FormTemplate formTemplate2 = new FormTemplate();
-                formTemplate2.setHtml(html);
-                formTemplate2.setUuid(form2.getUuid());
-
                 try {
                     saveAllForms(new ArrayList<Form>() {{
                         add(form);
-                        add(form2);
                     }});
                     saveFormTemplates(new ArrayList<FormTemplate>() {{
                         add(formTemplate);
-                        add(formTemplate2);
                     }});
                 } catch (FormSaveException e) {
                     Log.e("Error saving report", "  ", e);

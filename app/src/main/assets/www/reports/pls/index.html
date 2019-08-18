@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="initial-scale=1.0">
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/custom.css">
-    <link rel="stylesheet" href="css/onsenui.css">
-    <link rel="stylesheet" href="css/onsen-css-components.min.css">
+    <link rel="stylesheet" href="css/onsenui/2.10.8/onsenui.min.css">
+    <link rel="stylesheet" href="css/onsenui/2.10.8/onsen-css-components.min.css">
     <link rel="stylesheet" href="css/chartjs/2.8.0/Chart.min.css">
     <link rel="stylesheet" href="css/material-design-iconic-font/css/material-design-iconic-font.min.css"/>
     <link type="text/css" rel="stylesheet" href="css/materialize/1.0.0/materialize.min.css"  media="screen,projection"/>
-    <script src="js/onsenui.min.js"></script>
+    <script src="js/onsenui/2.10.8/onsenui.min.js"></script>
     <script src="js/chartjs/2.8.0/Chart.min.js"></script>
     <script type="text/javascript" src="js/materialize/1.0.0/materialize.min.js"></script>
-
 </head>
 <body>
 <ons-splitter>
@@ -22,17 +22,17 @@
                 <ons-list-item tappable>
                     Report period:
                     <ons-list>
-                        <ons-list-item onclick="loggingInterface.setCurrentReportPeriodAsWeekly()" tappable>
+                        <ons-list-item onclick="setCurrentReportPeriodAsWeekly()" tappable>
                             <label class="left">
-                                <ons-radio name="visualization_period" input-id="weekly"></ons-radio>
+                                <ons-radio id="weekly_visualization_period" name="visualization_period" input-id="weekly"></ons-radio>
                             </label>
                             <label for="weekly">
                                 Show weekly reports
                             </label>
                         </ons-list-item>
-                        <ons-list-item onclick="loggingInterface.showMonthlyReports()" tappable>
+                        <ons-list-item onclick="setCurrentReportPeriodAsMonthly()" tappable>
                             <label class="left">
-                                <ons-radio name="visualization_period" input-id="monthly"></ons-radio>
+                                <ons-radio id="monthly_visualization_period" name="visualization_period" input-id="monthly"></ons-radio>
                             </label>
                             <label for="monthly" class="center">
                                 Show monthly reports
@@ -56,7 +56,7 @@
         </ons-page>
     </ons-splitter-side>
     <ons-splitter-content>
-        <ons-navigator id="navigator">
+        <ons-navigator id="onsnavigator">
             <ons-page>
                 <ons-row style="margin: 10% auto;">
                     <ons-col style="text-align: center;">
@@ -68,155 +68,17 @@
     </ons-splitter-content>
 </ons-splitter>
 
+<script src="js/common.js"></script>
 <script>
-    const navigator = document.querySelector('#navigator');
-    document.loadPage = function(pageToLoad)
-    {
-        if (pageToLoad != null && pageToLoad != '') {
-            navigator.resetToPage(pageToLoad);
-        }
 
-        var sideMenuElement = document.getElementById("menu");
-        if(pageToLoad == "login.html"){
-            if(sideMenuElement.hasAttribute("swipeable")){
-                sideMenuElement.removeAttribute("swipeable");
-            }
-        } else if(!sideMenuElement.hasAttribute("swipeable")){
-            sideMenuElement.setAttribute("swipeable");
-        }
-
-        if(document.querySelector('ons-splitter-side').isOpen) {
-            document.querySelector('ons-splitter-side').close();
-        }
-    }
-
-    document.navigateBack = function(){
-        navigator.popPage();
-    }
-
-    const openMenu = function() {
-        var menu = document.getElementById('menu');
-        menu.open();
-    };
-
-    const getRandom = function(factor){
-        return Math.floor(Math.random() * factor);
-    }
-
-    const getRandomRgbColor = function(opacity){
-        var r =  Math.floor(Math.random() * 255);
-        var g =  Math.floor(Math.random() * 255);
-        var b =  Math.floor(Math.random() * 255);
-        return 'rgba('+ r +',' + g +',' + b + ',' + opacity +')';
-    }
-
-    const refreshReportPeriodDisplayString = function(){
-        var reportPeriodString = loggingInterface.getReportPeriodDisplayString();
-        var labels = document.getElementsByClassName('reportPeriodLabel');
-        for (i = 0; i < labels.length; i++) {
-            labels[i].innerHTML = reportPeriodString;
-        }
-
-        var buttons = document.getElementsByClassName('incrementReportPeriodButton');
-        if(loggingInterface.getReportPeriodOffset() == 0){
-            for (i = 0; i < buttons.length; i++) {
-                buttons[i].setAttribute("disabled","disabled");
-            }
-        } else {
-            for (i = 0; i < buttons.length; i++) {
-                buttons[i].removeAttribute("disabled");
-            }
-        }
-
-        var tabbar = document.querySelector('ons-tabbar');
-        var activeTab = loggingInterface.getActiveTab();
-        console.log("activeTab = "+activeTab);
-        console.log(tabbar.getActiveTabIndex());
-        if(activeTab == "tableTab"){
-            tabbar.setActiveTab(0);
-        } else {
-            tabbar.setActiveTab(0);
-        }
-    }
-
-    document.querySelector('ons-splitter-side').addEventListener('postclose', function() {
-        loggingInterface.reloadCurrentPage();
-    })
-
-    const selectedProviders = [];
-    const toggleSelectedProvider = function(value){
-        var index = selectedProviders.indexOf(value);
-        if(index > -1){
-
-            console.log("Removing: "+value);
-            selectedProviders.splice(index,1);
-        } else {
-            console.log("Adding: "+value);
-            selectedProviders.push(value);
-        }
-        console.log(selectedProviders);
-    }
-    const addSelectedProvider = function(value){
-        var index = selectedProviders.indexOf(value);
-        if(index == -1){
-            selectedProviders.push(value);
-            console.log("Adding: "+value);
-        }
-    }
-    const isProviderSelected = function(value){
-        return selectedProviders.indexOf(value) > -1;
-    }
-
-    const getChartData = function(chartType){
-        var chartData = loggingInterface.getChartData(chartType);
-        chartData = JSON.parse(chartData);
-        if(loggingInterface.isCurrentUserSupervisor()) {
-            var filteredDataSets = [];
-            chartData.datasets.forEach(function(dataset){
-                if(!isProviderSelected(dataset.id)){
-                    filteredDataSets.push(dataset);
-                }
-            });
-            chartData.datasets = filteredDataSets;
-        }
-
-        return chartData;
-    }
-
-
-    var providerSelectorElement = document.getElementById("providerSelection");
-    if(loggingInterface.isCurrentUserSupervisor()){
-        //addSelectedProvider("ayeung");
-        var providerListSelectionHtml = "<ons-list-item tappable>\n" +
-            "<label class=\"left\">" +
-            "<ons-checkbox name=\"provider\" onchange=\"toggleSelectedProvider('ayeung')\"" +
-            "input-id=\"ayeung\"" +
-            "checked></ons-checkbox>" +
-            "Ada Yeung" +
-            "</label>" +
-            "</ons-list-item>";
-        var providers = loggingInterface.getProviders();
-        providers = JSON.parse(providers);
-        providers.forEach(function(provider){
-            addSelectedProvider(provider.username);
-            providerListSelectionHtml += "<ons-list-item tappable>\n" +
-                "<label class=\"left\">\n" +
-
-                "<ons-checkbox name=\"provider\" onchange=\"toggleSelectedProvider('"+provider.username+"')\"" +
-                "input-id=\""+provider.username+"\"" +
-                "></ons-checkbox>" +
-                provider.name +
-                "</label>" +
-                "</ons-list-item>";
-            console.log(providerListSelectionHtml);
-        });
-        var providerListElement = document.getElementById("providerList");
-        providerListElement.innerHTML = providerListSelectionHtml;
-        providerSelectorElement.style.display = 'show';
+    if (loggingInterface.isCurrentReportPeriodMonthly()) {
+        var monthlyReportPeriodOption = document.getElementById("monthly_visualization_period");
+        monthlyReportPeriodOption.checked = true;
     } else {
-        providerSelectorElement.style.display = 'none';
+        loggingInterface.setCurrentReportPeriodAsWeekly();
+        var weeklyReportPeriodOption = document.getElementById("weekly_visualization_period");
+        weeklyReportPeriodOption.checked = true;
     }
-
 </script>
 </body>
 </html>

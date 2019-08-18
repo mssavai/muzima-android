@@ -2,7 +2,7 @@
     <div class="content" style="margin-top:5%">
         <ons-row>
             <ons-col >
-                <h5 style="text-align: center" >Encounter length</h5>
+                <h5 style="text-align: center" >Encounter length (Minutes)</h5>
             </ons-col>
         </ons-row>
         <ons-row>
@@ -15,37 +15,8 @@
     </div>
 
     <script type="text/javascript">
-
-        var chartData = getChartData(3);
-        //chartData = JSON.parse(chartData);
-
-        var html = "";
-        var dataLength = chartData.datasets[0].data.length;
-        var tableHeader = "<tr style='background-color:rgba(120,120,120,0.3)'><td></td>";
-        chartData.labels.forEach(function(label,index){
-            if(index < dataLength) {
-                tableHeader += "<td><b>" + label + "</b></td>";
-            }
-        });
-        tableHeader += "<td><b>TOTAL</b></td>";
-        tableHeader += "</tr>";
-        html +=tableHeader;
-
-        chartData.datasets.forEach(function(dataset){
-            var datasetHtml = "<tr style='background-color: " +dataset.tableBackgroundColor+ "'>" +
-                "<td>" + dataset.label + "</td>";
-
-            var total = 0;
-            dataset.data.forEach(function (dataItem) {
-                datasetHtml += "<td>" + dataItem + "</td>";
-                total += dataItem;
-            });
-            datasetHtml += "<td>" + total + "</td></tr>";
-            html += datasetHtml;
-        });
-
+        var html = createChartDataTable("average_encounter_length");
         var tableElement = document.getElementById("ps_table3");
         tableElement.innerHTML = html;
-
     </script>
 </ons-page>

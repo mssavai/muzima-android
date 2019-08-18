@@ -10,8 +10,8 @@
  */
 
 package com.muzima.view.reports;
-import android.os.Bundle;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.webkit.ConsoleMessage;
@@ -21,14 +21,12 @@ import android.webkit.WebView;
 import com.muzima.MuzimaApplication;
 import com.muzima.R;
 import com.muzima.api.model.FormTemplate;
-import com.muzima.api.model.Provider;
+import com.muzima.controller.FormController;
 import com.muzima.domain.Credentials;
 import com.muzima.model.AvailableForm;
-import com.muzima.controller.FormController;
 import com.muzima.utils.StringUtils;
 import com.muzima.utils.javascriptinterface.FormDataJavascriptInterface;
 import com.muzima.utils.javascriptinterface.PerformanceLoggingJavascriptInterface;
-import com.muzima.view.BroadcastListenerActivity;
 import com.muzima.view.progressdialog.MuzimaProgressDialog;
 
 import java.util.HashMap;
@@ -78,7 +76,7 @@ public class ProviderPerformanceReportViewActivity extends ProviderReportViewAct
         webView.getSettings( ).setJavaScriptEnabled(true);
         webView.getSettings( ).setDatabaseEnabled(true);
         webView.getSettings( ).setDomStorageEnabled(true);
-        webView.getSettings( ).setBuiltInZoomControls(true);
+        webView.getSettings( ).setBuiltInZoomControls(false);
 
         webView.addJavascriptInterface(new FormDataJavascriptInterface((MuzimaApplication) getApplicationContext()),
                 "formDataInterface");
@@ -117,9 +115,19 @@ public class ProviderPerformanceReportViewActivity extends ProviderReportViewAct
 
     public void reloadCurrentPage(){
         if (!navigationStack.isEmpty()) {
+            boolean isCurrentPageMapsPage = isCurrentPageMapsPage();
             String currentPageId = navigationStack.pop();
-            loadPage(currentPageId,false);
+            System.out.println("Reloading "+currentPageId);
+            if(isCurrentPageMapsPage) {
+                loadMapsPage();
+            } else {
+                loadPage(currentPageId, false);
+            }
         }
+    }
+
+    public String getCurrentPage(){
+        return navigationStack.peek();
     }
 
     public void loadLoginPage(){

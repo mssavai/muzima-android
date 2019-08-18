@@ -6,3 +6,20 @@ h2,h3,h4{
     margin:7% auto;
     text-align: center;
 }
+
+#map {
+    height: 100%;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+.toolbarItem{
+    font-size:0.8em;
+}
+th.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}

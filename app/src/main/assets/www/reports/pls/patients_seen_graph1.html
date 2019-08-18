@@ -13,14 +13,16 @@
     </div>
     <script type="text/javascript">
 
-        var chartData = getChartData(2);
+        var chartData = getChartData("patients_seen");
+        var labels = getChartDataDates();
+        var datasets = extractDataSets(chartData);
 
         var ctx = document.getElementById('ps_graph2');
         var myChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: chartData.labels,
-                datasets: chartData.datasets
+                labels: labels,
+                datasets: datasets
             },
             options: {
                 scales: {

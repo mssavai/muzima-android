@@ -2,7 +2,7 @@
     <div class="content" style="margin:5% auto auto;">
         <ons-row>
             <ons-col >
-                <h5 style="text-align: center" >Encounter length</h5>
+                <h5 style="text-align: center" >Encounter length (Minutes)</h5>
             </ons-col>
         </ons-row>
         <ons-row>
@@ -13,16 +13,16 @@
     </div>
     <script type="text/javascript">
 
-        var chartData = getChartData(3);
-        //chartData = JSON.parse(chartData);
-
+        var chartData = getChartData("average_encounter_length");
+        var labels = getChartDataDates();
+        var datasets = extractDataSets(chartData);
 
         var ctx = document.getElementById('ps_graph3');
         var myChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: chartData.labels,
-                datasets: chartData.datasets
+                labels: labels,
+                datasets: datasets
             },
             options: {
                 scales: {

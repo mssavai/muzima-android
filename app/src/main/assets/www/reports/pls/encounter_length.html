@@ -1,27 +1,27 @@
 <ons-page id="activity_count">
     <ons-toolbar>
         <div class="left">
-            <ons-toolbar-button onclick="loggingInterface.decrementReportPeriodOffset()">
+            <ons-toolbar-button class="toolbarItem" onclick="loggingInterface.decrementReportPeriodOffset()">
                 <ons-icon icon="md-chevron-left"></ons-icon>
                 <ons-icon icon="md-chevron-left"></ons-icon>
             </ons-toolbar-button>
-            <span class="reportPeriodLabel"></span>
-            <ons-toolbar-button class="incrementReportPeriodButton" onclick="loggingInterface.incrementReportPeriodOffset()">
+            <span  class="toolbarItem reportPeriodLabel"></span>
+            <ons-toolbar-button class="toolbarItem incrementReportPeriodButton" onclick="loggingInterface.incrementReportPeriodOffset()">
                 <ons-icon icon="md-chevron-right"></ons-icon>
                 <ons-icon icon="md-chevron-right"></ons-icon>
             </ons-toolbar-button>
         </div>
         <div class="right">
-            <ons-toolbar-button  onclick="openMenu()">
+            <ons-toolbar-button class="toolbarItem"  onclick="openMenu()">
                 <ons-icon icon="md-menu"></ons-icon>
             </ons-toolbar-button>
         </div>
     </ons-toolbar>
-    <ons-tabbar swipeable position="auto">
-        <ons-tab page="encounter_length_graph1.html" onclick = "loggingInterface.setActiveTab('graphTab')" label="Graph"
+    <ons-tabbar position="bottom" id="encounterlength-onstab">
+        <ons-tab page="encounter_length_graph1.html" label="Graph"  onclick = "loggingInterface.setActiveTab(0)"
                  icon="md-trending-up" class="graphTab" active>
         </ons-tab>
-        <ons-tab page="encounter_length_graph2.html" onclick = "loggingInterface.setActiveTab('tableTab')" label="Table"
+        <ons-tab page="encounter_length_graph2.html" label="Table"  onclick = "loggingInterface.setActiveTab(1)"
                  icon="md-border-all" class="tableTab"
         >
         </ons-tab>
