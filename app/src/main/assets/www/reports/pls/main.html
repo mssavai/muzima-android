@@ -3,7 +3,7 @@
         <div class="left">&nbsp;&nbsp;&nbsp;&nbsp;</div>
         <div class="right">
             <ons-toolbar-button  onclick="openMenu()">
-                <ons-icon icon="md-menu"></ons-icon>
+                <ons-icon class="onsIcon" icon="md-menu"></ons-icon>
             </ons-toolbar-button>
         </div>
     </ons-toolbar>
@@ -13,24 +13,16 @@
         </ons-col>
     </ons-row>
     <div class="main_page_tab_btn_div">
-        <ons-button style="width:70%" modifier="cta" onclick="loadActivityViewer('work_day_length.html')">
-            Work day length
-        </ons-button>
+        <a class="waves-effect waves-light btn" onclick="loadActivityViewer('work_day_length.html')">Work day length</a>
     </div>
     <div class="main_page_tab_btn_div">
-        <ons-button style="width:70%" modifier="cta" onclick="loadActivityViewer('patients_seen.html')">
-            No. of Patients seen
-        </ons-button>
+        <a class="waves-effect waves-light btn" onclick="loadActivityViewer('patients_seen.html')">No. of patients seen</a>
     </div>
     <div class="main_page_tab_btn_div">
-        <ons-button style="width:70%" modifier="cta" onclick="loadActivityViewer('encounter_length.html')">
-            Encounter length
-        </ons-button>
+        <a class="waves-effect waves-light btn" onclick="loadActivityViewer('encounter_length.html')">Encounter length</a>
     </div>
     <div class="main_page_tab_btn_div">
-        <ons-button style="width:70%" modifier="material" onclick="loggingInterface.loadMapsPage()">
-            Activity map
-        </ons-button>
+        <a class="waves-effect waves-light btn" onclick="loggingInterface.loadMapsPage()">Activity map</a>
     </div>
     <script>
         const loadActivityViewer = (viewerName) => {

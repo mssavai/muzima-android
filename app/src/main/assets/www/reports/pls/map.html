@@ -13,19 +13,20 @@
 </head>
 <body>
 <ons-splitter>
+
     <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
 
         <ons-page>
             <ons-list>
                 <ons-list-item tappable>
-                    Report period:
+                    <b style="text-align: left">Choose report period:</b>
                     <ons-list>
                         <ons-list-item onclick="setCurrentReportPeriodAsDaily()" tappable>
                             <label class="left">
                                 <ons-radio id="daily_visualization_period" name="visualization_period" input-id="daily"></ons-radio>
                             </label>
                             <label for="daily">
-                                Show daily reports
+                                <b>Show daily reports</b>
                             </label>
                         </ons-list-item>
                         <ons-list-item onclick="setCurrentReportPeriodAsWeekly()" tappable>
@@ -33,7 +34,7 @@
                                 <ons-radio id="weekly_visualization_period" name="visualization_period" input-id="weekly"></ons-radio>
                             </label>
                             <label for="weekly">
-                                Show weekly reports
+                                <b>Show weekly reports</b>
                             </label>
                         </ons-list-item>
                         <ons-list-item onclick="setCurrentReportPeriodAsMonthly()" tappable>
@@ -41,22 +42,22 @@
                                 <ons-radio id="monthly_visualization_period" name="visualization_period" input-id="monthly"></ons-radio>
                             </label>
                             <label for="monthly" class="center">
-                                Show monthly reports
+                                <b>Show monthly reports</b>
                             </label>
                         </ons-list-item>
                     </ons-list>
                 </ons-list-item>
                 <ons-list-item id="providerSelection">
-                    Select Providers:
+                    <b style="text-align: left">Select providers to show reports:</b>
                     <ons-list id="providerList">
 
                     </ons-list>
                 </ons-list-item>
                 <ons-list-item onclick="loggingInterface.navigateToPage('settings.html')" tappable>
-                    <ons-icon modifier="cta" icon="md-settings"></ons-icon> &nbsp;&nbsp;&nbsp;&nbsp;Settings
+                    <b style="text-align: left">Expected performance settings</b>
                 </ons-list-item>
                 <ons-list-item onclick="loggingInterface.navigateToPage('about.html')" tappable>
-                    <ons-icon modifier="cta" icon="md-help"></ons-icon> &nbsp;&nbsp;&nbsp;&nbsp;Help
+                    <b style="text-align: left">Help</b>
                 </ons-list-item>
             </ons-list>
         </ons-page>

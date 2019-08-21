@@ -7,6 +7,10 @@ h2,h3,h4{
     text-align: center;
 }
 
+.main_page_tab_btn_div a{
+    width:60%;
+}
+
 #map {
     height: 100%;
 }
@@ -18,8 +22,36 @@ html, body {
 .toolbarItem{
     font-size:0.8em;
 }
+.ons-icon{
+    color: #26a69a;
+}
 th.sticky-header {
     position: sticky;
     top: 0;
     z-index: 10;
 }
+#settings-page{
+    background-color: #fff;
+    width:100%;
+    height: 100%;
+    margin:0;
+    padding-top:5%;
+}
+#settings-title,.settings-table{
+    margin:2% auto;
+    width:90%;
+}
+#settings-title,.settings-table label{
+    font-size: 1.1em;
+    color:#222222;
+}
+.section {
+    padding: 10px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    margin: 10px 5px;
+}
+.select-input{
+    width: 30%;
+}
+

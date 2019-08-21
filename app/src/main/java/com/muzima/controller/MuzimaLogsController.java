@@ -29,6 +29,9 @@ public class MuzimaLogsController {
         providers.add("ayeung");
         providers.add("smbugua");
         providers.add("bmokaya");
+        providers.add("mmwaniki");
+        providers.add("pbalirwa");
+        providers.add("fomondi");
         providers.add(currentUser.getUsername() != null ? currentUser.getUsername() : currentUser.getSystemId());
 
         int entries = 30;
@@ -209,6 +212,28 @@ public class MuzimaLogsController {
             put("full_name","Benard Mokaya");
             put("role","provider");
             put("color","100, 60, 32");
+            put("isLoggedIn","false");
+        }});
+
+        providers.add(new JSONObject(){{
+            put("id","mmwaniki");
+            put("full_name","Michael Mwaniki");
+            put("role","provider");
+            put("color","99, 255, 132");
+            put("isLoggedIn","false");
+        }});
+        providers.add(new JSONObject(){{
+            put("id","pbalirwa");
+            put("full_name","Priscilla Balirwa");
+            put("role","provider");
+            put("color","199, 70, 32");
+            put("isLoggedIn","false");
+        }});
+        providers.add(new JSONObject(){{
+            put("id","fomondi");
+            put("full_name","Felix Omondi");
+            put("role","provider");
+            put("color","60, 100, 32");
             put("isLoggedIn","false");
         }});
         details.put("providers",providers);

@@ -1,58 +1,109 @@
+
 <ons-page>
     <ons-toolbar>
-        <div class="left">&nbsp;&nbsp;&nbsp;&nbsp; Settings</div>
+        <div class="left">&nbsp;&nbsp;&nbsp;&nbsp; Expected performance settings</div>
         <div class="right">
             <ons-toolbar-button  onclick="openMenu()">
                 <ons-icon icon="md-menu"></ons-icon>
             </ons-toolbar-button>
         </div>
     </ons-toolbar>
-    <ons-row style="margin: 10% auto;">
-        <ons-col style="text-align: center;">
-            <strong>Patients to be seen by providers daily:</strong>
-        </ons-col>
-        <ons-col style="text-align: center;">
-            <select class="select-input select-input--material">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>6</option>
-            </select>
-        </ons-col>
-    </ons-row>
-    <hr />
-    <ons-row style="margin: 10% auto;">
-        <ons-col style="text-align: center;">
-            <strong>Number of work hours per day:</strong>
-        </ons-col>
-        <ons-col style="text-align: center;">
-            <select class="select-input select-input--material">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>6</option>
-            </select>
-        </ons-col>
-    </ons-row>
-    <hr />
-    <ons-row style="margin: 10% auto;">
-        <ons-col style="text-align: center;">
-            <strong>Number of minutes a Provider spents  seeing a Patient:</strong>
-        </ons-col>
-        <ons-col style="text-align: left;">
-            <select class="select-input select-input--material">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>6</option>
-            </select>
-        </ons-col>
-    </ons-row>
-    <hr />
+    <ons-dialog id="my-dialog" style="display: none">
+        <div style="text-align: center; padding: 10px;">
+            <table class="settings-table highlight">
+                <tr style="background-color:#E9EDFD">
+                    <td><label for="patients-seen">Expected number of patients to be seen by providers daily:</label></td>
+                    <td><select style="width:45px" id="patients-seen" class="select-input select-input--material">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                    </select>
+                    </td>
+                </tr>
+                <tr style="background-color:#FCFDE9">
+                    <td><label for="expected-work-hours">Expected number of work hours per day:</label></td>
+                    <td>
+                        <select style="width:45px" id="expected-work-hours" class="select-input select-input--material">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr style="background-color:#FDE9EB">
+                    <td><label for="encounter-length">Expected number of minutes a Provider spents  seeing a Patient:</label></td>
+                    <td>
+                        <select style="width:45px" id="encounter-length" class="select-input select-input--material">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align:center">
+                        <a class="waves-effect waves-light btn" style="background-color:#ffd180;" onclick="hideDialog()">Cancel</a>
+                        <a class="waves-effect waves-light btn" onclick="hideDialog()">Save</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </ons-dialog>
+    <div id="settings-page">
+        <table class="settings-table highlight">
+            <tr style="background-color:#E9EDFD">
+                <td><label>Patients to be seen by providers daily:</label></td>
+                <td>
+                    <span id="patients-seen-view">2</span> patients
+                </td>
+            </tr>
+            <tr style="background-color:#FCFDE9">
+                <td><label>Number of work hours per day:</label></td>
+                <td>
+                    <span id="expected-work-hours-view">2</span> hours
+                </td>
+            </tr>
+            <tr style="background-color:#FDE9EB">
+                <td><label>Number of minutes a Provider spents  seeing a Patient:</label></td>
+                <td>
+                    <span id="encounter-length-view">2</span> minutes
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align:center">
+                    <a class="waves-effect waves-light btn" onclick="showTemplateDialog()">Update</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <script>
+        var showTemplateDialog = function() {
+            var dialog = document.getElementById('my-dialog');
+
+            if (dialog) {
+                dialog.show();
+            } else {
+                ons.createElement('dialog.html', { append: true })
+                    .then(function(dialog) {
+                        dialog.show();
+                    });
+            }
+        };
+
+        var hideDialog = function() {
+            document
+                .getElementById('my-dialog')
+                .hide();
+        };
+    </script>
 </ons-page>
+

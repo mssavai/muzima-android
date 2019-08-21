@@ -6,6 +6,7 @@
 
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/materialize/materialicons.css">
     <link rel="stylesheet" href="css/onsenui.css">
     <link rel="stylesheet" href="css/onsen-css-components.min.css">
     <link rel="stylesheet" href="css/material-design-iconic-font/css/material-design-iconic-font.min.css"/>
@@ -70,72 +71,119 @@
     </ons-splitter-side>
     <ons-splitter-content>
         <ons-navigator id="navigator">
+
             <ons-page>
                 <ons-toolbar>
-                    <div class="left">
-                        <ons-toolbar-button onclick="loggingInterface.decrementReportPeriodOffset()">
-                            <ons-icon icon="md-chevron-left"></ons-icon>
-                            <ons-icon icon="md-chevron-left"></ons-icon>
-                        </ons-toolbar-button>
-                        <span class="reportPeriodLabel"></span>
-                        <ons-toolbar-button
-                                class="incrementReportPeriodButton"
-                                onclick="loggingInterface.incrementReportPeriodOffset()">
-                            <ons-icon icon="md-chevron-right"></ons-icon>
-                            <ons-icon icon="md-chevron-right"></ons-icon>
-                        </ons-toolbar-button>
-                    </div>
+                    <div class="left">&nbsp;&nbsp;&nbsp;&nbsp; Expected performance settings</div>
                     <div class="right">
                         <ons-toolbar-button  onclick="openMenu()">
-                            <ons-icon icon="md-menu"></ons-icon>
+                            <i class="material-icons">menu</i>
                         </ons-toolbar-button>
                     </div>
                 </ons-toolbar>
+                <ons-dialog id="my-dialog" style="dis">
+                    <div style="text-align: center; padding: 10px;">
+                        <table id="settings-table" class="highlight">
+                            <tr style="background-color:  #FDE9EB ">
+                                <td><label for="patients-seen">Patients to be seen by providers daily:</label></td>
+                                <td><select style="width:60%" id="patients-seen" class="select-input select-input--material">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                </select>
+                                </td>
+                            </tr>
+                            <tr style="background-color: #FCFDE9">
+                                <td><label for="expected-work-hours">Number of work hours per day:</label></td>
+                                <td>
+                                    <select id="expected-work-hours" class="select-input select-input--material">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                        <option>6</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#E9EDFD">
+                                <td><label for="encounter-length">Number of minutes a Provider spents  seeing a Patient:</label></td>
+                                <td>
+                                    <select id="encounter-length" class="select-input select-input--material">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                        <option>6</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="text-align:center"><ons-button>Save</ons-button></td>
+                            </tr>
+                        </table>
+                    </div>
+                </ons-dialog>
+                <div id="settings-page">
+                    <table id="settings-table" class="highlight">
+                        <tr>
+                            <td><label>Patients to be seen by providers daily:</label></td>
+                            <td>
+                                <span id="patients-seen">2</span> patients
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label>Number of work hours per day:</label></td>
+                            <td>
+                                <span id="expected-work-hours">2</span> hours
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label>Number of minutes a Provider spents  seeing a Patient:</label></td>
+                            <td>
+                                <span id="encounter-length">2</span> minutes
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align:center">
+                                <ons-button modifier="light" onclick="showTemplateDialog()">Update</ons-button>
+                                <a class="waves-effect waves-light btn">Cancel</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <script>
+                    var showTemplateDialog = function() {
+                        var dialog = document.getElementById('my-dialog');
 
-                <div id="map"></div>
+                        if (dialog) {
+                            dialog.show();
+                        } else {
+                            ons.createElement('dialog.html', { append: true })
+                                .then(function(dialog) {
+                                    dialog.show();
+                                });
+                        }
+                    };
+
+                    var hideDialog = function(id) {
+                        document
+                            .getElementById(id)
+                            .hide();
+                    };
+                </script>
             </ons-page>
+
+
         </ons-navigator>
     </ons-splitter-content>
 </ons-splitter>
 
-<script>
 
-    var map;
-
-    function initMap() {
-        var mapData = loggingInterface.getMapData();
-        //mapData = '[{"label":"Ada","locations":[{"lat":"-0.10221","lng":"34.76171"}]}]';
-        mapData = JSON.parse(mapData);
-        map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 7,
-            center: new google.maps.LatLng(-0.10221,34.76171),
-        });
-
-       // mapData.locations = [{lat:-0.10221,lng:34.76171}]
-        var markers = [];
-        mapData.map(function(data,i){
-            console.log(data.label);
-            var m = data.locations.map(function(location, j) {
-                console.log(j+" "+data.label.charAt(0));
-                return new google.maps.Marker({
-                    position: location,
-                    label: data.label.charAt(0)
-                });
-            });
-            markers.push(m);
-        });
-
-
-        var markerCluster = new MarkerClusterer(map, markers,
-            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-
-    }
-</script>
-<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
-</script>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDaVjEJijwSaMCfNj8UOBg2wun_xr4PEOI&callback=initMap">
-</script>
 <script>
     const navigator = document.querySelector('#navigator');
     document.loadPage = function(pageToLoad)
@@ -253,37 +301,7 @@
 
 
     var providerSelectorElement = document.getElementById("providerSelection");
-    if(loggingInterface.isCurrentUserSupervisor()){
-        //addSelectedProvider("ayeung");
-        var providerListSelectionHtml = "<ons-list-item tappable>\n" +
-            "<label class=\"left\">" +
-            "<ons-checkbox name=\"provider\" onchange=\"toggleSelectedProvider('ayeung')\"" +
-            "input-id=\"ayeung\"" +
-            "checked></ons-checkbox>" +
-            "Ada Yeung" +
-            "</label>" +
-            "</ons-list-item>";
-        var providers = loggingInterface.getProviders();
-        providers = JSON.parse(providers);
-        providers.forEach(function(provider){
-            addSelectedProvider(provider.username);
-            providerListSelectionHtml += "<ons-list-item tappable>\n" +
-                "<label class=\"left\">\n" +
 
-                "<ons-checkbox name=\"provider\" onchange=\"toggleSelectedProvider('"+provider.username+"')\"" +
-                "input-id=\""+provider.username+"\"" +
-                "></ons-checkbox>" +
-                provider.name +
-                "</label>" +
-                "</ons-list-item>";
-            console.log(providerListSelectionHtml);
-        });
-        var providerListElement = document.getElementById("providerList");
-        providerListElement.innerHTML = providerListSelectionHtml;
-        providerSelectorElement.style.display = 'show';
-    } else {
-        providerSelectorElement.style.display = 'none';
-    }
 
 </script>
 </body>

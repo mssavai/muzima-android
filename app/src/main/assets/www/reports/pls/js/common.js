@@ -150,14 +150,14 @@ console.log("in setUpProviderList");
                     addSelectedProvider(provider.id);
                 }
                 providerListSelectionHtml += "<ons-list-item tappable>" +
-                    "<label class=\"left\">" +
+                    "<label class=\"left\"><b>" +
 
                     "<ons-checkbox " + checked + " name=\"provider\"" +
                     " onchange=\"toggleSelectedProvider('" + provider.id + "')\"" +
                     " input-id=\"" + provider.id + "\"" +
                     "></ons-checkbox>" +
                     provider.full_name + " (" + provider.id + ")" +
-                    "</label>" +
+                    "</b></label>" +
                     "</ons-list-item>";
             } else if (provider.isLoggedIn === "true") {
                 addSelectedProvider(provider.id);
