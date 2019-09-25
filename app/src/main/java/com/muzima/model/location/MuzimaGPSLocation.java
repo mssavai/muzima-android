@@ -2,12 +2,10 @@ package com.muzima.model.location;
 
 import android.location.Location;
 
-import org.apache.lucene.document.DateTools;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MuzimaGPSLocation {
@@ -19,6 +17,7 @@ public class MuzimaGPSLocation {
     private String speed;
     private String bearing;
     private String accuracy;
+    private String provider;
 
     private Location location;
 
@@ -26,7 +25,7 @@ public class MuzimaGPSLocation {
         this.location = location;
 
         if (location != null){
-            intialiseLocationData();
+            initializeLocationData();
         }
     }
 
@@ -58,6 +57,10 @@ public class MuzimaGPSLocation {
         this.bearing = String.valueOf(location.getBearing());
     }
 
+    private void setProvider() {
+        this.provider = location.getProvider();
+    }
+
     private String getFormartedDateTime(){
         Date date = new Date();
         date.setTime(location.getTime());
@@ -65,7 +68,7 @@ public class MuzimaGPSLocation {
         return  date.toString();
     }
 
-    private void intialiseLocationData(){
+    private void initializeLocationData(){
         setAltitude();
         setBearing();
         setLatitude();
@@ -73,6 +76,7 @@ public class MuzimaGPSLocation {
         setSpeed();
         setAccuracy();
         setTimeStamp();
+        setProvider();
     }
 
     @Override

@@ -26,6 +26,7 @@ import com.muzima.adapters.patients.PatientAdapterHelper;
 import com.muzima.api.model.Encounter;
 import com.muzima.api.model.Patient;
 import com.muzima.controller.PatientController;
+import com.muzima.service.MuzimaLoggerService;
 import com.muzima.utils.Fonts;
 import com.muzima.view.BroadcastListenerActivity;
 import com.muzima.view.patients.PatientSummaryActivity;
@@ -45,6 +46,8 @@ public class EncountersActivity extends BroadcastListenerActivity implements Ada
         setupPatientMetadata();
         setupStillLoadingView();
         setupPatientEncounters();
+        MuzimaLoggerService.log(this,"VIEW_CLIENT_ENCOUNTERS","{\"patientuuid\":\""+patient.getUuid()+"\"}");
+
     }
 
     private void setupPatientMetadata() {

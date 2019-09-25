@@ -278,7 +278,7 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(Result result) {
             if (result.status == SyncStatusConstants.AUTHENTICATION_SUCCESS) {
                 MuzimaLoggerService.log(((MuzimaApplication)getApplicationContext()).getMuzimaContext(),"LOGIN_SUCCESS",
-                        "{\"userId\":\"" +result.credentials.getUserName()+"\"}");
+                        result.credentials.getUserName(),"{}");
                 new CredentialsPreferenceService(getApplicationContext()).saveCredentials(result.credentials);
                 ((MuzimaApplication) getApplication()).restartTimer();
                 LocalePreferenceService localePreferenceService = ((MuzimaApplication) getApplication()).getLocalePreferenceService();
@@ -296,7 +296,7 @@ public class LoginActivity extends Activity {
                 startNextActivity();
             } else {
                 MuzimaLoggerService.log(((MuzimaApplication)getApplicationContext()).getMuzimaContext(),"LOGIN_FAILURE",
-                        "{\"userId\":\"" +result.credentials.getUserName()+"\"}");
+                        result.credentials.getUserName(),"{}");
                 Toast.makeText(getApplicationContext(), getErrorText(result), Toast.LENGTH_SHORT).show();
                 if (authenticatingText.getVisibility() == View.VISIBLE || flipFromLoginToAuthAnimator.isRunning()) {
                     flipFromLoginToAuthAnimator.cancel();

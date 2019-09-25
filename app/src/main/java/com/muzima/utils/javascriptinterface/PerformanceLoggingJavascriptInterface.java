@@ -1,14 +1,13 @@
 package com.muzima.utils.javascriptinterface;
 
-import android.util.Log;
 import android.webkit.JavascriptInterface;
 import com.muzima.MuzimaApplication;
-import com.muzima.api.model.LogStatistic;
 import com.muzima.controller.MuzimaLogsController;
 import com.muzima.util.JsonUtils;
 import com.muzima.view.reports.ProviderPerformanceReportViewActivity;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
+import com.muzima.model.LogStatistic;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -33,6 +32,7 @@ public class PerformanceLoggingJavascriptInterface {
     //ToDo: load javascriptAppContext from database
     private  static final JavascriptAppContext javascriptAppContext = new JavascriptAppContext();
     private String activeTab;
+    private String expectedPerformance;
 
     public PerformanceLoggingJavascriptInterface(ProviderPerformanceReportViewActivity providerReportViewActivity){
         this.providerReportViewActivity = providerReportViewActivity;
@@ -120,6 +120,28 @@ public class PerformanceLoggingJavascriptInterface {
     }
 
     @JavascriptInterface
+    public String getExpectedPerformance() {
+        MuzimaLogsController logsController = ((MuzimaApplication) providerReportViewActivity.getApplicationContext()).getMuzimaLogsController();
+        LogStatistic performanceStats = null;
+        List<LogStatistic> logStatistics = logsController.getLogStatisticsByTag("expectedPerformance");
+        for(LogStatistic logStatistic:logStatistics){
+            performanceStats = logStatistic;
+        }
+        if(performanceStats != null){
+            return performanceStats.getDetails();
+        }
+        if(expectedPerformance == null){
+            expectedPerformance = "{\"patients_seen\":\"6\",\"work_hours\":\"7\",\"encounter_length\":\"30\"}";
+        }
+        return expectedPerformance;
+    }
+
+    @JavascriptInterface
+    public void setExpectedPerformance(String patientsSeen, String workHours, String encounterLength) {
+        expectedPerformance = "{\"patients_seen\":\""+patientsSeen+"\",\"work_hours\":\""+workHours+"\",\"encounter_length\":\""+encounterLength+"\"}";
+    }
+
+    @JavascriptInterface
     public String getChartDataDates(){
         JSONArray labels = new JSONArray();
         int datesOffset = javascriptAppContext.getReportPeriodOffset();
@@ -136,15 +158,6 @@ public class PerformanceLoggingJavascriptInterface {
     @JavascriptInterface
     public String getMapData(){
         return getChartData(LOCATIONS_COLLECTION_KEY);
-    }
-
-    @JavascriptInterface
-    public void downloadStatistics(){
-        try {
-            muzimaApplication.getMuzimaLogsController().downloadlogStatistics();
-        } catch (IOException e) {
-            Log.e("TESTING","Test",e);
-        }
     }
 
     @JavascriptInterface

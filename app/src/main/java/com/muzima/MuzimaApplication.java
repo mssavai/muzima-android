@@ -44,6 +44,7 @@ import com.muzima.controller.SmartCardController;
 import com.muzima.domain.Credentials;
 import com.muzima.service.CohortPrefixPreferenceService;
 import com.muzima.service.LocalePreferenceService;
+import com.muzima.service.MuzimaLocationService;
 import com.muzima.service.MuzimaLoggerService;
 import com.muzima.service.MuzimaSyncService;
 import com.muzima.service.SntpService;
@@ -61,6 +62,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Security;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -97,6 +99,7 @@ public class MuzimaApplication extends MultiDexApplication {
     private LocationController locationController;
     private ProviderController providerController;
     private MuzimaSyncService muzimaSyncService;
+    private MuzimaLocationService muzimaLocationService;
     private CohortPrefixPreferenceService prefixesPreferenceService;
     private LocalePreferenceService localePreferenceService;
     private SetupConfigurationController setupConfigurationController;
@@ -196,6 +199,14 @@ public class MuzimaApplication extends MultiDexApplication {
         }
 
         return authenticatedUser;
+    }
+
+    public String getAuthenticatedUserId(){
+        User authenticatedUser = getAuthenticatedUser();
+        if(authenticatedUser != null)
+            return authenticatedUser.getUsername() != null ? authenticatedUser.getUsername():authenticatedUser.getSystemId();
+        return "null";
+
     }
 
     public ConceptController getConceptController() {
@@ -320,6 +331,13 @@ public class MuzimaApplication extends MultiDexApplication {
         return muzimaSyncService;
     }
 
+    public MuzimaLocationService getMuzimaLocationService() {
+        if (muzimaLocationService == null) {
+            muzimaLocationService = new MuzimaLocationService(this);
+        }
+        return muzimaLocationService;
+    }
+
     public CohortPrefixPreferenceService getCohortPrefixesPreferenceService() {
         if (prefixesPreferenceService == null) {
             prefixesPreferenceService = new CohortPrefixPreferenceService(this);
@@ -370,7 +388,7 @@ public class MuzimaApplication extends MultiDexApplication {
     public MuzimaLogsController getMuzimaLogsController() {
         if(muzimaLogsController == null){
             try {
-                muzimaLogsController = new MuzimaLogsController(muzimaContext.getLogStatisticService());
+                muzimaLogsController = new MuzimaLogsController(muzimaContext.getEncounterStatisticService());
             } catch (IOException e){
                 throw new RuntimeException(e);
             }
@@ -389,7 +407,12 @@ public class MuzimaApplication extends MultiDexApplication {
     public void logOut() {
         if(authenticatedUser != null) {
             MuzimaLoggerService.log(getMuzimaContext(), "USER_LOGOUT",
-                    "{\"userId\":\"" + authenticatedUser.getUsername() + "\"}");
+                    getAuthenticatedUserId(), "{}");
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
         }
         saveBeforeExit();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);

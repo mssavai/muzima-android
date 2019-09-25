@@ -45,35 +45,35 @@
                 android:baselineAligned="false"
                 android:weightSum="100">
 
-                <!--<RelativeLayout-->
-                    <!--style="@style/ClickableGridItem"-->
-                    <!--android:layout_weight="50"-->
-                    <!--android:onClick="cohortList"-->
-                    <!--android:orientation="vertical">-->
+                <RelativeLayout
+                    style="@style/ClickableGridItem"
+                    android:layout_weight="50"
+                    android:onClick="cohortList"
+                    android:orientation="vertical">
 
-                    <!--<TextView-->
-                        <!--style="@style/DashboardListItemPrimaryText"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:gravity="left"-->
-                        <!--android:text="@string/general_cohorts"/>-->
+                    <TextView
+                        style="@style/DashboardListItemPrimaryText"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:text="@string/general_cohorts"/>
 
-                    <!--<ImageView-->
-                            <!--android:id="@+id/pendingUpdateImg"-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:layout_alignParentRight="true"-->
-                            <!--app:srcCompat="@drawable/pending_update"-->
-                            <!--android:tint="#990000"-->
-                            <!--android:visibility="gone"-->
-                            <!--android:contentDescription="@string/info_downloaded_image"/>-->
+                    <ImageView
+                            android:id="@+id/pendingUpdateImg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            app:srcCompat="@drawable/pending_update"
+                            android:tint="#990000"
+                            android:visibility="gone"
+                            android:contentDescription="@string/info_downloaded_image"/>
 
-                    <!--<TextView-->
-                        <!--android:id="@+id/cohortDescription"-->
-                        <!--style="@style/DashboardItemDescription"-->
-                        <!--android:layout_alignParentBottom="true"-->
-                        <!--android:text="@string/synced_total_label_text"/>-->
+                    <TextView
+                        android:id="@+id/cohortDescription"
+                        style="@style/DashboardItemDescription"
+                        android:layout_alignParentBottom="true"
+                        android:text="@string/synced_total_label_text"/>
 
-                <!--</RelativeLayout>-->
+                </RelativeLayout>
 
                 <RelativeLayout
                         style="@style/ClickableGridItem"
@@ -94,24 +94,24 @@
 
                 </RelativeLayout>
 
-                <RelativeLayout
-                        style="@style/ClickableGridItem"
-                        android:layout_weight="50"
-                        android:onClick="providerReports">
+                <!--<RelativeLayout-->
+                        <!--style="@style/ClickableGridItem"-->
+                        <!--android:layout_weight="50"-->
+                        <!--android:onClick="providerReports">-->
 
-                    <TextView
-                            style="@style/DashboardListItemPrimaryText"
-                            android:layout_height="wrap_content"
-                            android:gravity="left"
-                            android:text="Reports"/>
+                    <!--<TextView-->
+                            <!--style="@style/DashboardListItemPrimaryText"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:gravity="left"-->
+                            <!--android:text="Reports"/>-->
 
-                    <TextView
-                            android:id="@+id/providerReportDescription"
-                            style="@style/DashboardItemDescription"
-                            android:layout_alignParentBottom="true"
-                            android:text="@string/synced_label_text"/>
+                    <!--<TextView-->
+                            <!--android:id="@+id/providerReportDescription"-->
+                            <!--style="@style/DashboardItemDescription"-->
+                            <!--android:layout_alignParentBottom="true"-->
+                            <!--android:text="@string/synced_label_text"/>-->
 
-                </RelativeLayout>
+                <!--</RelativeLayout>-->
 
             </LinearLayout>
 

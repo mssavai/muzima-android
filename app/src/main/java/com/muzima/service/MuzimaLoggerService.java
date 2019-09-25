@@ -2,22 +2,40 @@ package com.muzima.service;
 
 import android.os.AsyncTask;
 import android.os.Build;
+import android.util.Log;
+import com.muzima.MuzimaApplication;
 import com.muzima.api.context.Context;
+import com.muzima.api.model.User;
 import com.muzima.util.MuzimaLogger;
+import com.muzima.utils.StringUtils;
 
+import java.io.IOException;
 import java.util.UUID;
 
 public class MuzimaLoggerService {
     private static String pseudoDeviceId = null;
 
-    public static void log(final Context context, final String tag, final String details){
+    public static void log(final Context context, final String tag, final String userId, final String details){
         new AsyncTask<Void,Void,Void>(){
             protected Void doInBackground(Void... voids) {
                 String deviceId = getPseudoDeviceId();
-                MuzimaLogger.log(context, tag, details, deviceId);
+                System.out.println("Saving log: "+"tag="+tag+" ,userId="+userId+" , details="+details+" , deviceId="+deviceId);
+                MuzimaLogger.log(context, tag,userId, details, deviceId);
                 return null;
             }
         }.execute();
+    }
+
+    public static void log(final android.content.Context applicationContext, final String tag, final String details){
+        Context context = ((MuzimaApplication)applicationContext.getApplicationContext()).getMuzimaContext();
+        User authenticatedUser = ((MuzimaApplication)applicationContext.getApplicationContext()).getAuthenticatedUser();
+        if(authenticatedUser != null) {
+            String userId = StringUtils.isEmpty(authenticatedUser.getUsername()) ?
+                    authenticatedUser.getSystemId():authenticatedUser.getUsername();
+            log(context, tag,userId, details);
+        } else {
+            System.out.println("Could not save logsA");
+        }
     }
 
 

@@ -58,6 +58,7 @@ import com.muzima.controller.ObservationController;
 import com.muzima.model.BaseForm;
 import com.muzima.model.FormWithData;
 import com.muzima.service.GPSFeaturePreferenceService;
+import com.muzima.service.MuzimaLoggerService;
 import com.muzima.utils.audio.AudioResult;
 import com.muzima.utils.barcode.BarCodeScannerIntentIntegrator;
 import com.muzima.utils.barcode.IntentResult;
@@ -68,6 +69,7 @@ import com.muzima.view.patients.PatientSummaryActivity;
 import com.muzima.view.progressdialog.MuzimaProgressDialog;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -122,6 +124,8 @@ public class HTMLFormWebViewActivity extends BroadcastListenerActivity {
     private boolean encounterProviderPreference;
     private final Handler handler = new Handler();
 
+    private boolean isFormReload;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,7 +160,6 @@ public class HTMLFormWebViewActivity extends BroadcastListenerActivity {
             Log.e(getClass().getSimpleName(), t.getMessage(), t);
         }
         super.onStart();
-
     }
 
     @Override
@@ -256,6 +259,7 @@ public class HTMLFormWebViewActivity extends BroadcastListenerActivity {
             progressDialog.dismiss();
         }
         stopAutoSaveProcess();
+        logFormClosed();
         super.onDestroy();
     }
 
@@ -341,18 +345,6 @@ public class HTMLFormWebViewActivity extends BroadcastListenerActivity {
                 .show();
     }
 
-    public void showWarningDialog(String saveType) {
-        new AlertDialog.Builder(HTMLFormWebViewActivity.this)
-                .setCancelable(true)
-                .setIcon(getResources().getDrawable(R.drawable.ic_warning))
-                .setTitle(getResources().getString(R.string.title_duplicate_form_data_warning))
-                .setMessage(getResources().getString(R.string.warning_form_data_already_exists))
-                .setPositiveButton(getString(R.string.confirm_duplicate_form_data_save), duplicateFormDataClickListener(saveType))
-                .setNegativeButton(getString(R.string.general_cancel), null)
-                .create()
-                .show();
-    }
-
     public void showWarningDialog() {
         new AlertDialog.Builder(HTMLFormWebViewActivity.this)
                 .setCancelable(true)
@@ -362,20 +354,6 @@ public class HTMLFormWebViewActivity extends BroadcastListenerActivity {
                 .setNegativeButton(getString(R.string.general_ok), null)
                 .create()
                 .show();
-    }
-
-    private Dialog.OnClickListener duplicateFormDataClickListener(final String saveType) {
-
-        return new Dialog.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (saveType.equals(SAVE_AS_INCOMPLETE)) {
-                    webView.loadUrl("javascript:document.saveDraft()");
-                } else if (saveType.equals(SAVE_AS_COMPLETED)) {
-                    webView.loadUrl("javascript:document.submit()");
-                }
-            }
-        };
     }
 
     private void autoSaveForm() {
@@ -452,8 +430,10 @@ public class HTMLFormWebViewActivity extends BroadcastListenerActivity {
 
         if (baseForm.hasData()) {
             formData = formController.getFormDataByUuid(((FormWithData) baseForm).getFormDataUuid());
+            isFormReload = true;
         } else {
             createNewFormData();
+            isFormReload = false;
         }
     }
 
@@ -476,7 +456,6 @@ public class HTMLFormWebViewActivity extends BroadcastListenerActivity {
         }
     }
 
-
     private void setupWebView() {
         webView = findViewById(R.id.webView);
         webView.setWebChromeClient(createWebChromeClient());
@@ -497,7 +476,7 @@ public class HTMLFormWebViewActivity extends BroadcastListenerActivity {
         webView.addJavascriptInterface(imagingComponent, IMAGE);
         webView.addJavascriptInterface(audioComponent, AUDIO);
         webView.addJavascriptInterface(videoComponent, VIDEO);
-        webView.addJavascriptInterface(new HTMLFormDataStore(this, formData,
+        webView.addJavascriptInterface(new HTMLFormDataStore(this, formData,isFormReload,
                 (MuzimaApplication) getApplicationContext()), HTML_DATA_STORE);
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         if (isFormComplete()) {
@@ -567,6 +546,17 @@ public class HTMLFormWebViewActivity extends BroadcastListenerActivity {
                 processBackButtonPressed();
             }
         };
+    }
+
+    private void logFormClosed(){
+        try {
+            JSONObject eventDetails = new JSONObject();
+            eventDetails.put("patientuuid", formData.getPatientUuid());
+            eventDetails.put("formDataUuid", formData.getUuid());
+            MuzimaLoggerService.log(this,"FORM_CLOSED",eventDetails.toString());
+        } catch (JSONException e) {
+            Log.e(getClass().getSimpleName(),"Cannot create log",e);
+        }
     }
 
     private void processBackButtonPressed() {

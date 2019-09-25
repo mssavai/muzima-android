@@ -209,18 +209,18 @@ $(document).ready(function () {
             $(this).find('input:text').each(function(){
                 $(this).val($.trim($(this).val()));
             });
-            save("complete", false);
+            save("complete", false, true);
         } else {
             addValidationMessage();
         }
     };
 
     document.autoSaveForm = function () {
-        save("incomplete", true);
+        save("incomplete", true, false);
     };
 
     document.saveDraft = function () {
-        save("incomplete", false);
+        save("incomplete", false, true);
         return false;
     };
     document.preSaveScheduledTasks = [];
@@ -243,7 +243,7 @@ $(document).ready(function () {
         nextTask();
     }
 
-    var save = function (status, keepFormOpen) {
+    var save = function (status, keepFormOpen, isTerminalEvent) {
         new Promise((resolve, reject) => {
             if(document.preSaveScheduledTasks.length > 0 && status == "complete"){
                 runPreSaveScheduledTasks();
@@ -259,7 +259,7 @@ $(document).ready(function () {
                 /*Start of populating data entry completion timestamp*/
             }
             var jsonData = JSON.stringify($('form').serializeEncounterForm());
-            htmlDataStore.saveHTML(jsonData, status, keepFormOpen);
+            htmlDataStore.saveHTML(jsonData, status, keepFormOpen, isTerminalEvent);
         });
     };
 

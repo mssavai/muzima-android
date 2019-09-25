@@ -226,24 +226,24 @@ public class MainActivity extends BroadcastListenerActivity {
 
         @Override
         protected void onPostExecute(HomeActivityMetadata homeActivityMetadata) {
-//            TextView cohortsDescriptionView = mMainView.findViewById(R.id.cohortDescription);
-//            cohortsDescriptionView.setText(getString(R.string.hint_dashboard_cohorts_description,
-//                    homeActivityMetadata.syncedCohorts, homeActivityMetadata.totalCohorts));
+            TextView cohortsDescriptionView = mMainView.findViewById(R.id.cohortDescription);
+            cohortsDescriptionView.setText(getString(R.string.hint_dashboard_cohorts_description,
+                    homeActivityMetadata.syncedCohorts, homeActivityMetadata.totalCohorts));
 
-//            ImageView cortUpdateAvailable = (ImageView) mMainView.findViewById(R.id.pendingUpdateImg);
-//            if(homeActivityMetadata.isCohortUpdateAvailable){
-//                cortUpdateAvailable.setVisibility(View.VISIBLE);
-//            } else {
-//                cortUpdateAvailable.setVisibility(View.GONE);
-//            }
+            ImageView cortUpdateAvailable = (ImageView) mMainView.findViewById(R.id.pendingUpdateImg);
+            if(homeActivityMetadata.isCohortUpdateAvailable){
+                cortUpdateAvailable.setVisibility(View.VISIBLE);
+            } else {
+                cortUpdateAvailable.setVisibility(View.GONE);
+            }
 
             TextView patientDescriptionView = mMainView.findViewById(R.id.patientDescription);
             patientDescriptionView.setText(getString(R.string.hint_dashboard_clients_description,
                     homeActivityMetadata.syncedPatients));
 
-            TextView providerReportDescriptionView = mMainView.findViewById(R.id.providerReportDescription);
-            providerReportDescriptionView.setText(getString(R.string.hint_dashboard_clients_description,
-                    homeActivityMetadata.totalProviderReports));
+//            TextView providerReportDescriptionView = mMainView.findViewById(R.id.providerReportDescription);
+//            providerReportDescriptionView.setText(getString(R.string.hint_dashboard_clients_description,
+//                    homeActivityMetadata.totalProviderReports));
 
             TextView formsDescription = mMainView.findViewById(R.id.formDescription);
             formsDescription.setText(getString(R.string.hint_dashboard_forms_description,

@@ -46,6 +46,7 @@ import com.muzima.service.GPSFeaturePreferenceService;
 import com.muzima.service.HTMLFormObservationCreator;
 import com.muzima.service.MuzimaLoggerService;
 import com.muzima.service.MuzimaLocationService;
+import com.muzima.util.JsonUtils;
 import com.muzima.utils.Constants;
 import com.muzima.utils.StringUtils;
 
@@ -55,6 +56,7 @@ import org.json.JSONException;
 
 import com.muzima.controller.EncounterController;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,6 +69,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static com.muzima.utils.Constants.STANDARD_DATE_FORMAT;
+import static com.muzima.utils.Constants.STATUS_COMPLETE;
+import static com.muzima.utils.Constants.STATUS_INCOMPLETE;
 
 
 class HTMLFormDataStore {
@@ -81,8 +85,9 @@ class HTMLFormDataStore {
     private final EncounterController encounterController;
     private final MuzimaApplication application;
     private final MuzimaSettingController settingController;
+    private final MuzimaLocationService muzimaLocationService;
 
-    public HTMLFormDataStore(HTMLFormWebViewActivity formWebViewActivity, FormData formData, MuzimaApplication application) {
+    public HTMLFormDataStore(HTMLFormWebViewActivity formWebViewActivity, FormData formData, boolean isFormReload, MuzimaApplication application) {
         this.formWebViewActivity = formWebViewActivity;
         this.formData = formData;
 
@@ -93,7 +98,9 @@ class HTMLFormDataStore {
         this.conceptController = application.getConceptController();
         this.encounterController = application.getEncounterController();
         this.observationController = application.getObservationController();
+        this.muzimaLocationService = application.getMuzimaLocationService();
         this.application = application;
+        logFormStartEvent(isFormReload);
     }
 
     @JavascriptInterface
@@ -102,12 +109,76 @@ class HTMLFormDataStore {
     }
 
     @JavascriptInterface
-    public void saveHTML(String jsonPayload, String status) {
-        saveHTML(jsonPayload, status, false);
+    public void saveHTML(String jsonPayload, String status, boolean isTerminalEvent) {
+        saveHTML(jsonPayload, status, false, isTerminalEvent);
+    }
+
+    private void logFormStartEvent(boolean isFormReload){
+        try {
+            JSONObject eventDetails = new JSONObject();
+            eventDetails.put("patientuuid", formData.getPatientUuid());
+            eventDetails.put("formDataUuid", formData.getUuid());
+
+            HashMap<String, Object> locationDataHashMap = muzimaLocationService.getLastKnownGPS();
+            if(locationDataHashMap.containsKey("gps_location")) {
+                MuzimaGPSLocation muzimaGPSLocation = ((MuzimaGPSLocation)locationDataHashMap.get("gps_location"));
+                eventDetails.put("location", muzimaGPSLocation.toJsonObject());
+            }
+
+            if (isEncounterForm()) {
+                if(isFormReload) {
+                    logEvent("RESUME_ENCOUNTER_FORM", eventDetails.toString());
+                } else {
+                    logEvent("OPEN_ENCOUNTER_FORM", eventDetails.toString());
+                }
+            } else {
+                if(isFormReload) {
+                    logEvent("RESUME_REGISTRATION_FORM", eventDetails.toString());
+                } else {
+                    logEvent("OPEN_REGISTRATION_FORM", eventDetails.toString());
+                }
+            }
+        } catch (JSONException e) {
+            Log.e(getClass().getSimpleName(),"Cannot create log",e);
+        }
+    }
+
+    private void logFormSaveEvent(String status){
+        try {
+            JSONObject eventDetails = new JSONObject();
+            eventDetails.put("patientuuid", formData.getPatientUuid());
+            eventDetails.put("formDataUuid", formData.getUuid());
+
+            HashMap<String, Object> locationDataHashMap = muzimaLocationService.getLastKnownGPS();
+            if(locationDataHashMap.containsKey("gps_location")) {
+                MuzimaGPSLocation muzimaGPSLocation = ((MuzimaGPSLocation)locationDataHashMap.get("gps_location"));
+                eventDetails.put("location", muzimaGPSLocation.toJsonObject());
+            }
+
+
+            switch(status) {
+                case STATUS_COMPLETE :
+                    if(isEncounterForm()){
+                        logEvent( "SAVE_COMPLETE_ENCOUNTER_FORM", eventDetails.toString());
+                    } else {
+                        logEvent( "SAVE_COMPLETE_REGISTRATION_FORM", eventDetails.toString());
+                    }
+                    break;
+                case STATUS_INCOMPLETE :
+                    if(isEncounterForm()){
+                        logEvent( "SAVE_DRAFT_ENCOUNTER_FORM", eventDetails.toString());
+                    } else {
+                        logEvent( "SAVE_DRAFT_REGISTRATION_FORM", eventDetails.toString());
+                    }
+                    break;
+            }
+        } catch (JSONException e) {
+            Log.e(getClass().getSimpleName(),"Cannot create log",e);
+        }
     }
 
     @JavascriptInterface
-    public void saveHTML(String jsonPayload, String status, boolean keepFormOpen) {
+    public void saveHTML(String jsonPayload, String status, boolean keepFormOpen, boolean isTerminalEvent) {
         jsonPayload = injectUserSystemIdToEncounterPayload(jsonPayload);
         jsonPayload = injectTimeZoneToEncounterPayload(jsonPayload);
         formData.setJsonPayload(jsonPayload);
@@ -141,6 +212,9 @@ class HTMLFormDataStore {
                     if (status.equals("incomplete")) {
                         Toast.makeText(formWebViewActivity, formWebViewActivity.getString(R.string.info_draft_form_save_success), Toast.LENGTH_SHORT).show();
                     }
+                }
+                if(isTerminalEvent) {
+                    logFormSaveEvent(status);
                 }
             } else {
                 String missingMandatoryEncounterDetailsMessage = checkMisssingMandatoryEncounterDetails(jsonPayload);
@@ -206,7 +280,7 @@ class HTMLFormDataStore {
 
 
     private void parseForm(String jsonPayload, String status) {
-        if (status.equals(Constants.STATUS_INCOMPLETE)) {
+        if (status.equals(STATUS_INCOMPLETE)) {
             return;
         }
         getFormParser().createAndPersistObservations(jsonPayload, formData.getUuid());
@@ -223,6 +297,18 @@ class HTMLFormDataStore {
 
     private boolean isRegistrationComplete(String status) {
         return formController.isRegistrationFormData(formData) && status.equals(Constants.STATUS_COMPLETE);
+    }
+
+    private boolean isRegistrationForm() {
+        return formController.isRegistrationFormData(formData);
+    }
+
+    private boolean isEncounterForm() {
+        return formController.isEncounterFormData(formData);
+    }
+
+    private boolean isComplete(String status) {
+        return status.equals(Constants.STATUS_COMPLETE);
     }
 
     @JavascriptInterface
@@ -373,7 +459,7 @@ class HTMLFormDataStore {
                 List<FormData> allFormData = new ArrayList<>();
                 List<FormData> incompleteForms = new ArrayList<>();
                 List<FormData> completeForms = new ArrayList<>();
-                incompleteForms = formController.getAllFormDataByPatientUuid(patientUuid, Constants.STATUS_INCOMPLETE);
+                incompleteForms = formController.getAllFormDataByPatientUuid(patientUuid, STATUS_INCOMPLETE);
                 completeForms = formController.getAllFormDataByPatientUuid(patientUuid, Constants.STATUS_COMPLETE);
                 allFormData.addAll(incompleteForms);
                 allFormData.addAll(completeForms);
@@ -410,7 +496,7 @@ class HTMLFormDataStore {
     }
     @JavascriptInterface
     public void logEvent(String tag, String details){
-        MuzimaLoggerService.log(((MuzimaApplication)formWebViewActivity.getApplicationContext()).getMuzimaContext(), tag,details);
+        MuzimaLoggerService.log(formWebViewActivity,tag,details);
     }
 
     @JavascriptInterface
@@ -508,11 +594,18 @@ class HTMLFormDataStore {
             if (isLocationPermissionsGranted()) {
 
                 if(isLocationServicesEnabled()){
-                    MuzimaLocationService muzimaLocationService = new MuzimaLocationService(application);
-                    HashMap<String, String> locationDataHashMap = new HashMap<>(); //empty hashmap prevent NullPointerException
+                    HashMap<String, Object> locationDataHashMap;
                     try {
-                        locationDataHashMap = muzimaLocationService.getLastKnownGPS(jsonReturnType);
-                        gps_location_string = locationDataHashMap.get("gps_location_string");
+                        locationDataHashMap = muzimaLocationService.getLastKnownGPS();
+                        if(locationDataHashMap.containsKey("gps_location")) {
+                            if (jsonReturnType.equals("json-object")){
+                                gps_location_string = ((MuzimaGPSLocation)locationDataHashMap.get("gps_location")).toJsonObject().toString();
+                            } else {
+                                gps_location_string = ((MuzimaGPSLocation)locationDataHashMap.get("gps_location")).toJsonArray().toString();
+                            }
+                        } else {
+                            gps_location_string = (String)locationDataHashMap.get("gps_location_status");
+                        }
                         return gps_location_string;
                     } catch (Exception e) {
                         Log.e(getClass().getSimpleName(), "Unable to process gps data, unknow Error Occurred" + e.getMessage());

@@ -27,6 +27,7 @@ import com.muzima.MuzimaApplication;
 import com.muzima.R;
 import com.muzima.adapters.observations.ObservationsPagerAdapter;
 import com.muzima.api.model.Patient;
+import com.muzima.service.MuzimaLoggerService;
 import com.muzima.utils.Fonts;
 import com.muzima.view.BroadcastListenerActivity;
 import com.muzima.view.custom.CustomObsEntryDialog;
@@ -55,6 +56,7 @@ public class ObservationsActivity extends BroadcastListenerActivity {
         initPager();
         initPagerIndicator();
         encounterDateTextView = (TextView) findViewById(R.id.date_value_textview);
+        MuzimaLoggerService.log(this,"VIEW_CLIENT_OBS","{\"patientuuid\":\""+patient.getUuid()+"\"}");
     }
 
     private void initPagerIndicator() {

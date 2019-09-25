@@ -12,47 +12,81 @@
         <div style="text-align: center; padding: 10px;">
             <table class="settings-table highlight">
                 <tr style="background-color:#E9EDFD">
-                    <td><label for="patients-seen">Expected number of patients to be seen by providers daily:</label></td>
-                    <td><select style="width:45px" id="patients-seen" class="select-input select-input--material">
+                    <td><label for="patients-seen-selector">Expected number of patients to be seen by providers daily:</label></td>
+                    <td><select style="width:45px" id="patients-seen-selector" class="select-input select-input--material">
+                        <option>0</option>
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>
                         <option>4</option>
                         <option>5</option>
                         <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                        <option>14</option>
+                        <option>15</option>
+                        <option>16</option>
+                        <option>17</option>
+                        <option>18</option>
+                        <option>19</option>
+                        <option>20</option>
+                        <option>21</option>
+                        <option>22</option>
+                        <option>23</option>
+                        <option>24</option>
                     </select>
                     </td>
                 </tr>
                 <tr style="background-color:#FCFDE9">
-                    <td><label for="expected-work-hours">Expected number of work hours per day:</label></td>
+                    <td><label for="expected-work-hours-selector">Expected number of work hours per day:</label></td>
                     <td>
-                        <select style="width:45px" id="expected-work-hours" class="select-input select-input--material">
+                        <select style="width:45px" id="expected-work-hours-selector" class="select-input select-input--material">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
                             <option>4</option>
                             <option>5</option>
                             <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                            <option>11</option>
+                            <option>12</option>
                         </select>
                     </td>
                 </tr>
                 <tr style="background-color:#FDE9EB">
-                    <td><label for="encounter-length">Expected number of minutes a Provider spents  seeing a Patient:</label></td>
+                    <td><label for="encounter-length-selector">Expected number of minutes a Provider spents  seeing a Patient:</label></td>
                     <td>
-                        <select style="width:45px" id="encounter-length" class="select-input select-input--material">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
+                        <select style="width:45px" id="encounter-length-selector" class="select-input select-input--material">
                             <option>5</option>
-                            <option>6</option>
+                            <option>10</option>
+                            <option>15</option>
+                            <option>20</option>
+                            <option>25</option>
+                            <option>30</option>
+                            <option>35</option>
+                            <option>40</option>
+                            <option>55</option>
+                            <option>50</option>
+                            <option>55</option>
+                            <option>60</option>
+                            <option>65</option>
+                            <option>70</option>
+                            <option>75</option>
                         </select>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2" style="text-align:center">
                         <a class="waves-effect waves-light btn" style="background-color:#ffd180;" onclick="hideDialog()">Cancel</a>
-                        <a class="waves-effect waves-light btn" onclick="hideDialog()">Save</a>
+                        <a class="waves-effect waves-light btn" onclick="saveExpectedPerformance()">Save</a>
                     </td>
                 </tr>
             </table>
@@ -80,7 +114,7 @@
             </tr>
             <tr>
                 <td colspan="2" style="text-align:center">
-                    <a class="waves-effect waves-light btn" onclick="showTemplateDialog()">Update</a>
+                    <a id="update-setting-btn" class="waves-effect waves-light btn" onclick="showTemplateDialog()">Update</a>
                 </td>
             </tr>
         </table>
@@ -104,6 +138,36 @@
                 .getElementById('my-dialog')
                 .hide();
         };
+
+        var loadExpectedPerformance = function() {
+            var expectedPerformance = loggingInterface.getExpectedPerformance();
+            expectedPerformance = JSON.parse(expectedPerformance);
+            if (expectedPerformance['patients_seen'] != undefined) {
+                document.getElementById("patients-seen-view").innerHTML = expectedPerformance.patients_seen;
+                document.getElementById("patients-seen-selector").value = expectedPerformance.patients_seen;
+
+                document.getElementById("expected-work-hours-view").innerHTML = expectedPerformance.work_hours;
+                document.getElementById("expected-work-hours-selector").value = expectedPerformance.work_hours;
+
+                document.getElementById("encounter-length-view").innerHTML = expectedPerformance.encounter_length;
+                document.getElementById("encounter-length-selector").value = expectedPerformance.encounter_length;
+            }
+        }
+
+        var saveExpectedPerformance = function(){
+            var newPatientsSeen = document.getElementById("patients-seen-selector").value;
+            var newWorkHours = document.getElementById("expected-work-hours-selector").value;
+            var newEncounterLength = document.getElementById("encounter-length-selector").value;
+            loggingInterface.setExpectedPerformance(newPatientsSeen, newWorkHours,newEncounterLength);
+            hideDialog();
+            loadExpectedPerformance();
+        }
+        loadExpectedPerformance();
+
+        var isSupervisor = loggingInterface.isCurrentUserSupervisor();
+        if(!isSupervisor){
+            document.getElementById("update-setting-btn").style = "display:none";
+        }
     </script>
 </ons-page>
 
