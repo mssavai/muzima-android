@@ -12,7 +12,7 @@ public class MuzimaGPSLocation {
 
     private String longitude;
     private String latitude;
-    private String timeStamp;
+    private long timeStamp;
     private String altitude;
     private String speed;
     private String bearing;
@@ -42,7 +42,7 @@ public class MuzimaGPSLocation {
     }
 
     private void setTimeStamp() {
-        this.timeStamp = getFormartedDateTime();
+        this.timeStamp = location.getTime();
     }
 
     private void setAltitude() {

@@ -39,4 +39,14 @@ public class LogStatistic {
     public void setDetails(String details) {
         this.details = details;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("tag").append(" = ").append(tag)
+                .append("date").append(" = ").append(date)
+                .append("provider").append(" = ").append(providerId)
+                .append("details").append(" = ").append(details);
+        return stringBuilder.toString();
+    }
 }

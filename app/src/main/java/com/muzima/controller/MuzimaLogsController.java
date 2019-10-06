@@ -5,6 +5,7 @@ import com.muzima.api.model.EncounterStatistic;
 import com.muzima.api.model.User;
 import com.muzima.api.service.EncounterStatisticService;
 import com.muzima.model.LogStatistic;
+import com.muzima.utils.StringUtils;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -67,28 +68,41 @@ public class MuzimaLogsController {
                             workEndTime = encounterStatistic.getEndTime();
                         }
 
-                        providerTotalEncounterLength += encounterStatistic.getEncounterLength();
+                        providerTotalEncounterLength += encounterStatistic.getEncounterLength()/(60*1000);
                         numberOfEncounters++;
 
+                        System.out.println("encounterStatistic.getEncounterLength(): "+encounterStatistic.getEncounterLength());
+                        System.out.println("providerTotalEncounterLength: "+providerTotalEncounterLength);
+                        System.out.println("numberOfEncounters: "+numberOfEncounters);
 
-                        activitylocations.add(new JSONObject() {{
-                            put("lat",encounterStatistic.getGpsLatitude());
-                            put("lng",encounterStatistic.getGpsLongitude());
-                            put("encounter_date",reFormatDate(l) + ", " + dateFormat.format(l));
-                        }});
+
+                        if(!StringUtils.isEmpty(encounterStatistic.getGpsLatitude()) &&
+                                !StringUtils.isEmpty(encounterStatistic.getGpsLongitude())) {
+                            activitylocations.add(new JSONObject() {{
+                                put("lat", Float.valueOf(encounterStatistic.getGpsLatitude()));
+                                put("lng", Float.valueOf(encounterStatistic.getGpsLongitude()));
+                                put("encounter_date", reFormatDate(l) + ", " + dateFormat.format(encounterStatistic.getGpsTimestamp()));
+                            }});
+                        }
                     }
                 }
 
-                final double workDayLength = (workEndTime - workStartTime)+0.0;
+                final double workDayLength = (workEndTime - workStartTime)/(60*60*1000);
                 totalWorkdayLength +=workDayLength;
 
-                final double averageEncounterLength = providerTotalEncounterLength/numberOfEncounters;
+                final double averageEncounterLength;
+                if(numberOfEncounters>0){
+                    averageEncounterLength = providerTotalEncounterLength/numberOfEncounters;
+                } else {
+                    averageEncounterLength= 0.0;
+                }
+                System.out.println("averageEncounterLength: "+averageEncounterLength);
                 totalAverageEncounterLength += averageEncounterLength;
 
                 final double patientsSeen = numberOfEncounters;
                 totalPatientsSeen += patientsSeen;
 
-                logStatistics.add(new LogStatistic() {
+                LogStatistic logStatistic = new LogStatistic() {
                     {
                         setTag("providerStats");
                         setDate(formattedDate);
@@ -102,7 +116,9 @@ public class MuzimaLogsController {
                             put("activity_locations", activitylocations);
                         }}.toJSONString());
                     }
-                });
+                };
+                logStatistics.add(logStatistic);
+                System.out.println("ADDING: "+logStatistic.toString());
             }
             final double dailyAveragePatientsSeen = Math.round((totalPatientsSeen/providers.size()) * 10.0)/10.0;
             final double dailyAverageWorkdayLength = Math.round((totalWorkdayLength/providers.size()) * 10.0)/10.0;
@@ -141,102 +157,6 @@ public class MuzimaLogsController {
         return logStatistics;
     }
 
-public List<LogStatistic> getAllLogStatistics2(User currentUser) throws IOException {
-        //encounterStatisticService.getAllLogStatistics();
-        final List<String> providers = new ArrayList();
-        providers.add("ayeung");
-        providers.add("smbugua");
-        providers.add("bmokaya");
-        providers.add("mmwaniki");
-        providers.add("pbalirwa");
-        providers.add("fomondi");
-
-        int entries = 30;
-        List<String> datesList = getDatesStringList(entries);
-
-        List<LogStatistic> logStatistics = new ArrayList<>();
-
-        for(final String date:datesList) {
-            double totalPatientsSeen = 0.0;
-            double totalWorkdayLength = 0.0;
-            double totalAverageEncounterLength = 0.0;
-            for(final String provider:providers){
-                final double workDayLength = getRandom(8)+0.0;
-                totalWorkdayLength += workDayLength;
-
-                final double averageEncounterLength = getRandom(35)+0.0;
-                totalAverageEncounterLength += averageEncounterLength;
-
-                final double patientsSeen = getRandom(12)+0.0;
-                totalPatientsSeen += patientsSeen;
-
-                logStatistics.add(new LogStatistic() {
-                    {
-                        setTag("providerStats");
-                        setDate(date);
-                        setProviderId(provider);
-                        setDetails(new JSONObject() {{
-                            put("work_day_length", workDayLength);
-                            put("average_encounter_length", averageEncounterLength);
-
-                            put("patients_seen", patientsSeen);
-
-                            put("activity_locations", new JSONArray() {{
-                                    final Random random = new Random();
-                                    final DateFormat dateFormat = new SimpleDateFormat("hh:mm a");
-                                    for (int i = 0; i < patientsSeen; i++) {
-                                        add(new JSONObject() {{
-                                            Time time = new Time(random.nextLong());
-                                            put("lat",-1*random.nextFloat());
-                                            put("lng",34+random.nextFloat());
-                                            put("encounter_date",reFormatDate(date) + ", " + dateFormat.format(time));
-                                        }});
-                                    }
-                                }}
-                            );
-                        }}.toJSONString());
-                    }
-                });
-            }
-
-            final double dailyAveragePatientsSeen = Math.round((totalPatientsSeen/providers.size()) * 10.0)/10.0;
-            final double dailyAverageWorkdayLength = Math.round((totalWorkdayLength/providers.size()) * 10.0)/10.0;
-            final double dailyAverageEncounterLength = Math.round((totalAverageEncounterLength/providers.size()) * 10.0)/10.0;
-
-            logStatistics.add(new LogStatistic() {
-                {
-                    setTag("providerStats");
-                    setDate(date);
-                    setProviderId("average");
-                    setDetails(new JSONObject() {{
-                        put("work_day_length", dailyAverageWorkdayLength);
-                        put("average_encounter_length", dailyAverageEncounterLength);
-                        put("patients_seen", dailyAveragePatientsSeen);
-                        put("activity_locations", new JSONArray());
-                    }}.toJSONString());
-                }
-            });
-        }
-
-        for(final String date:datesList) {
-            logStatistics.add(new LogStatistic() {
-                {
-                    setTag("providerStats");
-                    setDate(date);
-                    setProviderId("expected");
-                    setDetails(new JSONObject() {{
-                        put("work_day_length", 8.0);
-                        put("average_encounter_length", 30.0);
-                        put("patients_seen", 10.0);
-                        put("activity_locations", new JSONArray());
-                    }}.toJSONString());
-                }
-            });
-        }
-        return logStatistics;
-    }
-
-
 
     private String reFormatDate(String dateString){
         SimpleDateFormat weeklyDateFormatter = new SimpleDateFormat("EEE dd MMM");
@@ -266,13 +186,6 @@ public List<LogStatistic> getAllLogStatistics2(User currentUser) throws IOExcept
             calendar.add(Calendar.DATE,-1);
         }
         return datesStringList;
-    }
-
-
-
-    private int getRandom(int limit){
-        Random random = new Random();
-        return random.nextInt(limit);
     }
 
     public LogStatistic getLatestConfig(final User currentUser){

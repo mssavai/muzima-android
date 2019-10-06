@@ -10,6 +10,7 @@
     <link type="text/css" rel="stylesheet" href="css/materialize/1.0.0/materialize.min.css"  media="screen,projection"/>
     <script src="js/onsenui/2.10.8/onsenui.min.js"></script>
     <script type="text/javascript" src="js/materialize/1.0.0/materialize.min.js"></script>
+    <script type="text/javascript" src="js/oms-1.0.3/oms.min.js"></script>
 </head>
 <body>
 <ons-splitter>
@@ -122,9 +123,13 @@
                 center: new google.maps.LatLng(-0.10221, 34.76171),
             });
 
+            var oms = new OverlappingMarkerSpiderfier(map,
+                {markersWontMove: true, markersWontHide: true});
+
             var labels = getChartDataDates();
             var mapData = loggingInterface.getMapData();
             var markers = [];
+            var infowindow = new google.maps.InfoWindow();
 
             mapData = JSON.parse(mapData);
 
@@ -132,9 +137,12 @@
                 var v = mapData[k];
                 if (isProviderSelected(v.id)) {
                     labels.forEach(function (label) {
+                        var totalItems = 0;
+                        var totalItemsWithLocation = 0;
                         if (v.data[label] != undefined) {
                             var providerMapData = v.data[label];
                             var m = providerMapData.map(function (location, j) {
+                                console.log("location.lat: "+location.lat+", location.lng: "+location.lng)
                                 var marker = new google.maps.Marker({
                                     position: {lat: location.lat, lng: location.lng},
                                     label: v.full_name.charAt(0)
@@ -144,18 +152,18 @@
                                     "<p>Provider: " + v.full_name + "</p>" +
                                     "<p>Encounter date : " + location.encounter_date + "</p>" +
                                     "</div>";
-
-                                var infowindow = new google.maps.InfoWindow({
-                                    content: contentString
-                                });
-
-                                marker.addListener('click', function () {
+                                google.maps.event.addListener(marker, 'spider_click', function(e) {  // 'spider_click', not plain 'click'
+                                    infowindow.setContent(contentString);
                                     infowindow.open(map, marker);
                                 });
+
+                                oms.addMarker(marker);
 
                                 return marker;
                             });
                             markers = markers.concat(m);
+                            totalItemsWithLocation = markers.length;
+
 
                         }
 
@@ -165,7 +173,11 @@
             ;
 
             var markerCluster = new MarkerClusterer(map, markers,
-                {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+                {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+                    maxZoom: 20});
+
+            var reportingHtml = "<div style='position:relative;z-index:1000'>Reporting: 70%</div>";
+            //document.getElementById('map').appendChild(reportingHtml);
 
             mapRendered = true;
         }
