@@ -53,8 +53,38 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="100"
+        android:id="@+id/relationship_list_data"
         android:layout_marginTop="20dp"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/grid_buttons"
+            android:onClick="showRelationshipsView">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/general_relationships"
+                android:textSize="18dp"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_icon_right" />
+        </RelativeLayout>
+
+        <ListView android:id="@+id/relationships_list"
+            style="@style/MuzimaSelectableListView">
+        </ListView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="100"
+        android:layout_marginTop="10dp"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
@@ -91,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:id="@+id/data_collection"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="60dp"
             android:orientation="vertical">
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -114,6 +144,7 @@
 
             <include layout="@layout/fragment_list"/>
         </LinearLayout>
+
     </LinearLayout>
 
     <View style="@style/DividerLine" />
