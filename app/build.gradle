@@ -119,7 +119,9 @@ dependencies {
     testImplementation group: 'org.robolectric', name: 'robolectric', version: '3.1.1'
     testImplementation 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
     testImplementation group: 'xmlpull', name: 'xmlpull', version: '1.1.3.4d_b4_min'
-    testImplementation(group: 'com.muzima', name: 'muzima-api', version: '2.0.0-SNAPSHOT')
+    testImplementation(group: 'com.muzima', name: 'muzima-api', version: '2.0.0-SNAPSHOT') {
+        exclude(module: 'guice')
+    }
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     //Fonts
     implementation 'io.github.inflationx:calligraphy3:3.1.1'
@@ -140,7 +142,17 @@ dependencies {
     implementation files('lib/YouTubeAndroidPlayerApi.jar')
     implementation group: 'net.minidev', name: 'json-smart', version: '1.1.1'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
-    implementation 'com.muzima:search-api:1.1.6-SNAPSHOT'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.16.1'
+    implementation (group: 'com.muzima', name: 'search-api', version: '1.1.6-SNAPSHOT'){
+        exclude(module: 'guice')
+    }
+    implementation group: 'com.google.inject', name: 'guice', version: '4.2.3', classifier: 'no_aop'
+
+    implementation ("androidx.security:security-crypto:1.0.0")
+    implementation ("net.zetetic:android-database-sqlcipher:4.5.3")
+    implementation "androidx.room:room-runtime:2.6.1"
+    annotationProcessor "androidx.room:room-compiler:2.6.1"
+
 
 
 }
