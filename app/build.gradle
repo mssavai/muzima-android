@@ -143,7 +143,7 @@ dependencies {
     implementation group: 'net.minidev', name: 'json-smart', version: '1.1.1'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
     implementation group: 'commons-io', name: 'commons-io', version: '2.16.1'
-    implementation (group: 'com.muzima', name: 'search-api', version: '1.1.6-SNAPSHOT'){
+    implementation (group: 'com.muzima', name: 'search-api', version: '1.1.7-SNAPSHOT'){
         exclude(module: 'guice')
     }
     implementation group: 'com.google.inject', name: 'guice', version: '4.2.3', classifier: 'no_aop'
