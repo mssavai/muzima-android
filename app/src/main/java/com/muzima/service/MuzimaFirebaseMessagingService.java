@@ -150,7 +150,7 @@ public class MuzimaFirebaseMessagingService extends FirebaseMessagingService {
         ((MuzimaApplication)getApplicationContext()).clearApplicationData();
         new WizardFinishPreferenceService(getApplicationContext()).resetWizard();
         new CredentialsPreferenceService(getApplicationContext()).saveCredentials(new Credentials("", null, null));
-        com.muzima.api.context.Context muzimaContext = ((MuzimaApplication)getApplicationContext()).getMuzimaContext();
+        com.muzima.api.context.MuzimaContext muzimaContext = ((MuzimaApplication)getApplicationContext()).getMuzimaContext();
         new CredentialsPreferenceService(getApplicationContext()).deleteUserData(muzimaContext);
         ((MuzimaApplication)getApplicationContext()).logOut();
         launchLoginActivity(true);

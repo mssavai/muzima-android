@@ -13,7 +13,7 @@ package com.muzima.service;
 import android.os.Build;
 import android.util.Log;
 import com.muzima.MuzimaApplication;
-import com.muzima.api.context.Context;
+import com.muzima.api.context.MuzimaContext;
 import com.muzima.api.model.MuzimaSetting;
 import com.muzima.api.model.User;
 import com.muzima.controller.MuzimaSettingController;
@@ -114,7 +114,7 @@ public class MuzimaLoggerService {
 
                             protected Void doInBackground(Void... voids) {
                                 try {
-                                    Context context = muzimaApplication.getMuzimaContext();
+                                    MuzimaContext context = muzimaApplication.getMuzimaContext();
                                     context.getLogEntryService().syncLogs();
                                 } catch (IOException e) {
                                     Log.e("LoggerService", "Error syncing", e);

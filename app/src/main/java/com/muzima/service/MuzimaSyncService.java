@@ -22,7 +22,7 @@ import android.util.Log;
 
 import com.muzima.MuzimaApplication;
 import com.muzima.R;
-import com.muzima.api.context.Context;
+import com.muzima.api.context.MuzimaContext;
 import com.muzima.api.exception.AuthenticationException;
 import com.muzima.api.model.AppUsageLogs;
 import com.muzima.api.model.Cohort;
@@ -186,7 +186,7 @@ public class MuzimaSyncService {
         String password = credentials[1];
         String server = credentials[2];
 
-        Context muzimaContext = muzimaApplication.getMuzimaContext();
+        MuzimaContext muzimaContext = muzimaApplication.getMuzimaContext();
         try {
 //            if(hasInvalidSpecialCharacter(username)){
 //                return SyncStatusConstants.INVALID_CHARACTER_IN_USERNAME;

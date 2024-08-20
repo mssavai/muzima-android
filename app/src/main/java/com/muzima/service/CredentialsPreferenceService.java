@@ -44,7 +44,7 @@ public class CredentialsPreferenceService extends PreferenceService {
                 .commit();
     }
 
-    public void deleteUserData(com.muzima.api.context.Context muzimaContext){
+    public void deleteUserData(com.muzima.api.context.MuzimaContext muzimaContext){
         try {
             UserService userService = muzimaContext.getUserService();
             userService.deleteAllUsers();

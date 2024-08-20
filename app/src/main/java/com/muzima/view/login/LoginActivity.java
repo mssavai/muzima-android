@@ -51,7 +51,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.muzima.BuildConfig;
 import com.muzima.MuzimaApplication;
 import com.muzima.R;
-import com.muzima.api.context.Context;
+import com.muzima.api.context.MuzimaContext;
 import com.muzima.api.model.AppRelease;
 import com.muzima.api.model.AppUsageLogs;
 import com.muzima.api.model.MinimumSupportedAppVersion;
@@ -435,7 +435,7 @@ public class LoginActivity extends BaseActivity {
         if (!new WizardFinishPreferenceService(this).isWizardFinished()) {
             try {
                 MuzimaApplication application = ((MuzimaApplication) getApplicationContext());
-                Context context = application.getMuzimaContext();
+                MuzimaContext context = application.getMuzimaContext();
 
                 //Cohort Wizard activity
                 application.getPatientController().deleteAllPatients();
@@ -1187,7 +1187,7 @@ public class LoginActivity extends BaseActivity {
             muzimaApplication.clearApplicationData();
             new WizardFinishPreferenceService(getApplicationContext()).resetWizard();
             new CredentialsPreferenceService(getApplicationContext()).saveCredentials(new Credentials("", null, null));
-            com.muzima.api.context.Context muzimaContext = muzimaApplication.getMuzimaContext();
+            MuzimaContext muzimaContext = muzimaApplication.getMuzimaContext();
             new CredentialsPreferenceService(getApplicationContext()).deleteUserData(muzimaContext);
 
             Date successfulLoginTime = new Date();

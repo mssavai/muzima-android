@@ -21,8 +21,8 @@ import androidx.multidex.MultiDexApplication;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.muzima.api.context.Context;
 import com.muzima.api.context.ContextFactory;
+import com.muzima.api.context.MuzimaContext;
 import com.muzima.api.model.Cohort;
 import com.muzima.api.model.Concept;
 import com.muzima.api.model.Credential;
@@ -34,11 +34,9 @@ import com.muzima.api.model.User;
 import com.muzima.api.service.ConceptService;
 import com.muzima.api.service.EncounterService;
 import com.muzima.api.service.LocationService;
-import com.muzima.api.service.NotificationService;
 import com.muzima.api.service.NotificationTokenService;
 import com.muzima.api.service.ObservationService;
 import com.muzima.api.service.PersonService;
-import com.muzima.api.service.PersonTagService;
 import com.muzima.api.service.ProviderService;
 import com.muzima.controller.AppUsageLogsController;
 import com.muzima.controller.AppReleaseController;
@@ -63,9 +61,7 @@ import com.muzima.controller.RelationshipController;
 import com.muzima.controller.ReportDatasetController;
 import com.muzima.controller.SetupConfigurationController;
 import com.muzima.controller.SmartCardController;
-import com.muzima.db.MuzimaDatabase;
 import com.muzima.domain.Credentials;
-import com.muzima.model.PassphraseStorage;
 import com.muzima.service.FormDuplicateCheckPreferenceService;
 import com.muzima.service.LocalePreferenceService;
 import com.muzima.service.MuzimaGPSLocationService;
@@ -103,7 +99,7 @@ import org.apache.lucene.queryParser.ParseException;
 
 public class MuzimaApplication extends MultiDexApplication {
 
-    private Context muzimaContext;
+    private MuzimaContext muzimaContext;
     private Activity currentActivity;
     private FormController formController;
     private CohortController cohortController;
@@ -137,8 +133,6 @@ public class MuzimaApplication extends MultiDexApplication {
     private MediaCategoryController mediaCategoryController;
     private ExecutorService executorService;
     private FormDuplicateCheckPreferenceService formDuplicateCheckPreferenceService;
-    private PassphraseStorage passphraseStorage;
-    private MuzimaDatabase database;
 
     public void clearApplicationData() {
         try {
@@ -182,7 +176,7 @@ public class MuzimaApplication extends MultiDexApplication {
 
         try {
             ContextFactory.setProperty(Constants.LUCENE_DIRECTORY_PATH, APP_DIR);
-            muzimaContext = ContextFactory.createContext();
+            muzimaContext = ContextFactory.createContext(this);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -196,20 +190,6 @@ public class MuzimaApplication extends MultiDexApplication {
                 .build());
     }
 
-    MuzimaDatabase getDatabase() throws Exception{
-        if (database == null) {
-            database = MuzimaDatabase.getDatabase(this, getPassphraseStorage().getPassphrase());
-        }
-        return database;
-    }
-
-    private PassphraseStorage getPassphraseStorage(){
-        if(passphraseStorage == null){
-            passphraseStorage = new PassphraseStorage(getApplicationContext());
-        }
-        return passphraseStorage;
-    }
-
     public void checkAndSetLocaleToDeviceLocaleIFDisclaimerNotAccepted() {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         String disclaimerKey = getResources().getString(R.string.preference_disclaimer);
@@ -220,7 +200,7 @@ public class MuzimaApplication extends MultiDexApplication {
         }
     }
 
-    public Context getMuzimaContext() {
+    public MuzimaContext getMuzimaContext() {
         return muzimaContext;
     }
 
@@ -753,10 +733,8 @@ public class MuzimaApplication extends MultiDexApplication {
             if(user == null){
                 return true;
             }
-        }  catch (IOException e) {
+        }  catch (IOException | ParseException e) {
             Log.e(getClass().getSimpleName(),"Encountered IO Exception ",e);
-        } catch (ParseException e) {
-            Log.e(getClass().getSimpleName(),"Encountered Parse Exception ",e);
         }
         return false;
     }
@@ -769,10 +747,8 @@ public class MuzimaApplication extends MultiDexApplication {
                 muzimaContext.getUserService().deleteUser(user);
                 muzimaContext.getUserService().deleteCredential(credential);
             }
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             Log.e(getClass().getSimpleName(),"Encountered IO Exception ",e);
-        } catch (ParseException e) {
-            Log.e(getClass().getSimpleName(),"Encountered Parse Exception ",e);
         }
     }
 
