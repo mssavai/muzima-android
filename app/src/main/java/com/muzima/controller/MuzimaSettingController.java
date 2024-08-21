@@ -209,42 +209,48 @@ public class MuzimaSettingController {
     }
 
     public void saveOrUpdateSetting(MuzimaSetting setting) throws MuzimaSettingSaveException {
-        try {
-            MuzimaSetting preExistingSetting = settingService.getSettingByProperty(setting.getProperty());
-            if (preExistingSetting != null) {
-                settingService.updateSetting(setting);
-                if(setting.getProperty().equals(ONLINE_ONLY_MODE_ENABLED_SETTING) &&
-                preExistingSetting.getValueBoolean() != setting.getValueBoolean()){
-                    toggleTheme();
-                    if(!setting.getValueBoolean()) {
-                        ActivityManager am = (ActivityManager) muzimaApplication.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-                        ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-                        Intent intent = new Intent();
-                        intent.setComponent(cn);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(setting!=null) {
+            try {
+
+
+                MuzimaSetting preExistingSetting = settingService.getSettingByProperty(setting.getProperty());
+                if (preExistingSetting != null) {
+                    settingService.updateSetting(setting);
+                    if (setting.getProperty().equals(ONLINE_ONLY_MODE_ENABLED_SETTING) &&
+                            preExistingSetting.getValueBoolean() != setting.getValueBoolean()) {
+                        toggleTheme();
+                        if (!setting.getValueBoolean()) {
+                            ActivityManager am = (ActivityManager) muzimaApplication.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+                            ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+                            Intent intent = new Intent();
+                            intent.setComponent(cn);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            }
+                            muzimaApplication.getApplicationContext().startActivity(intent);
+                        } else {
+                            Intent intent;
+                            intent = new Intent(muzimaApplication, MainDashboardActivity.class);
+                            intent.putExtra("OnlineMode", setting.getValueBoolean());
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            }
+                            muzimaApplication.startActivity(intent);
                         }
-                        muzimaApplication.getApplicationContext().startActivity(intent);
-                    }else {
-                        Intent intent;
-                        intent = new Intent(muzimaApplication, MainDashboardActivity.class);
-                        intent.putExtra("OnlineMode", setting.getValueBoolean());
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        }
-                        muzimaApplication.startActivity(intent);
+
                     }
+                } else {
+
+                    settingService.saveSetting(setting);
                 }
-            } else {
-                settingService.saveSetting(setting);
-            }
 
-            if(setting.getProperty().equals(NOTIFICATION_FEATURE_ENABLED_SETTING) && getSettingByProperty(NOTIFICATION_FEATURE_ENABLED_SETTING).getValueBoolean()){
-                muzimaApplication.getFCMTokenController().sendTokenToServer();
-            }
+                if (setting.getProperty().equals(NOTIFICATION_FEATURE_ENABLED_SETTING) && getSettingByProperty(NOTIFICATION_FEATURE_ENABLED_SETTING).getValueBoolean()) {
+                    muzimaApplication.getFCMTokenController().sendTokenToServer();
+                }
 
-        } catch (IOException | NullPointerException | ParseException | MuzimaSettingFetchException e) {
-            throw new MuzimaSettingSaveException(e);
+            } catch (IOException | NullPointerException | ParseException | MuzimaSettingFetchException e) {
+                throw new MuzimaSettingSaveException(e);
+            }
         }
     }
 
