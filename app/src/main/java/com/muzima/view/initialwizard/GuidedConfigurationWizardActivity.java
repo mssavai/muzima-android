@@ -611,6 +611,9 @@ public class GuidedConfigurationWizardActivity extends BroadcastListenerActivity
                 MuzimaSettingController muzimaSettingController = ((MuzimaApplication) getApplicationContext()).getMuzimaSettingController();
                 LocationController locationController = ((MuzimaApplication) getApplicationContext()).getLocationController();
                 List<String> uuids = extractLocationsUuids();
+                for(String uuid :uuids){
+                    Log.e(getClass().getSimpleName(),"++++++++++++++++++++ locatin size "+uuids.size()+" ==== "+uuid);
+                }
                 if (!uuids.isEmpty()) {
                     MuzimaSyncService muzimaSyncService = ((MuzimaApplication) getApplicationContext()).getMuzimaSyncService();
                     int[] result = muzimaSyncService.downloadLocations(uuids.toArray(new String[uuids.size()]));

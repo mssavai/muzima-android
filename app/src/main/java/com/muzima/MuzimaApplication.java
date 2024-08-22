@@ -326,7 +326,7 @@ public class MuzimaApplication extends MultiDexApplication {
     public LocationController getLocationController() {
         if (locationController == null) {
             try {
-                locationController = new LocationController(muzimaContext.getService(LocationService.class));
+                locationController = new LocationController(muzimaContext.getLocationService());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
