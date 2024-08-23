@@ -206,11 +206,11 @@ public class RelationshipJsonMapper {
             person.setGender(personJSON.getString("patient.sex"));
             List<PersonName> names = new ArrayList<>();
             names.add(createPersonName(personJSON));
-            person.setNames(names);
+            person.setNames(new ArrayList<PersonName>(names));
             person.setBirthdate(createBirthDate(personJSON));
             person.setBirthdateEstimated(createBirthDateEstimated(personJSON));
-            person.setAddresses(createPersonAddresses(personJSON));
-            person.setAttributes(createPersonAttributes(personJSON, muzimaApplication));
+            person.setAddresses(new ArrayList<>(createPersonAddresses(personJSON)));
+            person.setAttributes(new ArrayList<>(createPersonAttributes(personJSON, muzimaApplication)));
             return person;
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Could not create new person", e);

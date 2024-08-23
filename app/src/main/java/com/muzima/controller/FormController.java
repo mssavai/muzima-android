@@ -663,7 +663,7 @@ public class FormController {
             }
             personService.updatePerson(person);
 
-            person = personService.getPersonByUuid(person.getUuid());
+            //person = personService.getPersonByUuid(person.getUuid());
             return person;
         } catch (Exception e) {
             throw new FormDataProcessException(e);

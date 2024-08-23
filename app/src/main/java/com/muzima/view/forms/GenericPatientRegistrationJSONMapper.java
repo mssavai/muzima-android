@@ -296,16 +296,16 @@ public class GenericPatientRegistrationJSONMapper{
         patient.setNames(person.getNames());
         patient.setGender(person.getGender());
         patient.setBirthdate(person.getBirthdate());
-        patient.setAddresses(person.getAddresses());
-        patient.setAttributes(person.getAtributes());
+        patient.setAddresses(new ArrayList<>(person.getAddresses()));
+        patient.setAttributes(new ArrayList<>(person.getAtributes()));
     }
 
     private void copyDemographicsUpdateFromPatient(Person person) throws JSONException {
         person.setNames(patient.getNames());
         person.setGender(patient.getGender());
         person.setBirthdate(patient.getBirthdate());
-        person.setAddresses(patient.getAddresses());
-        person.setAttributes(patient.getAtributes());
+        person.setAddresses(new ArrayList<>(patient.getAddresses()));
+        person.setAttributes(new ArrayList<>(patient.getAtributes()));
     }
 
     private void setPatientIdentifiers() throws JSONException {
@@ -337,7 +337,7 @@ public class GenericPatientRegistrationJSONMapper{
     private void setPatientNames() throws JSONException {
         List<PersonName> names = new ArrayList<>();
         names.add(createPersonName(patientJSON));
-        patient.setNames(names);
+        patient.setNames(new ArrayList<>(names));
     }
 
     private void updatePatientNames() throws JSONException {
@@ -621,7 +621,7 @@ public class GenericPatientRegistrationJSONMapper{
     private void setPersonAddresses() throws JSONException {
         List<PersonAddress> addresses = createPersonAddresses(patientJSON);
         if(!addresses.isEmpty()){
-            patient.setAddresses(addresses);
+            patient.setAddresses(new ArrayList<>(addresses));
         }
     }
     private void updatePersonAddresses() throws JSONException {
@@ -656,7 +656,7 @@ public class GenericPatientRegistrationJSONMapper{
         List<PersonAttribute> attributes = createPersonAttributes(patientJSON,muzimaApplication);
 
         if(!attributes.isEmpty()) {
-            patient.setAttributes(attributes);
+            patient.setAttributes(new ArrayList<>(attributes));
         }
     }
 

@@ -113,7 +113,7 @@ public class LocationController {
                 if(locationAttribute != null && StringUtils.equalsIgnoreCase(locationAttribute.getAttribute(),attribute)){
                     return location;
                 }
-                locationAttribute = location.getAttribute(attributeType.getUuid());
+//                locationAttribute = location.getAttribute(attributeType.getUuid());
                 if(locationAttribute != null && StringUtils.equalsIgnoreCase(locationAttribute.getAttribute(),attribute)){
                     return location;
                 }

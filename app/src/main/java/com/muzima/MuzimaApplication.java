@@ -235,8 +235,8 @@ public class MuzimaApplication extends MultiDexApplication {
     public ConceptController getConceptController() {
         if (conceptController == null) {
             try {
-                conceptController = new ConceptController(muzimaContext.getService(ConceptService.class),
-                        muzimaContext.getService(ObservationService.class), this);
+                conceptController = new ConceptController(muzimaContext.getConceptService(),
+                        muzimaContext.getObservationService(), this);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -247,7 +247,7 @@ public class MuzimaApplication extends MultiDexApplication {
     public ProviderController getProviderController() {
         if (providerController == null) {
             try {
-                providerController = new ProviderController(muzimaContext.getService(ProviderService.class));
+                providerController = new ProviderController(muzimaContext.getProviderService());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -300,8 +300,8 @@ public class MuzimaApplication extends MultiDexApplication {
         if (observationController == null) {
             try {
                 observationController = new ObservationController(muzimaContext.getObservationService(),
-                        muzimaContext.getService(ConceptService.class),
-                        muzimaContext.getService(EncounterService.class),
+                        muzimaContext.getConceptService(),
+                        muzimaContext.getEncounterService(),
                         muzimaContext.getLastSyncTimeService(),
                         getSntpService());
             } catch (IOException e) {
@@ -314,7 +314,7 @@ public class MuzimaApplication extends MultiDexApplication {
     public EncounterController getEncounterController() {
         if (encounterController == null) {
             try {
-                encounterController = new EncounterController(muzimaContext.getService(EncounterService.class),
+                encounterController = new EncounterController(muzimaContext.getEncounterService(),
                         muzimaContext.getLastSyncTimeService(), getSntpService());
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -422,7 +422,7 @@ public class MuzimaApplication extends MultiDexApplication {
     public PersonController getPersonController() {
         if (personController == null) {
             try {
-                personController = new PersonController(muzimaContext.getService(PersonService.class), muzimaContext.getPersonTagService());
+                personController = new PersonController(muzimaContext.getPersonService(), muzimaContext.getPersonTagService());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -624,7 +624,7 @@ public class MuzimaApplication extends MultiDexApplication {
     public FCMTokenController getFCMTokenController() {
         if (fcmTokenController == null) {
             try {
-                fcmTokenController = new FCMTokenController(muzimaContext.getService(NotificationTokenService.class), this);
+                fcmTokenController = new FCMTokenController(muzimaContext.getNotificationTokenService(), this);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

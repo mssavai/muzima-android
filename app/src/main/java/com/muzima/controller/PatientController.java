@@ -66,7 +66,8 @@ public class PatientController {
 
     public void replacePatients(List<Patient> patients) throws PatientSaveException {
         try {
-            patientService.updatePatients(patients);
+            if(!patients.isEmpty())
+                patientService.updatePatients(patients);
         } catch (IOException e) {
             throw new PatientSaveException(e);
         }

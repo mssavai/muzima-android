@@ -113,7 +113,7 @@ public class KenyaEmrShrMapper {
             Patient patient = new Patient();
             PatientIdentification identification = SHRModel.getPatientIdentification();
             List<PersonName> names = extractPatientNamesFromSHRModel(SHRModel);
-            patient.setNames(names);
+            patient.setNames(new ArrayList<>(names));
 
             //set Identifiers
             List<PatientIdentifier> identifiers = extractPatientIdentifiersFromSHRModel(muzimaApplication, SHRModel);

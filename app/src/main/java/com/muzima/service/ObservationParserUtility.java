@@ -241,7 +241,7 @@ class ObservationParserUtility {
             String identifier = prov.getIdentifier();
             if(identifier != null && identifier.equals(providerId)){
                 providerName = prov.getName();
-                providerUuid = prov.getUuid();
+//                providerUuid = prov.getUuid();
                 providerIdentifier = prov.getIdentifier();
             }
         }

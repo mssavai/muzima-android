@@ -196,7 +196,7 @@ public class HTMLPatientJSONMapper {
     private void setPatientNames() throws JSONException {
         List<PersonName> names = new ArrayList<>();
         names.add(getPersonName());
-        patient.setNames(names);
+        patient.setNames(new ArrayList<>(names));
     }
 
     private void setPatientGender() throws JSONException {

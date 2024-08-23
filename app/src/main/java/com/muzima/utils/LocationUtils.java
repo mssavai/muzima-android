@@ -58,14 +58,14 @@ public class LocationUtils {
             } else {
                 boolean locationFound = false;
                 for(Location location1:locationController.getAllLocations()){
-                    for(LocationAttribute locationAttribute: location1.getAttributes()){
-                        if(StringUtils.equalsIgnoreCase(locationAttribute.getAttributeType().getUuid(),
-                                KenyaEmr.LocationAttributeType.MASTER_FACILITY_CODE.uuid)){
-                            location = location1;
-                            locationFound = true;
-                            break;
-                        }
-                    }
+//                    for(LocationAttribute locationAttribute: location1.getAttributes()){
+////                        if(StringUtils.equalsIgnoreCase(locationAttribute.getAttributeType().getUuid(),
+////                                KenyaEmr.LocationAttributeType.MASTER_FACILITY_CODE.uuid)){
+////                            location = location1;
+////                            locationFound = true;
+////                            break;
+////                        }
+//                    }
                     if(locationFound){
                         break;
                     }
@@ -88,14 +88,14 @@ public class LocationUtils {
 
             if(locationAttributeType == null){
                 locationAttributeType = new LocationAttributeType();
-                locationAttributeType.setUuid(KenyaEmr.LocationAttributeType.MASTER_FACILITY_CODE.uuid);
+//                locationAttributeType.setUuid(KenyaEmr.LocationAttributeType.MASTER_FACILITY_CODE.uuid);
                 locationAttributeType.setName(KenyaEmr.LocationAttributeType.MASTER_FACILITY_CODE.name);
             }
 
             LocationAttribute locationAttribute = new LocationAttribute();
             locationAttribute.setAttribute(facilityCode);
             locationAttribute.setAttributeType(locationAttributeType);
-            locationAttribute.setUuid(UUID.randomUUID().toString());
+//            locationAttribute.setUuid(UUID.randomUUID().toString());
             location.addAttribute(locationAttribute);
             try {
                 locationController.saveLocation(location);
