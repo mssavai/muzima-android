@@ -156,6 +156,8 @@ dependencies {
     implementation group: 'com.squareup.retrofit2', name: 'converter-gson', version: '2.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'org.awaitility:awaitility:4.2.2'
+    implementation "androidx.preference:preference:1.2.1"
+
 
 }
 task wrapper(type: Wrapper) {

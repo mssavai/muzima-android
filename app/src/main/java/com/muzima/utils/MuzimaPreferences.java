@@ -14,6 +14,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+import androidx.preference.PreferenceDataStore;
 import androidx.security.crypto.EncryptedSharedPreferences;
 
 import com.muzima.R;
@@ -28,16 +30,41 @@ import java.util.Set;
  * Support system preferences including prefs not
  * displayed in the settings UI
  */
-public class MuzimaPreferences {
-    public static SharedPreferences getSecureSharedPreferences(Context context) throws Exception {
-        SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
-                "filename",
-                "muzima_secret_shared_prefs",
-                context,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        );
+public class MuzimaPreferences  extends PreferenceDataStore {
 
+    private static final String CONFIG_FILE_NAME = "FileName";
+    private static final String CONFIG_MASTER_KEY_ALIAS = "muzima_secret_shared_prefs";
+    private  static MuzimaPreferences instance;
+    private SharedPreferences sharedPreferences;
+
+    public MuzimaPreferences(Context context) {
+        try {
+            sharedPreferences = EncryptedSharedPreferences.create(
+                    CONFIG_FILE_NAME,
+                    CONFIG_MASTER_KEY_ALIAS,
+                    context,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+
+        } catch (Exception e) {
+            Log.e("MuzimaPreferences", "Cannot get secure preferences datastore", e);
+        }
+    }
+
+
+
+    public static MuzimaPreferences getInstance(Context context) {
+        if (instance == null)
+            instance = new MuzimaPreferences(context);
+        return instance;
+
+    }
+    public static SharedPreferences getSecureSharedPreferences(Context context) {
+        return getInstance(context).getSharedPreferences();
+    }
+
+    public SharedPreferences getSharedPreferences() {
         return sharedPreferences;
     }
 
@@ -93,5 +120,67 @@ public class MuzimaPreferences {
             Log.e("MuzimaPreferences", "Error getting secure shared preferences");
             return defaultValue;
         }
+    }
+
+    @Override
+    public void putString(String key, @Nullable String value) {
+        sharedPreferences.edit().putString(key, value).apply();
+    }
+
+    @Override
+    public void putStringSet(String key, @Nullable Set<String> values) {
+        sharedPreferences.edit().putStringSet(key, values).apply();
+    }
+
+    @Override
+    public void putInt(String key, int value) {
+        sharedPreferences.edit().putInt(key, value).apply();
+    }
+
+    @Override
+    public void putLong(String key, long value) {
+        sharedPreferences.edit().putLong(key, value).apply();
+    }
+
+    @Override
+    public void putFloat(String key, float value) {
+        sharedPreferences.edit().putFloat(key, value).apply();
+    }
+
+    @Override
+    public void putBoolean(String key, boolean value) {
+        sharedPreferences.edit().putBoolean(key, value).apply();
+    }
+
+    @Nullable
+    @Override
+    public String getString(String key, @Nullable String defValue) {
+        return sharedPreferences.getString(key, defValue);
+    }
+
+    @Nullable
+    @Override
+    public Set<String> getStringSet(String key, @Nullable Set<String> defValues) {
+        return sharedPreferences.getStringSet(key, defValues);
+    }
+
+    @Override
+    public int getInt(String key, int defValue) {
+        return sharedPreferences.getInt(key, defValue);
+    }
+
+    @Override
+    public long getLong(String key, long defValue) {
+        return sharedPreferences.getLong(key, defValue);
+    }
+
+    @Override
+    public float getFloat(String key, float defValue) {
+        return sharedPreferences.getFloat(key, defValue);
+    }
+
+    @Override
+    public boolean getBoolean(String key, boolean defValue) {
+        return sharedPreferences.getBoolean(key, defValue);
     }
 }

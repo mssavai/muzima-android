@@ -23,14 +23,8 @@ public class WizardFinishPreferenceService extends PreferenceService {
     }
 
     public boolean isWizardFinished(){
-        try {
-            String wizardFinishedKey = context.getResources().getString(R.string.preference_wizard_finished);
-
-            return MuzimaPreferences.getSecureSharedPreferences(context).getBoolean(wizardFinishedKey, false);
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Error getting secure shared preferences");
-            return false;
-        }
+        String wizardFinishedKey = context.getResources().getString(R.string.preference_wizard_finished);
+        return MuzimaPreferences.getBooleanPreference(context, wizardFinishedKey, false);
     }
 
     public void finishWizard(){
@@ -42,13 +36,7 @@ public class WizardFinishPreferenceService extends PreferenceService {
     }
 
     private void setWizardFinished(boolean wizardFinished) {
-        try {
-            String wizardFinishedKey = context.getResources().getString(R.string.preference_wizard_finished);
-            MuzimaPreferences.getSecureSharedPreferences(context).edit()
-                    .putBoolean(wizardFinishedKey, wizardFinished)
-                    .commit();
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Error getting secure shared preferences");
-        }
+        String wizardFinishedKey = context.getResources().getString(R.string.preference_wizard_finished);
+        MuzimaPreferences.setBooleanPreference(context, wizardFinishedKey, wizardFinished);
     }
 }

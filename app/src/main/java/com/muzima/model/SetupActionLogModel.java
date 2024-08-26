@@ -21,7 +21,6 @@ public class SetupActionLogModel{
 
     public void setSetupAction(String setupAction) {
         this.setupAction = setupAction;
-        System.out.println("===============Downloading: "+setupAction);
     }
 
     public String getSetupActionResult() {
@@ -29,7 +28,6 @@ public class SetupActionLogModel{
     }
 
     public void setSetupActionResult(String setupActionResult) {
-        System.out.println("=============Action: "+setupAction + "  Result: "+setupActionResult+" Status: "+setupActionResultStatus);
         this.setupActionResult = setupActionResult;
     }
 

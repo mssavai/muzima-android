@@ -13,8 +13,8 @@ package com.muzima.view.preferences;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import android.util.Log;
@@ -31,7 +31,7 @@ import com.muzima.view.MainDashboardActivity;
 import com.muzima.view.login.LoginActivity;
 import com.muzima.view.preferences.settings.SettingsPreferenceFragment;
 
-public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SettingsActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private AppCompatDelegate delegate;
     private final LanguageUtil languageUtil = new LanguageUtil();
@@ -50,7 +50,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         getDelegate().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
         setTitle(R.string.general_settings);
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsPreferenceFragment()).commit();
         setupActionBar();
         logEvent("VIEW_SETTINGS");
@@ -85,13 +85,6 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         if (getDelegate().getSupportActionBar() != null) {
             getDelegate().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-    }
-
-    private AppCompatDelegate getDelegate() {
-        if (delegate == null) {
-            delegate = AppCompatDelegate.create(this, null);
-        }
-        return delegate;
     }
 
     @Override

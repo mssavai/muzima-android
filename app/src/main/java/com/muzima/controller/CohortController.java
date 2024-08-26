@@ -65,10 +65,8 @@ public class CohortController {
         try {
             User authenticatedUser = muzimaApplication.getAuthenticatedUser();
             if (authenticatedUser != null) {
-                System.out.println("====Get logged provider----");
                 loggedInProvider = muzimaApplication.getProviderController().getLoggedInProvider(
                         muzimaApplication.getAuthenticatedUser().getSystemId());
-                System.out.println("=================Provider is-- "+loggedInProvider );
             } else {
                 loggedInProvider = null;
             }
@@ -76,7 +74,6 @@ public class CohortController {
             loggedInProvider = null;
             Log.e(getClass().getSimpleName(), "Exception while fetching logged in provider " + e);
         }
-        System.out.println("=================Provider is "+loggedInProvider );
         return loggedInProvider;
     }
 
@@ -136,11 +133,8 @@ public class CohortController {
     public List<Cohort> downloadAllCohorts(String defaultLocation) throws CohortDownloadException {
         try {
             Date lastSyncTimeForCohorts = lastSyncTimeService.getLastSyncTimeFor(DOWNLOAD_COHORTS);
-            System.out.println("==========Getting ready for cohorts");
             Provider loggedInProvider = getLoggedInProvider();
-            System.out.println("==========Getting ready for cohorts--b");
             List<Cohort> allCohorts = cohortService.downloadCohortsByNameAndSyncDate(StringUtils.EMPTY, lastSyncTimeForCohorts, defaultLocation, loggedInProvider);
-            System.out.println("================Just gotten the list");
             LastSyncTime lastSyncTime = new LastSyncTime(DOWNLOAD_COHORTS, sntpService.getTimePerDeviceTimeZone());
             lastSyncTimeService.saveLastSyncTime(lastSyncTime);
             return allCohorts;

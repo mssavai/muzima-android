@@ -59,7 +59,7 @@ abstract class PreferenceService {
         MuzimaPreferences.setStringPreference(context, prefKey, serialize(values));
     }
 
-    void String getStringSet(String prefKey) {
-        return MuzimaPreferences.getStringPreference(context, prefKey, "{}");
+    String getStringSet(String prefKey) {
+        return MuzimaPreferences.getStringPreference(context, prefKey, "[]");
     }
 }

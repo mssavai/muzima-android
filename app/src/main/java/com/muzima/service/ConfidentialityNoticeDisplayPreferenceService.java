@@ -16,22 +16,13 @@ public class ConfidentialityNoticeDisplayPreferenceService extends PreferenceSer
         this.application = application;
     }
     public Boolean getConfidentialityNoticeDisplayPreferenceValue(){
-        try {
-            String key = context.getResources().getString(R.string.preference_confidentiality_notice_display);
-            return MuzimaPreferences.getSecureSharedPreferences(context).getBoolean(key, CONFIDENTIALITY_NOTICE_DISPLAY_ENABLED_DEFAULT_VALUE);
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Error getting secure shared preferences");
-            return false;
-        }
+        String key = context.getResources().getString(R.string.preference_confidentiality_notice_display);
+        return MuzimaPreferences.getBooleanPreference(context, key, CONFIDENTIALITY_NOTICE_DISPLAY_ENABLED_DEFAULT_VALUE);
     }
 
     public void updateConfidentialityNoticeDisplayPreferenceValue(){
-        try {
-            boolean confidentialityNoticeDisplayEnabled = application.getMuzimaSettingController().isConfidentialityNoticeDisplayEnabled();
-            String key = context.getResources().getString(R.string.preference_confidentiality_notice_display);
-            MuzimaPreferences.getSecureSharedPreferences(context).edit().putBoolean(key, confidentialityNoticeDisplayEnabled).apply();
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Error getting secure shared preferences");
-        }
+        boolean confidentialityNoticeDisplayEnabled = application.getMuzimaSettingController().isConfidentialityNoticeDisplayEnabled();
+        String key = context.getResources().getString(R.string.preference_confidentiality_notice_display);
+        MuzimaPreferences.setBooleanPreference(context, key, confidentialityNoticeDisplayEnabled);
     }
 }

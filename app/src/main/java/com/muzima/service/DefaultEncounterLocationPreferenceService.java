@@ -23,15 +23,9 @@ public class DefaultEncounterLocationPreferenceService extends  PreferenceServic
     }
 
     public void setDefaultEncounterLocationPreference(String defaultEncounterLocation) {
-        try {
-            Resources resources = context.getResources();
-            String key = resources.getString(R.string.preference_default_encounter_location);
+        Resources resources = context.getResources();
+        String key = resources.getString(R.string.preference_default_encounter_location);
 
-            MuzimaPreferences.getSecureSharedPreferences(context).edit()
-                    .putString(key, defaultEncounterLocation)
-                    .apply();
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Error getting secure shared preferences");
-        }
+        MuzimaPreferences.setStringPreference(context, key, defaultEncounterLocation);
     }
 }

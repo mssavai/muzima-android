@@ -420,7 +420,7 @@ public class MuzimaSyncService {
             Log.e(getClass().getSimpleName(), "Exception when trying to save locations", e);
             result[0] = SyncStatusConstants.SAVE_ERROR;
             return result;
-        } catch (LocationController.LocationDownloadException e) {
+        } catch (Throwable e) {
             Log.e(getClass().getSimpleName(), "Exception when trying to download locations", e);
             result[0] = SyncStatusConstants.DOWNLOAD_ERROR;
             return result;
@@ -442,7 +442,7 @@ public class MuzimaSyncService {
             Log.e(getClass().getSimpleName(), "Exception when trying to save providers", e);
             result[0] = SyncStatusConstants.SAVE_ERROR;
             return result;
-        } catch (ProviderController.ProviderDownloadException e) {
+        } catch (Throwable e) {
             Log.e(getClass().getSimpleName(), "Exception when trying to download providers", e);
             result[0] = SyncStatusConstants.DOWNLOAD_ERROR;
             return result;
@@ -464,7 +464,7 @@ public class MuzimaSyncService {
             Log.e(getClass().getSimpleName(), "Exception when trying to save concepts", e);
             result[0] = SyncStatusConstants.SAVE_ERROR;
             return result;
-        } catch (ConceptController.ConceptDownloadException e) {
+        } catch (Throwable e) {
             Log.e(getClass().getSimpleName(), "Exception when trying to download concepts", e);
             result[0] = SyncStatusConstants.DOWNLOAD_ERROR;
             return result;
@@ -496,7 +496,6 @@ public class MuzimaSyncService {
             result[0] = SyncStatusConstants.DELETE_ERROR;
             return result;
         }
-        System.out.println("==============Result: "+result);
         return result;
     }
 
@@ -615,10 +614,7 @@ public class MuzimaSyncService {
 
             cohortController.markAsUpToDate(cohortUuids);
             cohortController.setSyncStatus(cohortUuids,1);
-        } catch (CohortController.CohortDownloadException e) {
-            Log.e(getClass().getSimpleName(), "Exception thrown while downloading cohort data.", e);
-            result[0] = SyncStatusConstants.DOWNLOAD_ERROR;
-        } catch (CohortController.CohortReplaceException e) {
+        }  catch (CohortController.CohortReplaceException e) {
             Log.e(getClass().getSimpleName(), "Exception thrown while replacing cohort data.", e);
             result[0] = SyncStatusConstants.REPLACE_ERROR;
         } catch (PatientController.PatientSaveException e) {
@@ -630,6 +626,9 @@ public class MuzimaSyncService {
         } catch (CohortController.CohortUpdateException e) {
             Log.e(getClass().getSimpleName(), "Exception thrown while marking cohorts as updated.", e);
             result[0] = SyncStatusConstants.SAVE_ERROR;
+        }catch (Throwable e) {
+            Log.e(getClass().getSimpleName(), "Exception thrown while downloading cohort data.", e);
+            result[0] = SyncStatusConstants.DOWNLOAD_ERROR;
         }
         return result;
     }
@@ -684,6 +683,9 @@ public class MuzimaSyncService {
         } catch (PatientController.PatientLoadException e) {
             Log.e(getClass().getSimpleName(), "Exception thrown while loading patients.", e);
             result[0] = SyncStatusConstants.LOAD_ERROR;
+        } catch (Throwable e) {
+            Log.e(getClass().getSimpleName(), "Exception thrown while loading patients.", e);
+            result[0] = SyncStatusConstants.LOAD_ERROR;
         }
         return result;
     }
@@ -704,6 +706,9 @@ public class MuzimaSyncService {
             }
         } catch (PersonController.PersonLoadException e) {
             Log.e(getClass().getSimpleName(), "Exception thrown while loading persons.", e);
+            result[0] = SyncStatusConstants.LOAD_ERROR;
+        } catch (Throwable e) {
+            Log.e(getClass().getSimpleName(), "Exception thrown while downloading obs for persons.", e);
             result[0] = SyncStatusConstants.LOAD_ERROR;
         }
         return result;
@@ -736,6 +741,8 @@ public class MuzimaSyncService {
             result[0] = SyncStatusConstants.LOAD_ERROR;
         } catch (PatientController.PatientLoadException e) {
             Log.e(getClass().getSimpleName(), "Exception thrown while loading patients.", e);
+        } catch (Throwable e) {
+            Log.e(getClass().getSimpleName(), "Exception thrown while downloading derived observations.", e);
         }
         return result;
     }
@@ -1059,10 +1066,8 @@ public class MuzimaSyncService {
 
     private List<Cohort> downloadCohortsList() throws CohortController.CohortDownloadException {
         List<Cohort> cohorts;
-        System.out.println("=============DoDefault Location: "+getDefaultLocation());
         cohorts = cohortController.downloadAllCohorts(getDefaultLocation());
-        System.out.println("==============Cohorts: "+cohorts.size());
-        Log.e(TAG, "========== downloadCohortsList: downloaded cohorts " + cohorts.size());
+        Log.e(TAG, "downloadCohortsList: downloaded cohorts " + cohorts.size());
         return cohorts;
     }
 

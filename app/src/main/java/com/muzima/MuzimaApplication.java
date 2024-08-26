@@ -135,6 +135,7 @@ public class MuzimaApplication extends MultiDexApplication {
 
     public void clearApplicationData() {
         try {
+            //ToDo: clear data from Room tables
             File dir = new File(APP_DIR);
             if (dir.isDirectory()) {
                 deleteDir(dir);

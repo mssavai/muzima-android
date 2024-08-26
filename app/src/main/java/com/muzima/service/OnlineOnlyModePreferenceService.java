@@ -18,22 +18,13 @@ public class OnlineOnlyModePreferenceService extends PreferenceService{
     }
 
     public Boolean getOnlineOnlyModePreferenceValue(){
-        try {
         String key = context.getResources().getString(R.string.preference_online_only_mode);
-        return MuzimaPreferences.getSecureSharedPreferences(context).getBoolean(key,ONLINE_ONLY_MODE_ENABLED_DEFAULT_VALUE);
-        } catch (Exception e){
-            Log.e(getClass().getSimpleName(), "Error getting secure shared preferences");
-            return false;
-        }
+        return MuzimaPreferences.getBooleanPreference(context, key, ONLINE_ONLY_MODE_ENABLED_DEFAULT_VALUE);
     }
 
     public void updateOnlineOnlyModePreferenceValue(){
-        try {
         boolean onlineOnlyModeEnabled = application.getMuzimaSettingController().isOnlineOnlyModeEnabled();
-            String key = context.getResources().getString(R.string.preference_online_only_mode);
-            MuzimaPreferences.getSecureSharedPreferences(context).edit().putBoolean(key,onlineOnlyModeEnabled).apply();
-        } catch (Exception e){
-            Log.e(getClass().getSimpleName(), "Error getting secure shared preferences");
-        }
+        String key = context.getResources().getString(R.string.preference_online_only_mode);
+        MuzimaPreferences.setBooleanPreference(context, key,onlineOnlyModeEnabled);
     }
 }
