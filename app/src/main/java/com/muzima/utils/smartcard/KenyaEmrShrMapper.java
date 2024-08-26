@@ -118,7 +118,7 @@ public class KenyaEmrShrMapper {
             //set Identifiers
             List<PatientIdentifier> identifiers = extractPatientIdentifiersFromSHRModel(muzimaApplication, SHRModel);
             if(!identifiers.isEmpty()) {
-                patient.setIdentifiers(identifiers);
+                patient.setIdentifiers(new ArrayList<>(identifiers));
             }
 
             //date of birth

@@ -258,9 +258,9 @@ public class PersonRegistrationUtils {
             }
         }
 
-        personAddress.setUuid((String)getFromJsonObject(addressObject,"uuid"));
-        if(personAddress.getUuid() == null){
-            personAddress.setUuid(UUID.randomUUID().toString());
+        personAddress.setAddressUuid((String)getFromJsonObject(addressObject,"uuid"));
+        if(personAddress.getAddressUuid() == null){
+            personAddress.setAddressUuid(UUID.randomUUID().toString());
         }
 
         if(personAddress.isBlank()) {
@@ -416,7 +416,7 @@ public class PersonRegistrationUtils {
             if(attributeType == null){
                 attributeType = new PersonAttributeType();
                 if(personJsonObject.has("attribute_type_uuid")) {
-                    attributeType.setUuid(personJsonObject.getString("attribute_type_uuid"));
+                    attributeType.setPersonAttributeTypeUuid(personJsonObject.getString("attribute_type_uuid"));
                 }else if(personJsonObject.has("attribute_type_name")) {
                     attributeType.setName(personJsonObject.getString("attribute_type_name"));
                 }

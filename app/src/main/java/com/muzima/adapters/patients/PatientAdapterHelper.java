@@ -421,7 +421,7 @@ public abstract class PatientAdapterHelper extends RecyclerAdapter<PatientAdapte
                     if(jsonObject.has("attribute")){
                         object = jsonObject.get("attribute");
                         String uuid = null;
-                        List<PersonAttribute> personAttributes = patient.getAtributes();
+                        List<PersonAttribute> personAttributes = patient.getAttributes();;
                         if (object != null && object instanceof JSONArray) {
                             JSONArray jsonArray = (JSONArray) object;
                             for (int i = 0; i < jsonArray.length(); i++) {
@@ -430,7 +430,7 @@ public abstract class PatientAdapterHelper extends RecyclerAdapter<PatientAdapte
                             }
 
                             for(PersonAttribute personAttribute : personAttributes){
-                                if(attributeTypeUuids.contains(personAttribute.getAttributeType().getUuid())) {
+                                if(attributeTypeUuids.contains(personAttribute.getAttributeType().getPersonAttributeTypeUuid())) {
                                     RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                                     TextView textViews = new TextView(context);
                                     textViews.setText(personAttribute.getAttributeType().getName().concat(" : ").concat(personAttribute.getAttribute()));
@@ -444,7 +444,7 @@ public abstract class PatientAdapterHelper extends RecyclerAdapter<PatientAdapte
                             uuid = object.toString();
                             attributeTypeUuids.add(uuid);
                             for(PersonAttribute personAttribute : personAttributes){
-                                if(attributeTypeUuids.contains(personAttribute.getAttributeType().getUuid())) {
+                                if(attributeTypeUuids.contains(personAttribute.getAttributeType().getPersonAttributeTypeUuid())) {
                                     RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                                     TextView textViews = new TextView(context);
                                     textViews.setText(personAttribute.getAttributeType().getName().concat(" : ").concat(personAttribute.getAttribute()));
@@ -468,7 +468,7 @@ public abstract class PatientAdapterHelper extends RecyclerAdapter<PatientAdapte
                                 identifierTypeUuids.add(uuid);
                             }
                             for(PatientIdentifier patientIdentifier : patientIdentifiers){
-                                if(identifierTypeUuids.contains(patientIdentifier.getIdentifierType().getUuid())) {
+                                if(identifierTypeUuids.contains(patientIdentifier.getIdentifierType().getIdentifierTypeUuid())) {
                                     RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                                     TextView textViews = new TextView(context);
                                     textViews.setText(patientIdentifier.getIdentifierType().getName().concat(" : ").concat(patientIdentifier.getIdentifier()));

@@ -67,7 +67,7 @@ public class GeolocationJsonMapper {
             if(identifier.isPreferred()) {
                 JSONObject medicalRecordNumber = new JSONObject();
                 medicalRecordNumber.put("identifier_value", identifier.getIdentifier());
-                medicalRecordNumber.put("identifier_type_uuid", identifier.getIdentifierType().getUuid());
+                medicalRecordNumber.put("identifier_type_uuid", identifier.getIdentifierType().getIdentifierTypeUuid());
                 medicalRecordNumber.put("identifier_type_name", identifier.getIdentifierType().getName());
                 patientDetails.put("patient.medical_record_number", medicalRecordNumber);
                 break;

@@ -92,7 +92,7 @@ public class PatientIdentifierUtils {
             //ToDo: Figure out how to get identifierType from server side
             identifierType = new PatientIdentifierType();
             identifierType.setName(identifierTypeName);
-            identifierType.setUuid(identifierTypeUuid);
+            identifierType.setIdentifierTypeUuid(identifierTypeUuid);
         }
         return identifierType;
     }

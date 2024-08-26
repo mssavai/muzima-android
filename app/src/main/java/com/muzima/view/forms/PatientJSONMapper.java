@@ -64,7 +64,7 @@ public class PatientJSONMapper {
     private Patient patient(Map<String, String> paramsMap) {
         Patient patient = new Patient();
         patient.setUuid(paramsMap.get("patient.uuid"));
-        patient.setIdentifiers(asList(patientIdentifier(patient.getUuid()), preferredIdentifier(paramsMap)));
+        patient.setIdentifiers(new ArrayList<>(asList(patientIdentifier(patient.getUuid()), preferredIdentifier(paramsMap))));
         patient.setNames(new ArrayList<>(Collections.singletonList(personName(paramsMap))));
         patient.setGender(paramsMap.get("patient.sex"));
         patient.setBirthdate(getDate(paramsMap));

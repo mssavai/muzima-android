@@ -102,13 +102,13 @@ public class GenericPatientRegistrationJSONMapper{
                         if(identifier.getIdentifier().equals(patient.getIdentifier())){
                             JSONObject preferredIdentifierJSONObject = new JSONObject();
                             preferredIdentifierJSONObject.put("identifier_value", identifier.getIdentifier());
-                            preferredIdentifierJSONObject.put("identifier_type_uuid", identifier.getIdentifierType().getUuid());
+                            preferredIdentifierJSONObject.put("identifier_type_uuid", identifier.getIdentifierType().getIdentifierTypeUuid());
                             preferredIdentifierJSONObject.put("identifier_type_name", identifier.getIdentifierType().getName());
                             patientDetails.put("patient.medical_record_number", preferredIdentifierJSONObject);
                         } else if (!identifier.getIdentifier().equals(patient.getUuid())) {
                             JSONObject identifierJSONObject = new JSONObject();
                             identifierJSONObject.put("identifier_value", identifier.getIdentifier());
-                            identifierJSONObject.put("identifier_type_uuid", identifier.getIdentifierType().getUuid());
+                            identifierJSONObject.put("identifier_type_uuid", identifier.getIdentifierType().getIdentifierTypeUuid());
                             identifierJSONObject.put("identifier_type_name", identifier.getIdentifierType().getName());
                             identifierJSONArray.put(identifierJSONObject);
                         }
@@ -117,14 +117,14 @@ public class GenericPatientRegistrationJSONMapper{
                 patientDetails.put("patient.otheridentifier", identifierJSONArray);
             }
 
-            if(!patient.getAtributes().isEmpty()){
-                List<PersonAttribute> attributes = patient.getAtributes();
+            if(!patient.getAttributes().isEmpty()){
+                List<PersonAttribute> attributes = patient.getAttributes();
 
                 JSONArray attributesJSONArray = new JSONArray();
 
                 for(PersonAttribute attribute : attributes){
                     JSONObject attributeJSONObject = new JSONObject();
-                    attributeJSONObject.put("attribute_type_uuid",attribute.getAttributeType().getUuid());
+                    attributeJSONObject.put("attribute_type_uuid",attribute.getAttributeType().getPersonAttributeTypeUuid());
                     attributeJSONObject.put("attribute_type_name",attribute.getAttributeType().getName());
                     attributeJSONObject.put("attribute_value",attribute.getAttribute());
                     attributesJSONArray.put(attributeJSONObject);
@@ -153,7 +153,7 @@ public class GenericPatientRegistrationJSONMapper{
                     addressJSONObject.put("startDate",address.getStartDate());
                     addressJSONObject.put("endDate",address.getEndDate());
                     addressJSONObject.put("preferred",address.getPreferred());
-                    addressJSONObject.put("uuid",address.getUuid());
+                    addressJSONObject.put("uuid",address.getAddressUuid());
                     addressesJSONArray.put(addressJSONObject);
                 }
                 patientDetails.put("patient.personaddress",addressesJSONArray);
@@ -297,7 +297,7 @@ public class GenericPatientRegistrationJSONMapper{
         patient.setGender(person.getGender());
         patient.setBirthdate(person.getBirthdate());
         patient.setAddresses(new ArrayList<>(person.getAddresses()));
-        patient.setAttributes(new ArrayList<>(person.getAtributes()));
+        patient.setAttributes(new ArrayList<>(person.getAttributes()));
     }
 
     private void copyDemographicsUpdateFromPatient(Person person) throws JSONException {
@@ -305,7 +305,7 @@ public class GenericPatientRegistrationJSONMapper{
         person.setGender(patient.getGender());
         person.setBirthdate(patient.getBirthdate());
         person.setAddresses(new ArrayList<>(patient.getAddresses()));
-        person.setAttributes(new ArrayList<>(patient.getAtributes()));
+        person.setAttributes(new ArrayList<>(patient.getAttributes()));
     }
 
     private void setPatientIdentifiers() throws JSONException {
@@ -314,7 +314,7 @@ public class GenericPatientRegistrationJSONMapper{
         for(PatientIdentifier identifier:identifiers){
             identifier.setLocation(location);
         }
-        patient.setIdentifiers(identifiers);
+        patient.setIdentifiers(new ArrayList<>(identifiers));
     }
 
     private void updatePatientIdentifiers() throws JSONException {
@@ -322,7 +322,7 @@ public class GenericPatientRegistrationJSONMapper{
         Location location = getEncounterLocation();
         for(PatientIdentifier identifier:identifiers){
             identifier.setLocation(location);
-            PatientIdentifier existingIdentifier = patient.getIdentifier(identifier.getIdentifierType().getUuid());
+            PatientIdentifier existingIdentifier = patient.getIdentifier(identifier.getIdentifierType().getIdentifierTypeUuid());
             if(existingIdentifier == null){
                 existingIdentifier = patient.getIdentifier(identifier.getIdentifierType().getName());
             }
@@ -607,7 +607,7 @@ public class GenericPatientRegistrationJSONMapper{
         if(identifierType == null){
             identifierType = new PatientIdentifierType();
             if(!StringUtils.isEmpty(identifierTypeUuid)){
-                identifierType.setUuid(identifierTypeUuid);
+                identifierType.setIdentifierTypeUuid(identifierTypeUuid);
             }
             if(!StringUtils.isEmpty(identifierTypeName)){
                 identifierType.setName(identifierTypeName);
@@ -629,7 +629,7 @@ public class GenericPatientRegistrationJSONMapper{
         for(PersonAddress demographicsUpdateAddress:demographicsUpdateAddresses){
             boolean preExistingAddressFound = false;
             for(PersonAddress preExistingAddress:patient.getAddresses()){
-                if (StringUtils.equals(demographicsUpdateAddress.getUuid(), preExistingAddress.getUuid())) {
+                if (StringUtils.equals(demographicsUpdateAddress.getAddressUuid(), preExistingAddress.getAddressUuid())) {
                     preExistingAddressFound = true;
                     try{
                         copyPersonAddress(demographicsUpdateAddress, preExistingAddress);
@@ -669,9 +669,9 @@ public class GenericPatientRegistrationJSONMapper{
             PersonAttribute demographicsUpdateAttribute = demographicsUpdateAttributesIterator.next();
             PersonAttributeType demographicsUpdateAttributeType = demographicsUpdateAttribute.getAttributeType();
 
-            for (PersonAttribute preExistingAttribute:patient.getAtributes()) {
+            for (PersonAttribute preExistingAttribute:patient.getAttributes()) {
                 PersonAttributeType preExistingAttributeType = preExistingAttribute.getAttributeType();
-                if(StringUtils.equals(preExistingAttributeType.getUuid(), demographicsUpdateAttributeType.getUuid()) ||
+                if(StringUtils.equals(preExistingAttributeType.getPersonAttributeTypeUuid(), demographicsUpdateAttributeType.getPersonAttributeTypeUuid()) ||
                         StringUtils.equals(preExistingAttributeType.getName(), demographicsUpdateAttributeType.getName())) {
                     preExistingAttributeFound = true;
                     preExistingAttribute.setAttribute(demographicsUpdateAttribute.getAttribute());

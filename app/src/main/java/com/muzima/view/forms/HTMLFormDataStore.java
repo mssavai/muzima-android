@@ -503,7 +503,7 @@ class HTMLFormDataStore {
             if (person != null) {
                 PersonAttribute attribute = person.getAttribute(attributeTypeNameOrUuid);
                 if (attribute != null) {
-                    attributeJSONObject.put("attribute_type_uuid", attribute.getAttributeType().getUuid());
+                    attributeJSONObject.put("attribute_type_uuid", attribute.getAttributeType().getPersonAttributeTypeUuid());
                     attributeJSONObject.put("attribute_type_name", attribute.getAttributeType().getName());
                     attributeJSONObject.put("attribute_value", attribute.getAttribute());
                 }
@@ -522,7 +522,7 @@ class HTMLFormDataStore {
             if (patient != null) {
                 PatientIdentifier identifier = patient.getIdentifier(identifierType);
                 if (identifier != null) {
-                    identifierJSONObject.put("identifier_type_uuid", identifier.getIdentifierType().getUuid());
+                    identifierJSONObject.put("identifier_type_uuid", identifier.getIdentifierType().getIdentifierTypeUuid());
                     identifierJSONObject.put("identifier_type_name", identifier.getIdentifierType().getName());
                     identifierJSONObject.put("identifier_value", identifier.getIdentifier());
                 }
@@ -554,7 +554,7 @@ class HTMLFormDataStore {
                 patientJsonObject.put("birth_date", DateUtils.getFormattedDate(patient.getBirthdate()));
                 patientJsonObject.put("birthdate_estimated", Boolean.toString(patient.getBirthdateEstimated()));
                 patientJsonObject.put("sex", patient.getGender());
-                patientJsonObject.put("attributes", patient.getAtributes());
+                patientJsonObject.put("attributes", patient.getAttributes());
                 patientJsonObject.put("addresses", patient.getAddresses());
             }
         } catch (PatientController.PatientDownloadException | JSONException |
@@ -582,7 +582,7 @@ class HTMLFormDataStore {
                 personJsonObject.put("given_name", person.getGivenName());
                 personJsonObject.put("birth_date", DateUtils.getFormattedDate(person.getBirthdate()));
                 personJsonObject.put("sex", person.getGender());
-                personJsonObject.put("attributes", person.getAtributes());
+                personJsonObject.put("attributes", person.getAttributes());
                 personJsonObject.put("addresses", person.getAddresses());
             }
         } catch (PersonController.PersonLoadException | PatientController.PatientLoadException | JSONException e) {

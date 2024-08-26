@@ -173,7 +173,7 @@ public class RelationshipJsonMapper {
                 addressJSONObject.put("startDate", address.getStartDate());
                 addressJSONObject.put("endDate", address.getEndDate());
                 addressJSONObject.put("preferred", address.getPreferred());
-                addressJSONObject.put("uuid", address.getUuid());
+                addressJSONObject.put("uuid", address.getAddressUuid());
                 addressesJSONArray.put(addressJSONObject);
             }
         }
@@ -182,12 +182,12 @@ public class RelationshipJsonMapper {
 
     private JSONArray createAttributesJsonArray(Person person) throws JSONException {
         JSONArray attributesJSONArray = new JSONArray();
-        if(!person.getAtributes().isEmpty()){
-            List<PersonAttribute> attributes = person.getAtributes();
+        if(!person.getAttributes().isEmpty()){
+            List<PersonAttribute> attributes = person.getAttributes();
 
             for(PersonAttribute attribute : attributes){
                 JSONObject attributeJSONObject = new JSONObject();
-                attributeJSONObject.put("attribute_type_uuid",attribute.getAttributeType().getUuid());
+                attributeJSONObject.put("attribute_type_uuid",attribute.getAttributeType().getPersonAttributeTypeUuid());
                 attributeJSONObject.put("attribute_type_name",attribute.getAttributeType().getName());
                 attributeJSONObject.put("attribute_value",attribute.getAttribute());
                 attributesJSONArray.put(attributeJSONObject);

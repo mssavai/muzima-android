@@ -539,8 +539,10 @@ public class MuzimaSyncService {
             List<CohortData> cohortDataList = cohortController.downloadRemovedCohortData(cohortUuids);
 
             for (CohortData cohortData : cohortDataList) {
-                cohortController.deleteCohortMembers(cohortData.getCohortMembers());
-                patientController.deletePatientByCohortMembership(cohortData.getCohortMembers());
+                if(cohortData!=null) {
+                    cohortController.deleteCohortMembers(cohortData.getCohortMembers());
+                    patientController.deletePatientByCohortMembership(cohortData.getCohortMembers());
+                }
             }
 
             result[0] = SUCCESS;
@@ -570,14 +572,16 @@ public class MuzimaSyncService {
             List<Patient> cohortPatients = new ArrayList<>();
             List<Patient> downloadedPatients = new ArrayList<>();
             for (CohortData cohortData : cohortDataList) {
-                cohortController.addCohortMembers(cohortData.getCohortMembers());
-                cohortPatients = cohortData.getPatients();
-                getVoidedPatients(voidedPatients, cohortPatients);
-                cohortPatients.removeAll(voidedPatients);
-                patientController.replacePatients(cohortPatients);
-                patientCount += cohortData.getPatients().size();
-                if(cohortPatients.size() > 0) {
-                    downloadedPatients.addAll(cohortPatients);
+                if(cohortData!=null) {
+                    cohortController.addCohortMembers(cohortData.getCohortMembers());
+                    cohortPatients = cohortData.getPatients();
+                    getVoidedPatients(voidedPatients, cohortPatients);
+                    cohortPatients.removeAll(voidedPatients);
+                    patientController.replacePatients(cohortPatients);
+                    patientCount += cohortData.getPatients().size();
+                    if (cohortPatients.size() > 0) {
+                        downloadedPatients.addAll(cohortPatients);
+                    }
                 }
             }
             patientController.deletePatient(voidedPatients);
