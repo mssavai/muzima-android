@@ -12,9 +12,7 @@ package com.muzima;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.multidex.MultiDexApplication;
@@ -70,6 +68,7 @@ import com.muzima.service.MuzimaSyncService;
 import com.muzima.service.SntpService;
 import com.muzima.util.Constants;
 import com.muzima.utils.LanguageUtil;
+import com.muzima.utils.MuzimaPreferences;
 import com.muzima.utils.StringUtils;
 import com.muzima.view.forms.FormWebViewActivity;
 import com.muzima.view.forms.HTMLFormWebViewActivity;
@@ -191,12 +190,11 @@ public class MuzimaApplication extends MultiDexApplication {
     }
 
     public void checkAndSetLocaleToDeviceLocaleIFDisclaimerNotAccepted() {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         String disclaimerKey = getResources().getString(R.string.preference_disclaimer);
-        boolean disclaimerAccepted = settings.getBoolean(disclaimerKey, false);
+        boolean disclaimerAccepted = MuzimaPreferences.getBooleanPreference(getApplicationContext(), disclaimerKey, false);
         if (!disclaimerAccepted) {
             String localeKey = getResources().getString(R.string.preference_app_language);
-            settings.edit().putString(localeKey, Locale.getDefault().getLanguage()).commit();
+            MuzimaPreferences.setStringPreference(getApplicationContext(), localeKey, Locale.getDefault().getLanguage());
         }
     }
 
@@ -454,9 +452,8 @@ public class MuzimaApplication extends MultiDexApplication {
             deleteAllPatientsData();
         }
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         String passwordKey = getResources().getString(R.string.preference_password);
-        settings.edit().putString(passwordKey, StringUtils.EMPTY).commit();
+        MuzimaPreferences.setStringPreference(getApplicationContext(), passwordKey, StringUtils.EMPTY);
         evictAuthenticatedUser();
     }
 

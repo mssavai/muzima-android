@@ -29,7 +29,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -76,6 +75,7 @@ import com.muzima.tasks.MuzimaAsyncTask;
 import com.muzima.util.Constants;
 import com.muzima.util.NetworkUtils;
 import com.muzima.utils.LanguageUtil;
+import com.muzima.utils.MuzimaPreferences;
 import com.muzima.utils.StringUtils;
 import com.muzima.utils.SyncSettingsIntent;
 import com.muzima.utils.ThemeUtils;
@@ -516,7 +516,7 @@ public class LoginActivity extends BaseActivity {
 
                     String languageKey = getApplicationContext().getResources().getString(R.string.preference_app_language);
                     String defaultLanguage = getApplicationContext().getString(R.string.language_english);
-                    String preferredLocale = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(languageKey, defaultLanguage);
+                    String preferredLocale = MuzimaPreferences.getStringPreference(getApplicationContext(), languageKey, defaultLanguage);
 
                     localePreferenceService.setPreferredLocale(preferredLocale);
 
@@ -1200,7 +1200,7 @@ public class LoginActivity extends BaseActivity {
 
             String languageKey = getApplicationContext().getResources().getString(R.string.preference_app_language);
             String defaultLanguage = getApplicationContext().getString(R.string.language_english);
-            String preferredLocale = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(languageKey, defaultLanguage);
+            String preferredLocale = MuzimaPreferences.getStringPreference(getApplicationContext(), languageKey, defaultLanguage);
 
             localePreferenceService.setPreferredLocale(preferredLocale);
 

@@ -11,23 +11,26 @@
 package com.muzima.service;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.util.Log;
+
 import com.muzima.R;
+import com.muzima.utils.MuzimaPreferences;
 
 public class WizardFinishPreferenceService extends PreferenceService {
 
-    private final SharedPreferences settings;
-
     public WizardFinishPreferenceService(Context context) {
         super(context);
-        settings = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public boolean isWizardFinished(){
-        String wizardFinishedKey = context.getResources().getString(R.string.preference_wizard_finished);
+        try {
+            String wizardFinishedKey = context.getResources().getString(R.string.preference_wizard_finished);
 
-        return settings.getBoolean(wizardFinishedKey, false);
+            return MuzimaPreferences.getSecureSharedPreferences(context).getBoolean(wizardFinishedKey, false);
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error getting secure shared preferences");
+            return false;
+        }
     }
 
     public void finishWizard(){
@@ -39,9 +42,13 @@ public class WizardFinishPreferenceService extends PreferenceService {
     }
 
     private void setWizardFinished(boolean wizardFinished) {
-        String wizardFinishedKey = context.getResources().getString(R.string.preference_wizard_finished);
-        settings.edit()
-                .putBoolean(wizardFinishedKey, wizardFinished)
-                .commit();
+        try {
+            String wizardFinishedKey = context.getResources().getString(R.string.preference_wizard_finished);
+            MuzimaPreferences.getSecureSharedPreferences(context).edit()
+                    .putBoolean(wizardFinishedKey, wizardFinished)
+                    .commit();
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Error getting secure shared preferences");
+        }
     }
 }

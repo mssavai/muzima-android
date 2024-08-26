@@ -14,9 +14,7 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.muzima.MuzimaApplication;
@@ -30,6 +28,7 @@ import com.muzima.api.service.MuzimaSettingService;
 
 import com.muzima.api.service.SetupConfigurationService;
 import com.muzima.service.SntpService;
+import com.muzima.utils.MuzimaPreferences;
 import com.muzima.utils.StringUtils;
 import com.muzima.view.MainDashboardActivity;
 
@@ -255,13 +254,10 @@ public class MuzimaSettingController {
     }
 
     public void toggleTheme(){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(muzimaApplication.getApplicationContext());
         String lightModeKey = muzimaApplication.getApplicationContext().getResources().getString(R.string.preference_light_mode);
-        boolean isLightThemeEnabled = preferences.getBoolean(lightModeKey, false);
+        boolean isLightThemeEnabled = MuzimaPreferences.getBooleanPreference(muzimaApplication.getApplicationContext(), lightModeKey, false);
 
-        preferences.edit()
-                .putBoolean(lightModeKey, !isLightThemeEnabled)
-                .apply();
+        MuzimaPreferences.setBooleanPreference(muzimaApplication.getApplicationContext(), lightModeKey, !isLightThemeEnabled);
     }
 
     public List<MuzimaSetting> downloadChangedSettingsSinceLastSync() throws MuzimaSettingDownloadException {

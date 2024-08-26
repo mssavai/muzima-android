@@ -11,7 +11,7 @@
 package com.muzima.adapters.setupconfiguration;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +24,8 @@ import com.google.android.material.card.MaterialCardView;
 import com.muzima.MuzimaApplication;
 import com.muzima.R;
 import com.muzima.api.model.SetupConfiguration;
-import com.muzima.controller.MuzimaSettingController;
 import com.muzima.service.ActiveConfigPreferenceService;
+import com.muzima.utils.MuzimaPreferences;
 import com.muzima.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -78,7 +78,9 @@ public class SetupConfigurationRecyclerViewAdapter extends RecyclerView.Adapter<
             holder.cardView.setChecked(true);
         } else {
             holder.cardView.setChecked(false);
-            if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.preference_light_mode), false)) {
+
+            boolean isLightModeOn = MuzimaPreferences.getBooleanPreference(context, context.getResources().getString(R.string.preference_light_mode), false);;
+            if (!isLightModeOn) {
                 holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_black));
             } else
                 holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_background));
@@ -119,8 +121,9 @@ public class SetupConfigurationRecyclerViewAdapter extends RecyclerView.Adapter<
             selectedConfigsUuids.add(configuration.getUuid());
             cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_blue));
         } else if (!selected && selectedConfigsUuids.contains(configuration.getUuid())) {
-            selectedConfigsUuids.remove(configuration.getUuid());
-            if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.preference_light_mode), false)) {
+
+            boolean isLightModeOn = MuzimaPreferences.getBooleanPreference(context, context.getResources().getString(R.string.preference_light_mode), false);;
+            if (!isLightModeOn) {
                 cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_black));
             } else
                 cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_background));

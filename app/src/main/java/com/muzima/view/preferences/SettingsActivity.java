@@ -14,16 +14,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
+import android.util.Log;
 import android.view.Menu;
 
 import com.muzima.MuzimaApplication;
 import com.muzima.R;
 import com.muzima.service.MuzimaLoggerService;
 import com.muzima.utils.LanguageUtil;
+import com.muzima.utils.MuzimaPreferences;
 import com.muzima.utils.StringUtils;
 import com.muzima.utils.ThemeUtils;
 import com.muzima.view.MainDashboardActivity;
@@ -59,13 +60,22 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     protected void onResume() {
         super.onResume();
         languageUtil.onResume(this);
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
+        try {
+            MuzimaPreferences.getSecureSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+        } catch (Exception e){
+            Log.e(getClass().getSimpleName(), "Error getting secure shared preferences");
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+        try {
+            MuzimaPreferences.getSecureSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+        } catch (Exception e){
+            Log.e(getClass().getSimpleName(), "Error getting secure shared preferences");
+        }
     }
 
     /**

@@ -15,7 +15,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.preference.PreferenceManager;
 
 import com.muzima.R;
 
@@ -72,9 +71,8 @@ public class ThemeUtils {
 
     public boolean isLightModeSettingEnabled(Context context) {
         //check if night mode enabled or not
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String lightModeKey = context.getResources().getString(R.string.preference_light_mode);
-        return preferences.getBoolean(lightModeKey, false);
+        return MuzimaPreferences.getBooleanPreference(context, lightModeKey, false);
     }
 
     public boolean isLightModeChanged(Context context) {

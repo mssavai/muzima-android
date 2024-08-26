@@ -17,7 +17,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.muzima.MuzimaApplication;
@@ -79,6 +78,7 @@ import com.muzima.util.JsonUtils;
 import com.muzima.util.MuzimaSettingUtils;
 import com.muzima.utils.Constants;
 import com.muzima.utils.MemoryUtil;
+import com.muzima.utils.MuzimaPreferences;
 import com.muzima.utils.NetworkUtils;
 import com.muzima.utils.RelationshipViewUtil;
 import com.muzima.utils.StringUtils;
@@ -496,6 +496,7 @@ public class MuzimaSyncService {
             result[0] = SyncStatusConstants.DELETE_ERROR;
             return result;
         }
+        System.out.println("==============Result: "+result);
         return result;
     }
 
@@ -1058,8 +1059,10 @@ public class MuzimaSyncService {
 
     private List<Cohort> downloadCohortsList() throws CohortController.CohortDownloadException {
         List<Cohort> cohorts;
+        System.out.println("=============DoDefault Location: "+getDefaultLocation());
         cohorts = cohortController.downloadAllCohorts(getDefaultLocation());
-        Log.e(TAG, "downloadCohortsList: downloaded cohorts " + cohorts.size());
+        System.out.println("==============Cohorts: "+cohorts.size());
+        Log.e(TAG, "========== downloadCohortsList: downloaded cohorts " + cohorts.size());
         return cohorts;
     }
 
@@ -1379,8 +1382,7 @@ public class MuzimaSyncService {
 
     public String getDefaultLocation() {
         android.content.Context context = muzimaApplication.getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString("defaultEncounterLocation", null);
+        return MuzimaPreferences.getStringPreference(context, "defaultEncounterLocation", null);
     }
 
     public void updatePatientTags(List<String> patientUuidList){

@@ -5,8 +5,6 @@ import static com.muzima.utils.ConceptUtils.getDerivedConceptNameFromConceptName
 import static com.muzima.utils.Constants.FGH.Concepts.HEALTHWORKER_ASSIGNMENT_CONCEPT_ID;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +32,7 @@ import com.muzima.controller.SetupConfigurationController;
 import com.muzima.model.ObsData;
 import com.muzima.model.ObsGroups;
 import com.muzima.util.JsonUtils;
+import com.muzima.utils.MuzimaPreferences;
 import com.muzima.utils.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -124,8 +123,7 @@ public class ObservationGroupAdapter extends BaseTableAdapter {
         this.derivedConceptController = app.getDerivedConceptController();
         this.context = context;
         shouldReplaceProviderIdWithNames = app.getMuzimaSettingController().isPatientTagGenerationEnabled();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        this.applicationLanguage = preferences.getString(context.getResources().getString(R.string.preference_app_language), context.getResources().getString(R.string.language_english));
+        this.applicationLanguage = MuzimaPreferences.getStringPreference(context, context.getResources().getString(R.string.preference_app_language), context.getResources().getString(R.string.language_english));
 
         h = getHeaders();
         headers = h.toArray(new String[0]);

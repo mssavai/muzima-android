@@ -12,10 +12,14 @@ package com.muzima.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.util.Log;
+
+import androidx.security.crypto.EncryptedSharedPreferences;
 
 import com.muzima.R;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,6 +29,17 @@ import java.util.Set;
  * displayed in the settings UI
  */
 public class MuzimaPreferences {
+    public static SharedPreferences getSecureSharedPreferences(Context context) throws Exception {
+        SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
+                "filename",
+                "muzima_secret_shared_prefs",
+                context,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        );
+
+        return sharedPreferences;
+    }
 
     private static final String ON_BOARDING_COMPLETED_PREFERENCE = "onboarding_completed_pref";
 
@@ -37,15 +52,46 @@ public class MuzimaPreferences {
     }
 
     public static boolean getIsLightModeThemeSelectedPreference(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getResources().getString(R.string.preference_light_mode), false);
+        try {
+            return getSecureSharedPreferences(context)
+                    .getBoolean(context.getResources().getString(R.string.preference_light_mode), false);
+        } catch (Exception e) {
+            Log.e("MuzimaPreferences", "Error getting secure shared preferences");
+            return false;
+        }
     }
 
     public static void setBooleanPreference(Context context, String key, boolean value) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(key, value).apply();
+        try {
+            getSecureSharedPreferences(context).edit().putBoolean(key, value).apply();
+        } catch (Exception e){
+            Log.e("MuzimaPreferences", "Error getting secure shared preferences");
+        }
     }
 
     public static boolean getBooleanPreference(Context context, String key, boolean defaultValue) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key, defaultValue);
+        try {
+            return getSecureSharedPreferences(context).getBoolean(key, defaultValue);
+        } catch (Exception e){
+            Log.e("MuzimaPreferences", "Error getting secure shared preferences");
+            return defaultValue;
+        }
+    }
+
+    public static void setStringPreference(Context context, String key, String value) {
+        try {
+            getSecureSharedPreferences(context).edit().putString(key, value).apply();
+        } catch (Exception e){
+            Log.e("MuzimaPreferences", "Error getting secure shared preferences");
+        }
+    }
+
+    public static String getStringPreference(Context context, String key, String defaultValue) {
+        try {
+            return getSecureSharedPreferences(context).getString(key, defaultValue);
+        } catch (Exception e){
+            Log.e("MuzimaPreferences", "Error getting secure shared preferences");
+            return defaultValue;
+        }
     }
 }

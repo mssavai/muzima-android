@@ -1,9 +1,7 @@
 package com.muzima.adapters.observations;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +24,10 @@ import com.muzima.controller.ObservationController;
 import com.muzima.controller.ProviderController;
 import com.muzima.controller.SetupConfigurationController;
 import com.muzima.model.ConceptIcons;
-import com.muzima.model.ObsGroups;
 import com.muzima.util.JsonUtils;
 import com.muzima.utils.BackgroundTaskHelper;
 import com.muzima.utils.DateUtils;
+import com.muzima.utils.MuzimaPreferences;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -81,8 +79,7 @@ public class ObservationByDateAdapter extends RecyclerAdapter<ObservationsByType
     }
 
     private void bindViews(@NotNull ObservationByDateAdapter.ViewHolder holder, int position) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        String applicationLanguage = preferences.getString(context.getResources().getString(R.string.preference_app_language), context.getResources().getString(R.string.language_english));
+        String applicationLanguage = MuzimaPreferences.getStringPreference(context, context.getResources().getString(R.string.preference_app_language), context.getResources().getString(R.string.language_english));
 
         String date = dates.get(position);
         Calendar calendar = Calendar.getInstance();

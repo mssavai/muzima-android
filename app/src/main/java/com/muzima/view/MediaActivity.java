@@ -1,8 +1,6 @@
 package com.muzima.view;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +14,7 @@ import com.muzima.api.model.Media;
 import com.muzima.api.model.MediaCategory;
 import com.muzima.controller.MediaCategoryController;
 import com.muzima.controller.MediaController;
+import com.muzima.utils.MuzimaPreferences;
 import com.muzima.utils.StringUtils;
 import com.muzima.view.custom.ActivityWithBottomNavigation;
 
@@ -77,8 +76,7 @@ public class MediaActivity extends ActivityWithBottomNavigation {
         MediaCategoryController mediaCategoryController = ((MuzimaApplication) getApplication()).getMediaCategoryController();
         MediaController mediaController = ((MuzimaApplication) getApplication()).getMediaController();
         try {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-            String recentMedia = preferences.getString(this.getResources().getString(R.string.preference_recently_viewed_media), StringUtils.EMPTY);
+            String recentMedia = MuzimaPreferences.getStringPreference(getApplicationContext(), this.getResources().getString(R.string.preference_recently_viewed_media), StringUtils.EMPTY);
             if(!StringUtils.isEmpty(recentMedia)) {
                 MediaCategory recentlyViewedMediaCategory = new MediaCategory();
                 recentlyViewedMediaCategory.setUuid("5b4574a4-1b3b-4b95-9ba2-821771af47d1");

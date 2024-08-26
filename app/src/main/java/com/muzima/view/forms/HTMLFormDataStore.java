@@ -12,8 +12,6 @@ package com.muzima.view.forms;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
@@ -59,6 +57,7 @@ import com.muzima.service.MuzimaGPSLocationService;
 import com.muzima.service.MuzimaLoggerService;
 import com.muzima.utils.Constants;
 import com.muzima.utils.DateUtils;
+import com.muzima.utils.MuzimaPreferences;
 import com.muzima.utils.NetworkUtils;
 import com.muzima.utils.RelationshipJsonMapper;
 import com.muzima.utils.StringUtils;
@@ -682,8 +681,7 @@ class HTMLFormDataStore {
 
     @JavascriptInterface
     public String getDefaultEncounterProvider() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(formWebViewActivity.getApplicationContext());
-        boolean encounterProviderPreference = preferences.getBoolean("encounterProviderPreference", false);
+        boolean encounterProviderPreference = MuzimaPreferences.getBooleanPreference(formWebViewActivity.getApplicationContext(), "encounterProviderPreference", false);
         List<Provider> providers = new ArrayList<>();
 
         if (encounterProviderPreference) {
@@ -698,8 +696,7 @@ class HTMLFormDataStore {
 
     @JavascriptInterface
     public String getFontSizePreference() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(formWebViewActivity.getApplicationContext());
-        return preferences.getString(formWebViewActivity.getResources().getString(R.string.preference_font_size),
+        return MuzimaPreferences.getStringPreference(formWebViewActivity.getApplicationContext(), formWebViewActivity.getResources().getString(R.string.preference_font_size),
                 HTMLFormWebViewActivity.DEFAULT_FONT_SIZE).toLowerCase();
     }
 
@@ -914,8 +911,7 @@ class HTMLFormDataStore {
 
     @JavascriptInterface
     public void checkForPossibleFormDuplicate(String formUuid, String encounterDateTime, String patientUuid, String encounterPayLoad) throws FormController.FormDataFetchException, JSONException {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(formWebViewActivity.getApplicationContext());
-        boolean isDuplicateFormDataWarningPreferenceSet = preferences.getBoolean(formWebViewActivity.getResources().getString(R.string.preference_duplicate_form_data_key), HTMLFormWebViewActivity.IS_ALLOWED_FORM_DATA_DUPLICATION);
+        boolean isDuplicateFormDataWarningPreferenceSet = MuzimaPreferences.getBooleanPreference(formWebViewActivity.getApplicationContext(), formWebViewActivity.getResources().getString(R.string.preference_duplicate_form_data_key), HTMLFormWebViewActivity.IS_ALLOWED_FORM_DATA_DUPLICATION);
         if (isDuplicateFormDataWarningPreferenceSet) {
             JSONObject mainObject = new JSONObject(encounterPayLoad);
             JSONObject encounterObject = mainObject.getJSONObject("encounter");
@@ -953,16 +949,16 @@ class HTMLFormDataStore {
 
     @JavascriptInterface
     public boolean getDefaultEncounterLocationSetting() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(formWebViewActivity.getApplicationContext());
-        String defaultLocationName = preferences.getString("defaultEncounterLocation", getStringResource("no_default_encounter_location"));
+        String defaultLocationName = MuzimaPreferences.getStringPreference(formWebViewActivity.getApplicationContext(),
+                "defaultEncounterLocation", getStringResource("no_default_encounter_location"));
         String defaultValue = getStringResource("no_default_encounter_location");
         return !defaultLocationName.equals(defaultValue);
     }
 
     @JavascriptInterface
     public String getDefaultEncounterLocationPreference() throws LocationController.LocationLoadException {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(formWebViewActivity.getApplicationContext());
-        String defaultLocationName = preferences.getString("defaultEncounterLocation", getStringResource("no_default_encounter_location"));
+        String defaultLocationName = MuzimaPreferences.getStringPreference(formWebViewActivity.getApplicationContext(),
+                "defaultEncounterLocation", getStringResource("no_default_encounter_location"));
         String defaultValue = getStringResource("no_default_encounter_location");
         List<Location> defaultLocation = new ArrayList<>();
         List<Location> locations = new ArrayList<>();
@@ -1211,8 +1207,7 @@ class HTMLFormDataStore {
 
     @JavascriptInterface
     public String getApplicationLanguage() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(formWebViewActivity.getApplicationContext());
-        String applicationLanguage = preferences.getString(formWebViewActivity.getResources().getString(R.string.preference_app_language), formWebViewActivity.getResources().getString(R.string.language_english));
+        String applicationLanguage = MuzimaPreferences.getStringPreference(formWebViewActivity.getApplicationContext(), formWebViewActivity.getResources().getString(R.string.preference_app_language), formWebViewActivity.getResources().getString(R.string.language_english));
         return applicationLanguage;
     }
 
