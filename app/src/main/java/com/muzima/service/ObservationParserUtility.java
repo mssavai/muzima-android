@@ -275,7 +275,7 @@ class ObservationParserUtility {
         ConceptName dummyConceptName = new ConceptName();
         dummyConceptName.setName(conceptName);
         dummyConceptName.setPreferred(true);
-        concept.setConceptNames(Collections.singletonList(dummyConceptName));
+        concept.setConceptNames(new ArrayList<>(Collections.singletonList(dummyConceptName)));
         ConceptType conceptType = new ConceptType();
         if(isCoded) {
             conceptType.setName("Coded");

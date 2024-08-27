@@ -178,7 +178,7 @@ public class ObsVerticalViewAdapter extends RecyclerView.Adapter<ObsVerticalView
 
                 Concept concept = new Concept();
                 concept.setUuid(derivedObservation.getDerivedConcept().getUuid());
-                concept.setConceptNames(conceptNames);
+                concept.setConceptNames(new ArrayList<>(conceptNames));
                 concept.setConceptType(derivedObservation.getDerivedConcept().getConceptType());
 
                 observation.setUuid(derivedObservation.getUuid());

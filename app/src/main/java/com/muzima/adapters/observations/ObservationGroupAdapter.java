@@ -205,7 +205,7 @@ public class ObservationGroupAdapter extends BaseTableAdapter {
 
                         Concept concept = new Concept();
                         concept.setUuid(derivedObservation.getDerivedConcept().getUuid());
-                        concept.setConceptNames(conceptNames);
+                        concept.setConceptNames(new ArrayList<>(conceptNames));
                         concept.setConceptType(derivedConcept.getConceptType());
 
                         observation.setUuid(derivedObservation.getUuid());
