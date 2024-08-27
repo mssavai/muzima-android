@@ -10,7 +10,6 @@
 
 package com.muzima.tasks;
 
-import android.os.AsyncTask;
 import android.util.Log;
 import androidx.annotation.MainThread;
 import androidx.annotation.WorkerThread;
