@@ -12,35 +12,66 @@ package com.muzima.tasks;
 
 import android.util.Log;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public abstract class MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> {
     private boolean cancelled = false;
+    private Future<OUTPUT> mFuture;
+    private OnProgressListener<PROGRESS> onProgressListener;
 
-    public MuzimaAsyncTask() {}
+    /* @see #execute(Object) */
+    public MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> execute() {
+        return execute(null);
+    }
 
     /**
      * Starts all
-     * @param input Data you want to process in the background
+     * @param input Data you want to work with in the background
      */
-    public void execute(final INPUT... input) {
+    public MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> execute(final INPUT input) {
         onPreExecute();
-        ExecutorService executorService = AsyncWorker.getInstance().getExecutorService();
-        executorService.execute(() -> {
-            try {
-                final OUTPUT output = doInBackground(input);
-                if(!isCancelled())
-                    AsyncWorker.getInstance().getHandler().post(() -> onPostExecute(output));
-            } catch (final Exception e) {
-                Log.e(getClass().getSimpleName(),"Encounter an exception",e);
 
-                AsyncWorker.getInstance().getHandler().post(() -> onBackgroundError(e));
+        ExecutorService executorService = AsyncWorker.getInstance().getExecutorService();
+        mFuture = executorService.submit(new Callable<OUTPUT>() {
+            @Override
+            public OUTPUT call() {
+                OUTPUT output = null;
+                try {
+                    output = doInBackground(input);
+                    OUTPUT finalOutput = output;
+                    if (!isCancelled())
+                        AsyncWorker.getInstance().getHandler().post(() -> onPostExecute(finalOutput));
+                } catch (final Exception e) {
+                    Log.e(getClass().getSimpleName(), "Encountered an exception", e);
+                    AsyncWorker.getInstance().getHandler().post(() -> onBackgroundError(e));
+                }
+                return output;
             }
         });
+
+        return this;
     }
 
-    public void execute() {
-        execute(null);
+    public OUTPUT get() {
+        try {
+            if (mFuture == null)
+                throw new RuntimeException("Task not executed before calling get()");
+            else
+                return mFuture.get();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public OUTPUT get(long timeout, TimeUnit timeUnit) throws Exception {
+        if (mFuture == null)
+            throw new Exception("Task not executed before calling get()");
+        else
+            return mFuture.get(timeout, timeUnit);
     }
 
     /**
@@ -49,10 +80,13 @@ public abstract class MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> {
      */
     protected void publishProgress(final PROGRESS progress) {
         AsyncWorker.getInstance().getHandler().post(() -> {
-            if (onProgressListener != null) {
+            onProgress(progress);
+            if (onProgressListener != null)
                 onProgressListener.onProgress(progress);
-            }
         });
+    }
+
+    protected void onProgress(final PROGRESS progress) {
     }
 
     /**
@@ -75,45 +109,37 @@ public abstract class MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> {
      */
     protected void onCancelled() {
         AsyncWorker.getInstance().getHandler().post(() -> {
-            if (onCancelledListener != null) {
+            if (onCancelledListener != null)
                 onCancelledListener.onCancelled();
-            }
         });
     }
 
     /**
-     * Work which you want to be done on UI thread before {@link #doInBackground(Object...)}
+     * Work which you want to be done on UI thread before {@link #doInBackground(Object)}
      */
     protected abstract void onPreExecute();
 
     /**
      * Work on background
-     *
      * @param input Input data
      * @return Output data
-     * @throws Exception Any uncaught exception which occurred while working in background.
-     *  If any occurs, {@link #onBackgroundError(Exception)} will be executed (on the UI thread)
+     * @throws Exception Any uncaught exception which occurred while working in background. If
+     * any occurs, {@link #onBackgroundError(Exception)} will be executed (on the UI thread)
      */
-    protected abstract OUTPUT doInBackground(INPUT... input) throws Exception;
+    protected abstract OUTPUT doInBackground(INPUT input) throws Exception;
 
     /**
-     * Work which you want to be done on UI thread after {@link #doInBackground(Object...)}
-     * @param output Output data from {@link #doInBackground(Object...)}
+     * Work which you want to be done on UI thread after {@link #doInBackground(Object)}
+     * @param output Output data from {@link #doInBackground(Object)}
      */
     protected abstract void onPostExecute(OUTPUT output);
 
     /**
      * Triggered on UI thread if any uncaught exception occurred while working in background
      * @param e Exception
-     * @see #doInBackground(Object...)
+     * @see #doInBackground(Object)
      */
     protected abstract void onBackgroundError(Exception e);
-
-    private OnProgressListener<PROGRESS> onProgressListener;
-
-    public interface OnProgressListener<PROGRESS> {
-        void onProgress(PROGRESS progress);
-    }
 
     public void setOnProgressListener(OnProgressListener<PROGRESS> onProgressListener) {
         this.onProgressListener = onProgressListener;
@@ -121,11 +147,15 @@ public abstract class MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> {
 
     private OnCancelledListener onCancelledListener;
 
-    public interface OnCancelledListener {
-        void onCancelled();
-    }
-
     public void setOnCancelledListener(OnCancelledListener onCancelledListener) {
         this.onCancelledListener = onCancelledListener;
+    }
+
+    public interface OnProgressListener<PROGRESS> {
+        void onProgress(PROGRESS progress);
+    }
+
+    public interface OnCancelledListener {
+        void onCancelled();
     }
 }
