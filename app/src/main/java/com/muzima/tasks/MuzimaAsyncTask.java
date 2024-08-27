@@ -24,10 +24,12 @@ public abstract class MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> {
     private boolean cancelled = false;
     private Future<OUTPUT> mFuture;
     private OnProgressListener<PROGRESS> onProgressListener;
+    private OnCancelledListener onCancelledListener;
 
     /**
      * Convenience version of {@link #execute(Object...)} for use with a simple Runnable object.
      * See {@link #execute(Object...)} for more information on the order of execution.
+     * @noinspection ConfusingArgumentToVarargsMethod
      */
     public MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> execute() {
         return execute(null);
@@ -37,7 +39,8 @@ public abstract class MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> {
      * Main execute function
      * @param input Data you want to process in the background
      */
-    public MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> execute(final INPUT... input) {
+    @SafeVarargs
+    public final MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> execute(final INPUT... input) {
         onPreExecute();
 
         ExecutorService executorService = AsyncWorker.getInstance().getExecutorService();
@@ -128,6 +131,7 @@ public abstract class MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> {
     /**
      *
      * @return Returns true if the background work should be cancelled
+     * @noinspection BooleanMethodIsAlwaysInverted
      */
     protected boolean isCancelled() {
         return cancelled;
@@ -136,6 +140,7 @@ public abstract class MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> {
     /**
      * Call this method after cancelling background work
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     protected void onCancelled() {
         AsyncWorker.getInstance().getHandler().post(() -> {
             if (onCancelledListener != null)
@@ -175,11 +180,10 @@ public abstract class MuzimaAsyncTask<INPUT, PROGRESS, OUTPUT> {
     @MainThread
     protected abstract void onBackgroundError(Exception e);
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public void setOnProgressListener(OnProgressListener<PROGRESS> onProgressListener) {
         this.onProgressListener = onProgressListener;
     }
-
-    private OnCancelledListener onCancelledListener;
 
     @SuppressWarnings({"UnusedDeclaration"})
     public void setOnCancelledListener(OnCancelledListener onCancelledListener) {
