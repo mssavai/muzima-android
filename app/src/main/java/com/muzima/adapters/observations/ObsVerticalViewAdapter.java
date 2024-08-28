@@ -97,7 +97,7 @@ public class ObsVerticalViewAdapter extends RecyclerView.Adapter<ObsVerticalView
         String icon = getConceptIcon(observation.getConcept().getUuid());
         holder.conceptIcon.setText(StringUtils.isEmpty(icon) ? "edit" : icon);
 
-        if (StringUtils.equals(observation.getConcept().getConceptType().getName(), "Complex")) {
+        if (StringUtils.equals(observation.getConcept().getConceptType().getConceptTypeName(), "Complex")) {
             holder.observationValue.setVisibility(View.GONE);
             holder.observationComplexHolder.setVisibility(View.VISIBLE);
         } else {
@@ -116,7 +116,7 @@ public class ObsVerticalViewAdapter extends RecyclerView.Adapter<ObsVerticalView
                 holder.observationValue.setText(String.valueOf(observation.isValueBoolean()));
 
             if (!observation.getConcept().isNumeric() && !observation.getConcept().isDatetime() && !observation.getConcept().isCoded() && !observation.getConcept().isBoolean()){
-                if(shouldReplaceProviderIdWithNames && observation.getConcept().getId() == HEALTHWORKER_ASSIGNMENT_CONCEPT_ID){
+                if(shouldReplaceProviderIdWithNames && observation.getConcept().getConceptid() == HEALTHWORKER_ASSIGNMENT_CONCEPT_ID){
                     Provider provider = providerController.getProviderBySystemId(observation.getValueAsString());
                     if(provider != null){
                         holder.observationValue.setText(provider.getName());
@@ -177,11 +177,11 @@ public class ObsVerticalViewAdapter extends RecyclerView.Adapter<ObsVerticalView
                 conceptNames.add(conceptName);
 
                 Concept concept = new Concept();
-                concept.setUuid(derivedObservation.getDerivedConcept().getUuid());
+                concept.setConceptUuid(derivedObservation.getDerivedConcept().getUuid());
                 concept.setConceptNames(new ArrayList<>(conceptNames));
                 concept.setConceptType(derivedObservation.getDerivedConcept().getConceptType());
 
-                observation.setUuid(derivedObservation.getUuid());
+                observation.setObsUuid(derivedObservation.getUuid());
                 observation.setPerson(derivedObservation.getPerson());
                 observation.setConcept(concept);
                 observation.setValueCoded(derivedObservation.getValueCoded());

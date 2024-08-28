@@ -78,7 +78,7 @@ public class ObservationGroupAdapter extends BaseTableAdapter {
             List<DerivedObservation> derivedObservations = derivedObservationController.getDerivedObservationByPatientUuid(patientUuid);
             for (DerivedObservation derivedObservation : derivedObservations) {
                 Observation observation = new Observation();
-                observation.setUuid(derivedObservation.getUuid());
+                observation.setObsUuid(derivedObservation.getUuid());
                 observation.setObservationDatetime(derivedObservation.getDateCreated());
                 observations.add(observation);
             }
@@ -153,7 +153,7 @@ public class ObservationGroupAdapter extends BaseTableAdapter {
 
                             Concept cpt = conceptController.getConceptByUuid(conceptUuid);
                             if (cpt != null) {
-                                List<Observation> observations = observationController.getObservationsByPatientuuidAndConceptId(patientUuid, cpt.getId());
+                                List<Observation> observations = observationController.getObservationsByPatientuuidAndConceptId(patientUuid, cpt.getConceptid());
                                 if (observations.size() > 0) {
                                     if(!groups.contains(group.toString())) {
                                         obsGroups.add(new ObsGroups(group.toString()));
@@ -174,7 +174,7 @@ public class ObservationGroupAdapter extends BaseTableAdapter {
                 if(!conceptUuids.contains(concept.getUuid())){
                     if(!isOtherGroupAdded){
                         if (concept != null) {
-                            List<Observation> observations = observationController.getObservationsByPatientuuidAndConceptId(patientUuid, concept.getId());
+                            List<Observation> observations = observationController.getObservationsByPatientuuidAndConceptId(patientUuid, concept.getConceptid());
                             if (observations.size() > 0) {
                                 if(!groups.contains(app.getString(R.string.general_other))) {
                                     obsGroups.add(new ObsGroups(app.getString(R.string.general_other)));
@@ -204,11 +204,11 @@ public class ObservationGroupAdapter extends BaseTableAdapter {
                         conceptNames.add(conceptName);
 
                         Concept concept = new Concept();
-                        concept.setUuid(derivedObservation.getDerivedConcept().getUuid());
+                        concept.setConceptUuid(derivedObservation.getDerivedConcept().getUuid());
                         concept.setConceptNames(new ArrayList<>(conceptNames));
                         concept.setConceptType(derivedConcept.getConceptType());
 
-                        observation.setUuid(derivedObservation.getUuid());
+                        observation.setObsUuid(derivedObservation.getUuid());
                         observation.setPerson(derivedObservation.getPerson());
                         observation.setConcept(concept);
                         observation.setValueCoded(derivedObservation.getValueCoded());
@@ -266,7 +266,7 @@ public class ObservationGroupAdapter extends BaseTableAdapter {
                                 String value = "";
                                 for (Observation observation : observations) {
                                     if (dateString.equals(dateFormat.format(observation.getObservationDatetime()))) {
-                                        if (shouldReplaceProviderIdWithNames && observation.getConcept().getId() == HEALTHWORKER_ASSIGNMENT_CONCEPT_ID) {
+                                        if (shouldReplaceProviderIdWithNames && observation.getConcept().getConceptid() == HEALTHWORKER_ASSIGNMENT_CONCEPT_ID) {
                                             Provider provider = app.getProviderController().getProviderBySystemId(observation.getValueText());
                                             if (provider != null) {
                                                 value = provider.getName();
@@ -317,7 +317,7 @@ public class ObservationGroupAdapter extends BaseTableAdapter {
                                     String value = "";
                                     for (Observation observation : observations) {
                                         if (dateString.equals(dateFormat.format(observation.getObservationDatetime()))) {
-                                            if (shouldReplaceProviderIdWithNames && observation.getConcept().getId() == HEALTHWORKER_ASSIGNMENT_CONCEPT_ID) {
+                                            if (shouldReplaceProviderIdWithNames && observation.getConcept().getConceptid() == HEALTHWORKER_ASSIGNMENT_CONCEPT_ID) {
                                                 Provider provider = app.getProviderController().getProviderBySystemId(observation.getValueText());
                                                 if (provider != null) {
                                                     value = provider.getName();
@@ -467,7 +467,7 @@ public class ObservationGroupAdapter extends BaseTableAdapter {
         Concept concept = new Concept();
         try {
             concept = conceptController.getConceptByName(conceptName);
-            observations = observationController.getObservationsByPatientuuidAndConceptId(patientUuid,concept.getId());
+            observations = observationController.getObservationsByPatientuuidAndConceptId(patientUuid,concept.getConceptid());
         } catch (ConceptController.ConceptFetchException | ObservationController.LoadObservationException e) {
             Log.e(getClass().getSimpleName(), "Encountered an error while getting concept or observations");
         }

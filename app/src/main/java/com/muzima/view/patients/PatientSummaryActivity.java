@@ -366,9 +366,9 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
 
             if (confidentObs != null && confidentObs.size() > 0) {
                 for (Observation observation : confidentObs) {
-                    if (observation.getConcept().getId() == 1740) {
+                    if (observation.getConcept().getConceptid() == 1740) {
                         confidantName.setText((StringUtils.EMPTY.equalsIgnoreCase(observation.getValueText()) || observation.getValueText() == null) ? "-----------------" : observation.getValueText());
-                    } else if (observation.getConcept().getId() == 6224) {
+                    } else if (observation.getConcept().getConceptid() == 6224) {
                         confidantContact1.setText((StringUtils.EMPTY.equalsIgnoreCase(observation.getValueText()) || observation.getValueText() == null) ? "-----------------" : observation.getValueText());
                     }
                 }
@@ -463,7 +463,7 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
             if(consultationResultObs!=null){
                 lastClinicalConsultDate.setText(consultationResultObs!=null? DateUtils.getFormattedDate(consultationResultObs.getObservationDatetime(), SIMPLE_DAY_MONTH_YEAR_DATE_FORMAT):"-----------------");
                 Encounter encounter = consultationResultObs.getEncounter();
-                Observation observation = getObsByPatientUuidAndEncounterIdAndConceptId(patientUuid, encounter.getId(), 1410);
+                Observation observation = getObsByPatientUuidAndEncounterIdAndConceptId(patientUuid, encounter.getEncounterId(), 1410);
                 nextClinicalConsultDate.setText(observation != null ? DateUtils.getFormattedDate(observation.getValueDatetime(), SIMPLE_DAY_MONTH_YEAR_DATE_FORMAT) : "-----------------");
             }
 
@@ -527,14 +527,14 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
     }
 
     private String setHvlResult(Observation observation){
-        if(1306 == observation.getValueCoded().getId()){
+        if(1306 == observation.getValueCoded().getConceptid()){
             return "Nível de detecção baixo";
         }
-        else if(23814 == observation.getValueCoded().getId()){
+        else if(23814 == observation.getValueCoded().getConceptid()){
             return getConceptNameFromConceptNamesByLocale(observation.getValueCoded().getConceptNames(), applicationLanguage);
         }
-        else if(165331 == observation.getValueCoded().getId() || 23904 == observation.getValueCoded().getId() || 23905 == observation.getValueCoded().getId() || 23906 == observation.getValueCoded().getId()
-                || 23907 == observation.getValueCoded().getId() || 23908 == observation.getValueCoded().getId()){
+        else if(165331 == observation.getValueCoded().getConceptid() || 23904 == observation.getValueCoded().getConceptid() || 23905 == observation.getValueCoded().getConceptid() || 23906 == observation.getValueCoded().getConceptid()
+                || 23907 == observation.getValueCoded().getConceptid() || 23908 == observation.getValueCoded().getConceptid()){
             List<ConceptName> conceptNames = observation.getValueCoded().getConceptNames();
             List<String> names = new ArrayList<String>(0);
             for (ConceptName value:conceptNames) {
@@ -626,7 +626,7 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
             if (observations.size() > 0) {
                 for (Observation observation:observations) {
                     EncounterType encounterType = observation.getEncounter().getEncounterType();
-                    if(encounterTypeUuid.equalsIgnoreCase(encounterType.getUuid())){
+                    if(encounterTypeUuid.equalsIgnoreCase(encounterType.getEncounterTypeUuid())){
                         return observation;
                     }
                 }
@@ -646,7 +646,7 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
             if (observations.size() > 0) {
                 for (Observation observation: observations) {
                     EncounterType encounterType = observation.getEncounter().getEncounterType();
-                    if(encounterTypeUuid.equalsIgnoreCase(encounterType.getUuid())){
+                    if(encounterTypeUuid.equalsIgnoreCase(encounterType.getEncounterTypeUuid())){
                         return observation;
                     }
                 }
@@ -665,7 +665,7 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
             if (observations.size() > 0) {
                 for (Observation observation:observations) {
                     EncounterType encounterType = observation.getEncounter().getEncounterType();
-                    if((valueCoded1 == observation.getValueCoded().getId() || valueCoded2 == observation.getValueCoded().getId()) && encounterTypeUuid.equalsIgnoreCase(encounterType.getUuid())){
+                    if((valueCoded1 == observation.getValueCoded().getConceptid() || valueCoded2 == observation.getValueCoded().getConceptid()) && encounterTypeUuid.equalsIgnoreCase(encounterType.getEncounterTypeUuid())){
                         return observation;
                     }
                 }
@@ -682,7 +682,7 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
         List<Observation> observations = getObsByPatientUuidAndEncounterId(patientUuid, encounterId);
         for (Observation observation: observations) {
              Concept concept = observation.getConcept();
-             if(conceptId==concept.getId()){
+             if(conceptId==concept.getConceptid()){
                  return observation;
              }
         }
@@ -696,7 +696,7 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
             List<Observation> selectedObs = new ArrayList<>(0);
             if (observations.size() > 0) {
                 for (Observation observation: observations) {
-                    int id = observation.getEncounter().getId();
+                    int id = observation.getEncounter().getEncounterId();
                     if(encounterId == id){
                         selectedObs.add(observation);
                     }
@@ -1216,15 +1216,15 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
             if (observations != null && observations.size() > 0) {
                 Observation lastConfidentSource = observations.get(0);
 
-                if (lastConfidentSource.getConcept().getId() == 165482) {
+                if (lastConfidentSource.getConcept().getConceptid() == 165482) {
                     groupObs = getConfidentObsByPatientUuidAndConceptId(patientUuid);
 
                 } else {
-                    groupObs = observationController.getObservationsByEncounterId(lastConfidentSource.getEncounter().getId());
+                    groupObs = observationController.getObservationsByEncounterId(lastConfidentSource.getEncounter().getEncounterId());
                 }
                 if (groupObs != null && groupObs.size() > 0) {
                     for (Observation observation : groupObs) {
-                        if (observation.getConcept().getId() == 1740 || observation.getConcept().getId() == 6224) {
+                        if (observation.getConcept().getConceptid() == 1740 || observation.getConcept().getConceptid() == 6224) {
                             confidentobservations.add(observation);
                         }
                     }
@@ -1244,7 +1244,7 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
             List<Observation> groupObservations = observationController.getObservationsByPatientuuidAndConceptId(patientUuid, 165482);
             Collections.sort(groupObservations, observationDateTimeComparator);
             if (groupObservations.size() > 0) {
-                observations = observationController.getObsByObsGroupId(groupObservations.get(0).getId());
+                observations = observationController.getObsByObsGroupId(groupObservations.get(0).getObsId());
 
                 return observations;
             }

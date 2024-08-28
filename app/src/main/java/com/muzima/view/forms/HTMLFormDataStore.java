@@ -781,8 +781,8 @@ class HTMLFormDataStore {
         try {
             encounters = encounterController.getEncountersByPatientUuid(patientuuid);
             for (Encounter encounter : encounters) {
-                if (!(encounterTypeArray.contains(encounter.getEncounterType().getName()))) {
-                    encounterTypeArray.add(encounter.getEncounterType().getName());
+                if (!(encounterTypeArray.contains(encounter.getEncounterType().getEncounterTypeName()))) {
+                    encounterTypeArray.add(encounter.getEncounterType().getEncounterTypeName());
                     encountertypes.add(encounter);
                 }
             }
@@ -823,8 +823,8 @@ class HTMLFormDataStore {
         try {
             encounters = encounterController.getEncountersByPatientUuid(patientUuid);
             for (Encounter enc : encounters) {
-                if (enc.getEncounterType().getName().equals(encounterType)) {
-                    observations.addAll(observationController.getObservationsByEncounterId(enc.getId()));
+                if (enc.getEncounterType().getEncounterTypeName().equals(encounterType)) {
+                    observations.addAll(observationController.getObservationsByEncounterId(enc.getEncounterId()));
                 }
             }
             Collections.sort(observations, observationDateTimeComparator);
@@ -876,13 +876,13 @@ class HTMLFormDataStore {
                 json.put("conceptName", "Concept Created On Phone");
             }
 
-            json.put("conceptId", obs.getConcept().getId());
+            json.put("conceptId", obs.getConcept().getConceptid());
             json.put("conceptUuid", obs.getConcept().getUuid());
 
             json.put("obsDate", convertedEncounterDate);
             if (obs.getValueCoded() != null) {
                 codedConcept.put("uuid", obs.getValueCoded().getUuid());
-                codedConcept.put("id", obs.getValueCoded().getId());
+                codedConcept.put("id", obs.getValueCoded().getConceptid());
                 codedConcept.put("name", getConceptNameFromConceptNamesByLocale(obs.getValueCoded().getConceptNames(), getApplicationLanguage()));
                 ;
                 json.put("valueCoded", codedConcept);
@@ -891,8 +891,8 @@ class HTMLFormDataStore {
             }
             json.put("valueNumeric", obs.getValueNumeric());
             json.put("valueText", obs.getValueText());
-            json.put("encounterId", obs.getEncounter().getId());
-            json.put("uuid", obs.getUuid());
+            json.put("encounterId", obs.getEncounter().getEncounterId());
+            json.put("uuid", obs.getObsUuid());
             json.put("valueComplex", obs.getValueComplex());
             json.put("valueDatetime", convertedvalueDateTime);
             json.put("obs_comment", obs.getComment());
@@ -1490,7 +1490,7 @@ class HTMLFormDataStore {
             json.put("dateCreated", convertedCreationDate);
             if (derivedObservation.getValueCoded() != null) {
                 derivedCodedConcept.put("uuid", derivedObservation.getValueCoded().getUuid());
-                derivedCodedConcept.put("id", derivedObservation.getValueCoded().getId());
+                derivedCodedConcept.put("id", derivedObservation.getValueCoded().getConceptid());
                 derivedCodedConcept.put("name", getConceptNameFromConceptNamesByLocale(derivedObservation.getValueCoded().getConceptNames(), getApplicationLanguage()));
                 ;
                 json.put("valueCoded", derivedCodedConcept);

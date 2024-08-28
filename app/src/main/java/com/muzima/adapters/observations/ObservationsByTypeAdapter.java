@@ -100,7 +100,7 @@ public class ObservationsByTypeAdapter extends RecyclerAdapter<ObservationsByTyp
             @Override
             public void onObservationClicked(int position) {
                 for(ConceptWithObservations concept : conceptWithObservationsList){
-                    if(concept.getConcept().getId() == position){
+                    if(concept.getConcept().getConceptid() == position){
                         EventBus.getDefault().post(new ClientSummaryObservationSelectedEvent(concept));
                     }
                 }
@@ -113,7 +113,7 @@ public class ObservationsByTypeAdapter extends RecyclerAdapter<ObservationsByTyp
         String applicationLanguage = MuzimaPreferences.getStringPreference(context, context.getResources().getString(R.string.preference_app_language), context.getResources().getString(R.string.language_english));
 
         String text = getConceptNameFromConceptNamesByLocale(concept.getConceptNames(),applicationLanguage);
-        if (concept.getConceptType().getName().equals(Concept.NUMERIC_TYPE)) {
+        if (concept.getConceptType().getConceptTypeName().equals(Concept.NUMERIC_TYPE)) {
             text += " (" + concept.getUnit() + ")";
         }
         return text;

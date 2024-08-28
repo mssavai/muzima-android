@@ -1595,7 +1595,7 @@ public class MuzimaSyncService {
                                         CohortMember cohortMember = cohortMembers.get(0);
                                         Date membershipDate = cohortMember.getMembershipDate();
                                         if (obs.getObservationDatetime().after(membershipDate)) {
-                                            if (obs.getValueCoded().getId() == NO_INTERVENTION_NEEDED_ANSWER_CONCEPT_ID) {
+                                            if (obs.getValueCoded().getConceptid() == NO_INTERVENTION_NEEDED_ANSWER_CONCEPT_ID) {
 
                                                 noInterventionTag = new PatientTag();
                                                 noInterventionTag.setName("NA");
@@ -1702,7 +1702,7 @@ public class MuzimaSyncService {
 
                             if(firstAttemptObservations.size() > 0 && homeVisitTagCount==0){
                                 if(firstAttemptObservations.get(0).getObservationDatetime().after(membershipDate)) {
-                                    if (firstAttemptObservations.get(0).getValueCoded().getId() == 1065) {
+                                    if (firstAttemptObservations.get(0).getValueCoded().getConceptid() == 1065) {
                                         PatientTag firstAttemptTag = new PatientTag();
                                         firstAttemptTag.setName("SIM");
                                         firstAttemptTag.setUuid(SIM_TAG_UUID);
@@ -1721,7 +1721,7 @@ public class MuzimaSyncService {
 
                             if(secondAttemptObservations.size() > 0 && homeVisitTagCount==1){
                                 if(secondAttemptObservations.get(0).getObservationDatetime().after(membershipDate)) {
-                                    if (secondAttemptObservations.get(0).getValueCoded().getId() == 1065) {
+                                    if (secondAttemptObservations.get(0).getValueCoded().getConceptid() == 1065) {
                                         PatientTag secondAttemptTag = new PatientTag();
                                         secondAttemptTag.setName("SIM");
                                         secondAttemptTag.setUuid(SIM_TAG_UUID);
@@ -1740,7 +1740,7 @@ public class MuzimaSyncService {
 
                             if(thirdAttemptObservations.size() > 0 && homeVisitTagCount==2){
                                 if(thirdAttemptObservations.get(0).getObservationDatetime().after(membershipDate)) {
-                                    if (thirdAttemptObservations.get(0).getValueCoded().getId() == 1065) {
+                                    if (thirdAttemptObservations.get(0).getValueCoded().getConceptid() == 1065) {
                                         PatientTag thirdAttemptTag = new PatientTag();
                                         thirdAttemptTag.setName("SIM");
                                         thirdAttemptTag.setUuid(SIM_TAG_UUID);
@@ -2883,7 +2883,7 @@ public class MuzimaSyncService {
 
                                     if(observations.size() > 0 && homeVisitTagCount==0){
                                         if(observations.get(0).getObservationDatetime().after(membershipDate)) {
-                                            if (observations.get(0).getValueCoded().getId() == 1065) {
+                                            if (observations.get(0).getValueCoded().getConceptid() == 1065) {
                                                 PersonTag firstAttemptTag = new PersonTag();
                                                 firstAttemptTag.setName("SIM");
                                                 firstAttemptTag.setUuid(SIM_TAG_UUID);
@@ -2902,7 +2902,7 @@ public class MuzimaSyncService {
 
                                         if(observations.size() > 1 && homeVisitTagCount==1){
                                             if(observations.get(1).getObservationDatetime().after(membershipDate)) {
-                                                if (observations.get(1).getValueCoded().getId() == 1065) {
+                                                if (observations.get(1).getValueCoded().getConceptid() == 1065) {
                                                     PersonTag firstAttemptTag = new PersonTag();
                                                     firstAttemptTag.setName("SIM");
                                                     firstAttemptTag.setUuid(SIM_TAG_UUID);
@@ -2921,7 +2921,7 @@ public class MuzimaSyncService {
 
                                         if(observations.size() > 2 && homeVisitTagCount==2){
                                             if(observations.get(2).getObservationDatetime().after(membershipDate)) {
-                                                if (observations.get(2).getValueCoded().getId() == 1065) {
+                                                if (observations.get(2).getValueCoded().getConceptid() == 1065) {
                                                     PersonTag attemptTag = new PersonTag();
                                                     attemptTag.setName("SIM");
                                                     attemptTag.setUuid(SIM_TAG_UUID);

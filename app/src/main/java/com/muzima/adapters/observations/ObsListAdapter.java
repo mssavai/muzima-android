@@ -49,7 +49,7 @@ public class ObsListAdapter extends RecyclerView.Adapter<ObsListAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Observation observation = observations.get(position);
         String value = "";
-        if (shouldReplaceProviderIdWithNames && observation.getConcept().getId() == HEALTHWORKER_ASSIGNMENT_CONCEPT_ID) {
+        if (shouldReplaceProviderIdWithNames && observation.getConcept().getConceptid() == HEALTHWORKER_ASSIGNMENT_CONCEPT_ID) {
             Provider provider = app.getProviderController().getProviderBySystemId(observation.getValueText());
             if (provider != null) {
                 value = provider.getName();

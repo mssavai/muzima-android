@@ -1081,7 +1081,7 @@ public class FormController {
                     if (isCompleteFormData(formData) || isArchivedFormData(formData)) {
                         List<Encounter> encounters = encounterService.getEncountersByFormDataUuid(formData.getUuid());
                         for (Encounter encounter : encounters) {
-                            List<Observation> observations = observationService.getObservationsByEncounter(encounter.getUuid());
+                            List<Observation> observations = observationService.getObservationsByEncounter(encounter.getEncounterUuid());
                             observationService.deleteObservations(observations);
                         }
                         encounterService.deleteEncounters(encounters);
@@ -1103,7 +1103,7 @@ public class FormController {
                 if (isCompleteFormData(formData) || isArchivedFormData(formData)) {
                     List<Encounter> encounters = encounterService.getEncountersByFormDataUuid(formData.getUuid());
                     for (Encounter encounter : encounters) {
-                        List<Observation> observations = observationService.getObservationsByEncounter(encounter.getUuid());
+                        List<Observation> observations = observationService.getObservationsByEncounter(encounter.getEncounterUuid());
                         observationService.deleteObservations(observations);
                     }
                     encounterService.deleteEncounters(encounters);

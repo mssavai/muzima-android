@@ -64,7 +64,7 @@ public class ClientDynamicObsFormsAdapter extends RecyclerView.Adapter<ClientDyn
         String applicationLanguage = MuzimaPreferences.getStringPreference(context, context.getResources().getString(R.string.preference_app_language), context.getResources().getString(R.string.language_english));
         final SingleObsForm form = singleObsFormList.get(position);
         holder.readingCountTextView.setText(String.format(Locale.getDefault(), "%s %d", context.getResources().getString(R.string.general_reading), form.getReadingCount()));
-        holder.valueEditText.setHint(String.format(Locale.getDefault(), "%s %s", getConceptNameFromConceptNamesByLocale(form.getConcept().getConceptNames(),applicationLanguage), form.getConcept().getConceptType().getName()));
+        holder.valueEditText.setHint(String.format(Locale.getDefault(), "%s %s", getConceptNameFromConceptNamesByLocale(form.getConcept().getConceptNames(),applicationLanguage), form.getConcept().getConceptType().getConceptTypeName()));
         if(form.getConcept().isNumeric()) {
             holder.valueEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
             holder.valueEditText.setVisibility(View.VISIBLE);
@@ -72,7 +72,7 @@ public class ClientDynamicObsFormsAdapter extends RecyclerView.Adapter<ClientDyn
         }else if(form.getConcept().isDatetime()){
             holder.valueEditText.setVisibility(View.GONE);
             holder.valueDateText.setVisibility(View.VISIBLE);
-            holder.valueDateText.setHint(String.format(Locale.getDefault(), "%s %s", getConceptNameFromConceptNamesByLocale(form.getConcept().getConceptNames(),applicationLanguage), form.getConcept().getConceptType().getName()));
+            holder.valueDateText.setHint(String.format(Locale.getDefault(), "%s %s", getConceptNameFromConceptNamesByLocale(form.getConcept().getConceptNames(),applicationLanguage), form.getConcept().getConceptType().getConceptTypeName()));
             holder.valueDateText.setText(form.getInputDateValue());
             holder.valueEditText.setText(form.getInputDateValue());
         } else{

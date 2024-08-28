@@ -65,7 +65,7 @@ class ObservationsByDateBackgroundTask extends AsyncTask<Void, List<String>, Lis
             List<DerivedObservation> derivedObservations = derivedObservationController.getDerivedObservationByPatientUuid(patientUuid);
             for (DerivedObservation derivedObservation : derivedObservations) {
                 Observation observation = new Observation();
-                observation.setUuid(derivedObservation.getUuid());
+                observation.setObsUuid(derivedObservation.getUuid());
                 observation.setObservationDatetime(derivedObservation.getDateCreated());
                 observations.add(observation);
             }

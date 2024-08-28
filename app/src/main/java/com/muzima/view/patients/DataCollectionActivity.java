@@ -277,13 +277,13 @@ public class DataCollectionActivity extends ActivityWithPatientSummaryBottomNavi
         singleObsFormsRecyclerViews.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         singleObsFormsRecyclerViews.setAdapter(clientDynamicObsFormsAdapter);
 
-        SingleObsForm form = new SingleObsForm(selectedBottomSheetConcept, new Date(), selectedBottomSheetConcept.getConceptType().getName(), "", singleObsFormsList.size() + 1);
+        SingleObsForm form = new SingleObsForm(selectedBottomSheetConcept, new Date(), selectedBottomSheetConcept.getConceptType().getConceptTypeName(), "", singleObsFormsList.size() + 1);
         if(singleObsFormsList.size() > 0){
-            if(singleObsFormsList.get(0).getConcept().getId() == selectedBottomSheetConcept.getId()){
+            if(singleObsFormsList.get(0).getConcept().getConceptid() == selectedBottomSheetConcept.getConceptid()){
                 singleObsFormsList.add(form);
             }
         }else {
-            bottomSheetConceptTitleTextView.setText(String.format(Locale.getDefault(), "%s (%s)", getConceptNameFromConceptNamesByLocale(selectedBottomSheetConcept.getConceptNames(),applicationLanguage), selectedBottomSheetConcept.getConceptType().getName()));
+            bottomSheetConceptTitleTextView.setText(String.format(Locale.getDefault(), "%s (%s)", getConceptNameFromConceptNamesByLocale(selectedBottomSheetConcept.getConceptNames(),applicationLanguage), selectedBottomSheetConcept.getConceptType().getConceptTypeName()));
             singleObsFormsList.add(form);
         }
         clientDynamicObsFormsAdapter.notifyDataSetChanged();
@@ -302,13 +302,13 @@ public class DataCollectionActivity extends ActivityWithPatientSummaryBottomNavi
         addReadingActionView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SingleObsForm form = new SingleObsForm(selectedBottomSheetConcept, new Date(), selectedBottomSheetConcept.getConceptType().getName(), "", singleObsFormsList.size() + 1);
+                SingleObsForm form = new SingleObsForm(selectedBottomSheetConcept, new Date(), selectedBottomSheetConcept.getConceptType().getConceptTypeName(), "", singleObsFormsList.size() + 1);
                 if(singleObsFormsList.size() > 0){
-                    if(singleObsFormsList.get(0).getConcept().getId() == selectedBottomSheetConcept.getId()){
+                    if(singleObsFormsList.get(0).getConcept().getConceptid() == selectedBottomSheetConcept.getConceptid()){
                         singleObsFormsList.add(form);
                     }
                 }else {
-                    bottomSheetConceptTitleTextView.setText(String.format(Locale.getDefault(), "%s (%s)", selectedBottomSheetConcept.getName(), selectedBottomSheetConcept.getConceptType().getName()));
+                    bottomSheetConceptTitleTextView.setText(String.format(Locale.getDefault(), "%s (%s)", selectedBottomSheetConcept.getName(), selectedBottomSheetConcept.getConceptType().getConceptTypeName()));
                     singleObsFormsList.add(form);
                 }
                 clientDynamicObsFormsAdapter.notifyDataSetChanged();
