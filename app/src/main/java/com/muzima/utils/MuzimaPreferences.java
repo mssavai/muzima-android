@@ -52,8 +52,6 @@ public class MuzimaPreferences  extends PreferenceDataStore {
         }
     }
 
-
-
     public static MuzimaPreferences getInstance(Context context) {
         if (instance == null)
             instance = new MuzimaPreferences(context);

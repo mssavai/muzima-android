@@ -1128,8 +1128,8 @@ class HTMLFormDataStore {
             cohortMembers = cohortController.getCohortMembershipByPatientUuid(patientUuid);
             for (CohortMember cohortMember : cohortMembers) {
                 JSONObject json = new JSONObject();
-                json.put("cohortUuid", cohortMember.getCohort().getUuid());
-                json.put("cohortName", cohortMember.getCohort().getName());
+                json.put("cohortUuid", cohortMember.getCohortUuid());
+                json.put("cohortName", cohortMember.getCohortName());
                 map.put("json" + i, json);
                 jsonArray.put(map.get("json" + i));
                 i++;

@@ -253,7 +253,7 @@ public class CohortController {
                     if (localCohort != null) {
                         cohort.setSyncStatus(localCohort.getSyncStatus());
                     }
-                    cohortService.updateCohort(cohort);
+                    cohortService.saveCohort(cohort);
                 }
             }
         } catch (IOException e) {
@@ -409,9 +409,9 @@ public class CohortController {
             try {
                 List<CohortMember> cohortMembers = cohortService.getCohortMembers(cohortUuid);
                 for(CohortMember cohortMember : cohortMembers){
-                    List<CohortMember> patientMembership = cohortService.getCohortMembershipByPatientUuid(cohortMember.getPatient().getUuid());
+                    List<CohortMember> patientMembership = cohortService.getCohortMembershipByPatientUuid(cohortMember.getPatientUuid());
                     if(patientMembership.size()==1){
-                        muzimaApplication.getPatientController().deleteOrMarkAsPendingDeletion(cohortMember.getPatient());
+                        muzimaApplication.getPatientController().deleteOrMarkAsPendingDeletion(cohortMember.getPatientUuid());
                     }
                 }
             } catch (IOException e) {

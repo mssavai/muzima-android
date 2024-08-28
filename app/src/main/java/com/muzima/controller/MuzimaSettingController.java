@@ -599,9 +599,9 @@ public class MuzimaSettingController {
     public Boolean isBottomNavigationFormEnabled() {
         try {
             MuzimaSetting muzimaSetting = getSettingByProperty(BOTTOM_NAVIGATION_FORM_ENABLED_SETTING);
-            if (muzimaSetting != null)
+            if (muzimaSetting != null) {
                 return muzimaSetting.getValueBoolean();
-            else
+            } else
                 Log.e(getClass().getSimpleName(), "Bottom nav form setting is missing on this server");
         } catch (MuzimaSettingFetchException e) {
             Log.e(getClass().getSimpleName(), "Bottom nav form setting is missing on this server");
