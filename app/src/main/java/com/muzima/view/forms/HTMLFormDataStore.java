@@ -896,7 +896,11 @@ class HTMLFormDataStore {
             json.put("valueComplex", obs.getValueComplex());
             json.put("valueDatetime", convertedvalueDateTime);
             json.put("obs_comment", obs.getComment());
-            json.put("obs_group_id", obs.getObsGroupId());
+            if(obs.getObsGroup() != null) {
+                json.put("obs_group_id", obs.getObsGroup().getObsGroupId());
+            }else{
+                json.put("obs_group_id", "");
+            }
             map.put("json" + i, json);
             arr.put(map.get("json" + i));
             i++;

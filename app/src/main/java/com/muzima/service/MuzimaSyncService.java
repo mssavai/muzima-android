@@ -1077,6 +1077,7 @@ public class MuzimaSyncService {
 
     List<String> getPatientUuids(List<Patient> patients) {
         List<String> patientUuids = new ArrayList<>();
+        patientUuids.add("cfeb3210-e000-11e6-a91f-4485001ec084");
         for (Patient patient : patients) {
             if(!patientUuids.contains(patient.getUuid())) {
                 patientUuids.add(patient.getUuid());
@@ -2654,8 +2655,10 @@ public class MuzimaSyncService {
                             slicedPatientUuid, slicedDerivedConceptUuid, activeSetupConfigUuid));
 
                     for (DerivedObservation derivedObservation : derivedObservations) {
-                        if(!patientUuidsForDownloadedObs.contains(derivedObservation.getPerson().getUuid())) {
-                            patientUuidsForDownloadedObs.add(derivedObservation.getPerson().getUuid());
+                        if(derivedObservation.getPerson() != null) {
+                            if (!patientUuidsForDownloadedObs.contains(derivedObservation.getPerson().getUuid())) {
+                                patientUuidsForDownloadedObs.add(derivedObservation.getPerson().getUuid());
+                            }
                         }
                     }
 

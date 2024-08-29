@@ -54,14 +54,14 @@ public class LocationUtils {
             } else {
                 boolean locationFound = false;
                 for(Location location1:locationController.getAllLocations()){
-//                    for(LocationAttribute locationAttribute: location1.getAttributes()){
-////                        if(StringUtils.equalsIgnoreCase(locationAttribute.getAttributeType().getUuid(),
-////                                KenyaEmr.LocationAttributeType.MASTER_FACILITY_CODE.uuid)){
-////                            location = location1;
-////                            locationFound = true;
-////                            break;
-////                        }
-//                    }
+                    for(LocationAttribute locationAttribute: location1.getAttributes()){
+                        if(StringUtils.equalsIgnoreCase(locationAttribute.getAttributeType().getLocationAttributeTypeUuid(),
+                                KenyaEmr.LocationAttributeType.MASTER_FACILITY_CODE.uuid)){
+                            location = location1;
+                            locationFound = true;
+                            break;
+                        }
+                    }
                     if(locationFound){
                         break;
                     }
