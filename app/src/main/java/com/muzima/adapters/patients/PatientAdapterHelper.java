@@ -137,7 +137,7 @@ public abstract class PatientAdapterHelper extends RecyclerAdapter<PatientAdapte
         holder.identifier.setText(patient.getIdentifier());
         holder.distanceToClientAddress.setText(getDistanceToClientAddress(patient));
         holder.name.setText(getPatientFullName(patient));
-        if(patient.getGender() != null) {
+        if(patient != null && patient.getGender() != null) {
             holder.genderImg.setImageResource(getGenderImage(patient.getGender()));
         }
         addTags(holder,patient);
@@ -242,6 +242,9 @@ public abstract class PatientAdapterHelper extends RecyclerAdapter<PatientAdapte
     }
 
     private void addTags(ViewHolder holder, Patient patient) {
+        if(patient == null){
+            return;
+        }
         PatientTag[] tags = patient.getTags();
         if(tags!=null) {
             if (tags.length > 0) {
@@ -550,19 +553,22 @@ public abstract class PatientAdapterHelper extends RecyclerAdapter<PatientAdapte
     }
 
     private String getPatientFullName(Patient patient) {
-        StringBuilder patientFullName = new StringBuilder();
-        if (!StringUtils.isEmpty(patient.getFamilyName())) {
-            patientFullName.append(patient.getFamilyName());
-            patientFullName.append(", ");
-        }
-        if (!StringUtils.isEmpty(patient.getGivenName())) {
-            patientFullName.append(patient.getGivenName());
-            patientFullName.append(" ");
-        }
-        if (!StringUtils.isEmpty(patient.getMiddleName())) {
-            patientFullName.append(patient.getMiddleName());
-        }
-        return patientFullName.toString();
+            return "Null patient person";
+
+            //ToDo: Fix null person
+//        StringBuilder patientFullName = new StringBuilder();
+//        if (!StringUtils.isEmpty(patient.getFamilyName())) {
+//            patientFullName.append(patient.getFamilyName());
+//            patientFullName.append(", ");
+//        }
+//        if (!StringUtils.isEmpty(patient.getGivenName())) {
+//            patientFullName.append(patient.getGivenName());
+//            patientFullName.append(" ");
+//        }
+//        if (!StringUtils.isEmpty(patient.getMiddleName())) {
+//            patientFullName.append(patient.getMiddleName());
+//        }
+//        return patientFullName.toString();
     }
 
     private int getGenderImage(String gender) {

@@ -15,7 +15,7 @@ public class TagsUtil {
 
     public static void loadTags (Patient patient, ViewGroup tagsLayout, Context context) {
         PatientTag[] tags = patient.getTags();
-        if (tags.length > 0) {
+        if (tags != null && tags.length > 0) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
 
             for (int i = 0; i < tags.length; i++) {

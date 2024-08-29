@@ -558,6 +558,7 @@ public class MuzimaSyncService {
     }
 
     public int[] downloadPatientsForCohorts(String[] cohortUuids) {
+
         int[] result = new int[4];
 
         int patientCount = 0;
@@ -598,7 +599,7 @@ public class MuzimaSyncService {
             result[3] = voidedPatients.size();
 
             if(cohortUuids.length > 0) {
-                downloadRelationshipsForPatientsByCohortUUIDs(cohortUuids);
+               // downloadRelationshipsForPatientsByCohortUUIDs(cohortUuids);
             }
             MuzimaSettingController muzimaSettingController = muzimaApplication.getMuzimaSettingController();
             if(muzimaSettingController.isPatientTagGenerationEnabled()) {
@@ -609,12 +610,12 @@ public class MuzimaSyncService {
                     }
                 }
                 if(patientUuids.size()>0){
-                    updatePatientTags(patientUuids);
+                    //updatePatientTags(patientUuids);
                 }
             }
 
             //update memberships
-            downloadRemovedCohortMembershipData(cohortUuids);
+            //downloadRemovedCohortMembershipData(cohortUuids);
 
             cohortController.markAsUpToDate(cohortUuids);
             cohortController.setSyncStatus(cohortUuids,1);
@@ -2964,13 +2965,14 @@ public class MuzimaSyncService {
     }
 
     public void updatePersonTagsByCohortUuids(String[] cohortUuids){
-        try {
-            List<Patient> patients = patientController.getPatientsForCohorts(cohortUuids);
-            List<String> patientlist = new ArrayList();
-            patientlist = getPatientUuids(patients);
-            updatePersonTags(patientlist);
-        } catch (PatientController.PatientLoadException e) {
-            Log.d(getClass().getSimpleName(), "Exception thrown while loading patients.", e);
-        }
+        //ToDo : Fix tags generation
+//        try {
+//            List<Patient> patients = patientController.getPatientsForCohorts(cohortUuids);
+//            List<String> patientlist = new ArrayList();
+//            patientlist = getPatientUuids(patients);
+//            updatePersonTags(patientlist);
+//        } catch (PatientController.PatientLoadException e) {
+//            Log.d(getClass().getSimpleName(), "Exception thrown while loading patients.", e);
+//        }
     }
 }

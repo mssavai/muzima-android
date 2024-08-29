@@ -281,6 +281,7 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
             patientUuid = getIntent().getStringExtra(PATIENT_UUID);
 
             patient = ((MuzimaApplication) getApplicationContext()).getPatientController().getPatientByUuid(patientUuid);
+
             patientNameTextView.setText(patient.getDisplayName());
             identifierTextView.setText(String.format(Locale.getDefault(), "ID:#%s", patient.getIdentifier()));
 
@@ -523,6 +524,8 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
             Log.e(getClass().getSimpleName(), "Exception occurred while loading observations", e);
         } catch (DerivedObservationController.DerivedObservationFetchException e) {
             Log.e(getClass().getSimpleName(), "Exception occurred while loading derived observations", e);
+        } catch (Throwable e) {
+            Log.e(getClass().getSimpleName(), "Exception occurred while loading patient data", e);
         }
     }
 
@@ -1051,9 +1054,10 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
     }
 
     private void loadFormsCount() {
-        try {
-            long incompleteForms = formController.countIncompleteFormsForPatient(patientUuid);
-            long completeForms = formController.countCompleteFormsForPatient(patientUuid);
+//ToDO: Fix loading of forms
+//        try {
+            long incompleteForms = 0; //formController.countIncompleteFormsForPatient(patientUuid);
+            long completeForms = 0;// formController.countCompleteFormsForPatient(patientUuid);
             incompleteFormsCountView.setText(String.valueOf(incompleteForms));
 
             if (incompleteForms == 0) {
@@ -1078,9 +1082,9 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
                 completeFormsView.setVisibility(View.GONE);
                 incompleteFormsView.setVisibility(View.GONE);
 
-        } catch (FormController.FormFetchException e) {
-            Log.e(getClass().getSimpleName(), "Could not count complete and incomplete forms", e);
-        }
+//        } catch (FormController.FormFetchException e) {
+//            Log.e(getClass().getSimpleName(), "Could not count complete and incomplete forms", e);
+//        }
     }
 
     @Override
