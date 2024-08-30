@@ -1180,9 +1180,9 @@ public class GuidedConfigurationWizardActivity extends BroadcastListenerActivity
                     if (downloadedObs == 1 && patients == 1) {
                         resultDescription = getString(R.string.info_derived_observation_patient_downloaded);
                     } else if (downloadedObs == 1) {
-                        resultDescription = getString(R.string.info_derived_observation_patients_downloaded, patients);
-                    } else if (patients == 1) {
                         resultDescription = getString(R.string.info_derived_observations_patient_downloaded, patients);
+                    } else if (patients == 1) {
+                        resultDescription = getString(R.string.info_derived_observation_patients_downloaded, downloadedObs);
                     } else if (downloadedObs == 0) {
                         resultDescription = getString(R.string.info_derived_observation_patient_not_downloaded);
                     } else {
