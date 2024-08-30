@@ -1371,7 +1371,7 @@ class HTMLFormDataStore {
     private boolean isPreventiveObs(DerivedObservation derivedObservation) {
         List<String> derivedConceptsUuids = new ArrayList<String>();
         derivedConceptsUuids.add("379e2aa5-b750-4b08-af13-cd0b9795eca7");
-        return  derivedConceptsUuids.contains(derivedObservation.getDerivedConcept().getUuid());
+        return  derivedConceptsUuids.contains(derivedObservation.getDerivedConcept().getDerivedConceptUuid());
     }
 
     private boolean isPatientFromList2(List<DerivedObservation> derivedObservations) {
@@ -1381,7 +1381,7 @@ class HTMLFormDataStore {
         derivedConceptsUuids.add("9e928864-b7d2-445d-9856-cb7c9a0632dd");
         derivedConceptsUuids.add("46e6c352-bddb-4191-8d1e-40380aa1a346");
         for (DerivedObservation derivedObservation : derivedObservations) {
-            if (derivedConceptsUuids.contains(derivedObservation.getDerivedConcept().getUuid())) {
+            if (derivedConceptsUuids.contains(derivedObservation.getDerivedConcept().getDerivedConceptUuid())) {
                 return true;
             }
         }
@@ -1398,7 +1398,7 @@ class HTMLFormDataStore {
         derivedConceptsUuids.add("46e6c352-bddb-4191-8d1e-40380aa1a346");
         derivedConceptsUuids.add("379e2aa5-b750-4b08-af13-cd0b9795eca7");
         for (DerivedObservation derivedObservation : derivedObservations) {
-            if (derivedConceptsUuids.contains(derivedObservation.getDerivedConcept().getUuid())) {
+            if (derivedConceptsUuids.contains(derivedObservation.getDerivedConcept().getDerivedConceptUuid())) {
                 derivedObservationList.add(derivedObservation);
             }
         }
@@ -1455,9 +1455,9 @@ class HTMLFormDataStore {
         List<DerivedConcept> derivedConcepts = derivedConceptController.getDerivedConcepts();
         for (DerivedObservation derivedObservation : derivedObservations) {
             String derivedConceptName = "";
-            String conceptUuid = derivedObservation.getDerivedConcept().getUuid();
+            String conceptUuid = derivedObservation.getDerivedConcept().getDerivedConceptUuid();
             for (DerivedConcept derivedConcept : derivedConcepts) {
-                if (derivedConcept.getUuid().equals(conceptUuid)) {
+                if (derivedConcept.getDerivedConceptUuid().equals(conceptUuid)) {
                     derivedConceptName = getDerivedConceptNameFromConceptNamesByLocale(derivedConcept.getDerivedConceptName(), getApplicationLanguage());
                 }
             }
@@ -1488,8 +1488,8 @@ class HTMLFormDataStore {
                 json.put("derivedConceptName", "NULL");
             }
 
-            json.put("derivedConceptId", derivedObservation.getDerivedConcept().getId());
-            json.put("derivedConceptUuid", derivedObservation.getDerivedConcept().getUuid());
+            json.put("derivedConceptId", derivedObservation.getDerivedConcept().getDerivedConceptId());
+            json.put("derivedConceptUuid", derivedObservation.getDerivedConcept().getDerivedConceptUuid());
 
             json.put("dateCreated", convertedCreationDate);
             if (derivedObservation.getValueCoded() != null) {
@@ -1505,7 +1505,7 @@ class HTMLFormDataStore {
             json.put("valueText", derivedObservation.getValueText());
             json.put("valueBoolean", derivedObservation.isValueBoolean());
             json.put("valueDatetime", convertedValueDateTime);
-            json.put("uuid", derivedObservation.getUuid());
+            json.put("uuid", derivedObservation.getDerivedObservationUuid());
             map.put("json" + i, json);
             arr.put(map.get("json" + i));
             i++;

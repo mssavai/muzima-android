@@ -99,13 +99,13 @@ public class DerivedObservationController {
     }
 
     public void saveDerivedObservations(List<DerivedObservation> derivedObservations) throws DerivedObservationSaveException {
-//        try {
-//            if(derivedObservations.size()>0) {
-//               // derivedObservationService.saveDerivedObservations(derivedObservations);
-//            }
-//        } catch (IOException e) {
-//            throw new DerivedObservationSaveException(e);
-//        }
+        try {
+            if(derivedObservations.size()>0) {
+                derivedObservationService.saveDerivedObservations(derivedObservations);
+            }
+        } catch (IOException e) {
+            throw new DerivedObservationSaveException(e);
+        }
     }
 
     public void updateDerivedObservations(List<DerivedObservation> derivedObservations) throws  DerivedObservationSaveException {

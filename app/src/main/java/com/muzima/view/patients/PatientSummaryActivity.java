@@ -313,7 +313,7 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
 
             DerivedConcept derivedConcept = derivedConceptController.getDerivedConceptByUuid("e6e48883-0c7f-41e7-abc9-bab5134d9863");
             if(derivedConcept!=null) {
-                List<DerivedObservation> derivedObservations = derivedObservationController.getDerivedObservationByPatientUuidAndDerivedConceptId(patientUuid, derivedConcept.getId());
+                List<DerivedObservation> derivedObservations = derivedObservationController.getDerivedObservationByPatientUuidAndDerivedConceptId(patientUuid, derivedConcept.getDerivedConceptId());
                 if (!derivedObservations.isEmpty()) {
                     DerivedObservation derivedObservation = derivedObservations.get(0);
                     lastVolunteerName.setText(derivedObservation.getValueText());
@@ -490,7 +490,7 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
 
             DerivedConcept tptStartDateDerivedConcept = derivedConceptController.getDerivedConceptByUuid("9b7b653f-2b09-48cd-91fc-4099e5cd2e02");
             if(tptStartDateDerivedConcept!=null) {
-                List<DerivedObservation> derivedObservations = derivedObservationController.getDerivedObservationByPatientUuidAndDerivedConceptId(patientUuid, tptStartDateDerivedConcept.getId());
+                List<DerivedObservation> derivedObservations = derivedObservationController.getDerivedObservationByPatientUuidAndDerivedConceptId(patientUuid, tptStartDateDerivedConcept.getDerivedConceptId());
                 if (!derivedObservations.isEmpty()) {
                     DerivedObservation derivedObservation = derivedObservations.get(0);
                     tptStartDate.setText(DateUtils.getFormattedDate(derivedObservation.getValueDatetime(), SIMPLE_DAY_MONTH_YEAR_DATE_FORMAT));
@@ -503,7 +503,7 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
 
             DerivedConcept tptEndDateDerivedConcept = derivedConceptController.getDerivedConceptByUuid("ceeda5e2-6e36-48c5-a599-2b595324c0ca");
             if(tptEndDateDerivedConcept!=null) {
-                List<DerivedObservation> derivedObservations = derivedObservationController.getDerivedObservationByPatientUuidAndDerivedConceptId(patientUuid, tptEndDateDerivedConcept.getId());
+                List<DerivedObservation> derivedObservations = derivedObservationController.getDerivedObservationByPatientUuidAndDerivedConceptId(patientUuid, tptEndDateDerivedConcept.getDerivedConceptId());
                 if (!derivedObservations.isEmpty()) {
                     DerivedObservation derivedObservation = derivedObservations.get(0);
                     tptEndDate.setText(DateUtils.getFormattedDate(derivedObservation.getValueDatetime(), SIMPLE_DAY_MONTH_YEAR_DATE_FORMAT));

@@ -78,7 +78,7 @@ public class ObservationGroupAdapter extends BaseTableAdapter {
             List<DerivedObservation> derivedObservations = derivedObservationController.getDerivedObservationByPatientUuid(patientUuid);
             for (DerivedObservation derivedObservation : derivedObservations) {
                 Observation observation = new Observation();
-                observation.setObsUuid(derivedObservation.getUuid());
+                observation.setObsUuid(derivedObservation.getDerivedObservationUuid());
                 observation.setObservationDatetime(derivedObservation.getDateCreated());
                 observations.add(observation);
             }
@@ -193,7 +193,7 @@ public class ObservationGroupAdapter extends BaseTableAdapter {
             for(DerivedConcept derivedConcept : derivedConcepts){
                 if (derivedConcept != null) {
                     List<Observation> observations = new ArrayList<>();
-                    List<DerivedObservation> derivedObservations = derivedObservationController.getDerivedObservationByPatientUuidAndDerivedConceptUuid(patientUuid, derivedConcept.getUuid());
+                    List<DerivedObservation> derivedObservations = derivedObservationController.getDerivedObservationByPatientUuidAndDerivedConceptUuid(patientUuid, derivedConcept.getDerivedConceptUuid());
                     for (DerivedObservation derivedObservation : derivedObservations) {
                         Observation observation = new Observation();
 
@@ -204,11 +204,11 @@ public class ObservationGroupAdapter extends BaseTableAdapter {
                         conceptNames.add(conceptName);
 
                         Concept concept = new Concept();
-                        concept.setConceptUuid(derivedObservation.getDerivedConcept().getUuid());
+                        concept.setConceptUuid(derivedObservation.getDerivedConcept().getDerivedConceptUuid());
                         concept.setConceptNames(new ArrayList<>(conceptNames));
                         concept.setConceptType(derivedConcept.getConceptType());
 
-                        observation.setObsUuid(derivedObservation.getUuid());
+                        observation.setObsUuid(derivedObservation.getDerivedObservationUuid());
                         observation.setPerson(derivedObservation.getPerson());
                         observation.setConcept(concept);
                         observation.setValueCoded(derivedObservation.getValueCoded());
@@ -226,8 +226,8 @@ public class ObservationGroupAdapter extends BaseTableAdapter {
                             obsGroups.add(new ObsGroups(app.getString(R.string.general_other)));
                             groups.add(app.getString(R.string.general_other));
                         }
-                        conceptGroupMap.put(derivedConcept.getUuid(),app.getString(R.string.general_other));
-                        conceptsObservations.put(derivedConcept.getUuid(),observations);
+                        conceptGroupMap.put(derivedConcept.getDerivedConceptUuid(),app.getString(R.string.general_other));
+                        conceptsObservations.put(derivedConcept.getDerivedConceptUuid(),observations);
                     }
                 }
             }

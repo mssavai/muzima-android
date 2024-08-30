@@ -359,7 +359,7 @@ class ObservationParserUtility {
                     + derivedConcept.getDerivedConceptName() + "'. Reason: No Observation value provided.");
         }
         DerivedObservation derivedObservation = new DerivedObservation();
-        derivedObservation.setUuid(getObservationUuid());
+        derivedObservation.setDerivedObservationUuid(getObservationUuid());
         derivedObservation.setValueCoded(defaultValueCodedConcept());
 
         if (derivedConcept.isCoded()) {

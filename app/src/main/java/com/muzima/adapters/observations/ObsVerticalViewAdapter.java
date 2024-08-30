@@ -167,7 +167,7 @@ public class ObsVerticalViewAdapter extends RecyclerView.Adapter<ObsVerticalView
             List<DerivedObservation> derivedObservations = derivedObservationController.getDerivedObservationsByPatientUuidAndCreationDate(patientUuid,DateUtils.parse(date));
             Collections.sort(derivedObservations, derivedObsDateTimeComparator);
             for (DerivedObservation derivedObservation : derivedObservations) {
-                observationUuids.add(derivedObservation.getUuid());
+                observationUuids.add(derivedObservation.getDerivedObservationUuid());
                 Observation observation = new Observation();
 
                 List<ConceptName> conceptNames = new ArrayList<>();
@@ -177,11 +177,11 @@ public class ObsVerticalViewAdapter extends RecyclerView.Adapter<ObsVerticalView
                 conceptNames.add(conceptName);
 
                 Concept concept = new Concept();
-                concept.setConceptUuid(derivedObservation.getDerivedConcept().getUuid());
+                concept.setConceptUuid(derivedObservation.getDerivedConcept().getDerivedConceptUuid());
                 concept.setConceptNames(new ArrayList<>(conceptNames));
                 concept.setConceptType(derivedObservation.getDerivedConcept().getConceptType());
 
-                observation.setObsUuid(derivedObservation.getUuid());
+                observation.setObsUuid(derivedObservation.getDerivedObservationUuid());
                 observation.setPerson(derivedObservation.getPerson());
                 observation.setConcept(concept);
                 observation.setValueCoded(derivedObservation.getValueCoded());

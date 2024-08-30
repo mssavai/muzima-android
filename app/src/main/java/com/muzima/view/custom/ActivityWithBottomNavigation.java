@@ -57,9 +57,14 @@ public abstract class ActivityWithBottomNavigation extends BroadcastListenerActi
         MediaCategoryController mediaCategoryController = ((MuzimaApplication) getApplication()).getMediaCategoryController();
         MediaController mediaController = ((MuzimaApplication) getApplication()).getMediaController();
         try {
+            Log.e(getClass().getSimpleName(),"XXXXXXXXXXXXXXXXX1 ");
             List<MediaCategory> mediaCategoryList = mediaCategoryController.getMediaCategories();
+            Log.e(getClass().getSimpleName(),"XXXXXXXXXXXXXXXXX2 "+mediaCategoryList.size());
             for(MediaCategory mediaCategory:mediaCategoryList){
+                Log.e(getClass().getSimpleName(),"XXXXXXXXXXXXXXXXX11 "+mediaCategory.getUuid());
+
                 List<Media> mediaList = mediaController.getMediaByCategoryUuid(mediaCategory.getUuid());
+                Log.e(getClass().getSimpleName(),"XXXXXXXXXXXXXXXXX11 "+mediaList.size());
                 if(mediaList.size()>0) {
                     isAnyGroupWithMedia = true;
                 }
