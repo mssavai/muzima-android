@@ -70,8 +70,8 @@ public class FormsRecyclerViewAdapter extends Adapter<FormsRecyclerViewAdapter.V
             TagsAdapter adapter = new TagsAdapter(form.getForm().getTags());
             holder.tagsListView.setLayoutManager(new LinearLayoutManager(context.getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
             holder.tagsListView.setAdapter(adapter);
-            if (form.getForm().getTags().length > 0)
-                holder.tagsListView.setVisibility(View.VISIBLE);
+//            if (form.getForm().getTags().length > 0)
+//                holder.tagsListView.setVisibility(View.VISIBLE);
             if (form.isSelected())
                 holder.container.setBackgroundColor(context.getResources().getColor(R.color.hint_blue_opaque));
             else {
