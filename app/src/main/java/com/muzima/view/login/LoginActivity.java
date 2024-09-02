@@ -815,7 +815,7 @@ public class LoginActivity extends BaseActivity {
                     MinimumSupportedAppVersion localMinimumSupportedAppVersion = minimumSupportedAppVersionController.getMinimumSupportedAppVersion();
                     MinimumSupportedAppVersion downloadedMinimumSupportedAppVersion = minimumSupportedAppVersionController.downloadMinimumSupportedAppVersion();
                     if(downloadedMinimumSupportedAppVersion != null) {
-                        if (localMinimumSupportedAppVersion.getVersion() != null) {
+                        if (localMinimumSupportedAppVersion.getVersion() != null && localMinimumSupportedAppVersion.getVersion()!=0) {
                             minimumSupportedAppVersionController.updateMinimumSupportedAppVersion(downloadedMinimumSupportedAppVersion);
                         } else {
                             minimumSupportedAppVersionController.saveMinimumSupportedAppVersion(downloadedMinimumSupportedAppVersion);
