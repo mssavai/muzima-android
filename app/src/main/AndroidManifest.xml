@@ -278,6 +278,9 @@
         <activity
             android:name=".view.patients.PatientsLocationMapActivity"
             android:configChanges="orientation|screenSize"
+
+
+
             android:screenOrientation="portrait"
             android:label="@string/title_clients_locations"
             android:parentActivityName=".view.patients.PatientsSearchActivity"

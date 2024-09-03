@@ -432,7 +432,7 @@ public class MuzimaSettingController {
             if (muzimaSetting != null)
                 return muzimaSetting.getValueBoolean();
             else
-                Log.e(getClass().getSimpleName(), "muzima single element entry setting is missing on this server");
+                Log.d(getClass().getSimpleName(), "muzima single element entry setting is missing on this server");
         } catch (MuzimaSettingFetchException e) {
             Log.e(getClass().getSimpleName(), "muzima single element entry setting is missing on this server");
         }
@@ -448,7 +448,7 @@ public class MuzimaSettingController {
             else
                 Log.e(getClass().getSimpleName(), "muzima online only mode setting is missing");
         } catch (MuzimaSettingFetchException e) {
-            Log.e(getClass().getSimpleName(), "There was an error while loading muzima online only mode setting",e);
+            Log.d(getClass().getSimpleName(), "There was an error while loading muzima online only mode setting",e);
         }
         return false;
     }

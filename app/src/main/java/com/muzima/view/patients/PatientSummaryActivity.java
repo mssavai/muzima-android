@@ -282,6 +282,9 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
 
             patient = ((MuzimaApplication) getApplicationContext()).getPatientController().getPatientByUuid(patientUuid);
 
+            if(patient == null){
+                return;
+            }
             patientNameTextView.setText(patient.getDisplayName());
             identifierTextView.setText(String.format(Locale.getDefault(), "ID:#%s", patient.getIdentifier()));
 

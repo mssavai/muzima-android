@@ -12,6 +12,7 @@ package com.muzima.controller;
 
 import android.util.Log;
 
+import com.muzima.api.model.CohortData;
 import com.muzima.api.model.Person;
 import com.muzima.api.model.PersonTag;
 import com.muzima.api.service.PersonService;
@@ -21,6 +22,7 @@ import com.muzima.utils.CustomColor;
 import org.apache.lucene.queryParser.ParseException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +65,15 @@ public class PersonController {
         }
     }
 
+    public void savePersons(List<Person> persons) throws PersonSaveException {
+        try {
+            personService.saveOrUpdatePersons(persons);
+        } catch (IOException e) {
+            Log.e(getClass().getSimpleName(), "Error while saving the persons", e);
+            throw new PersonSaveException(e);
+        }
+    }
+
     public List<Person> getAllPersons() throws PersonLoadException {
         try {
             return personService.getAllPersons();
@@ -98,6 +109,23 @@ public class PersonController {
             tagColors.put(uuid, CustomColor.getRandomColor());
         }
         return tagColors.get(uuid);
+    }
+    public List<Person> downloadPersonsForCohorts(String[] cohortUuids, String defaulLocation) throws PersonLoadException {
+        ArrayList<Person> persons = new ArrayList<>();
+        for (String cohortUuid : cohortUuids) {
+            persons.addAll(downloadPersonsForCohort(cohortUuid, defaulLocation));
+        }
+        return persons;
+    }
+    public List<Person> downloadPersonsForCohort(String cohortUuid, String defaulLocation) throws PersonLoadException {
+        List<Person> persons = new ArrayList<>();
+
+        try {
+            persons = personService.downloadPersonsForCohort(cohortUuid, defaulLocation);
+        } catch (IOException e) {
+            throw new PersonLoadException(e);
+        }
+        return persons;
     }
 
     /********************************************************************************************************

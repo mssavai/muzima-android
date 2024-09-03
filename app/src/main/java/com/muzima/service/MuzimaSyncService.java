@@ -557,6 +557,22 @@ public class MuzimaSyncService {
         return result;
     }
 
+    public int[] downloadPersonsForCohorts(String[] cohortUuids) {
+        int[] result = new int[2];
+        try {
+            List<Person> persons = personController.downloadPersonsForCohorts(cohortUuids, getDefaultLocation());
+            personController.savePersons(persons);
+            result[0] = SUCCESS;
+        } catch (PersonController.PersonLoadException e) {
+            Log.e(getClass().getSimpleName(), "Exception thrown while downloading persons.", e);
+            result[0] = DOWNLOAD_ERROR;
+        } catch (PersonController.PersonSaveException e) {
+            Log.e(getClass().getSimpleName(), "Exception thrown while saving persons.", e);
+            result[0] = SAVE_ERROR;
+        }
+        return result;
+    }
+
     public int[] downloadPatientsForCohorts(String[] cohortUuids) {
 
         int[] result = new int[4];
@@ -564,6 +580,7 @@ public class MuzimaSyncService {
         int patientCount = 0;
         try {
             long startDownloadCohortData = System.currentTimeMillis();
+
 
             List<CohortData> cohortDataList = cohortController.downloadCohortData(cohortUuids, getDefaultLocation());
 
@@ -599,7 +616,7 @@ public class MuzimaSyncService {
             result[3] = voidedPatients.size();
 
             if(cohortUuids.length > 0) {
-               // downloadRelationshipsForPatientsByCohortUUIDs(cohortUuids);
+               downloadRelationshipsForPatientsByCohortUUIDs(cohortUuids);
             }
             MuzimaSettingController muzimaSettingController = muzimaApplication.getMuzimaSettingController();
             if(muzimaSettingController.isPatientTagGenerationEnabled()) {
@@ -615,7 +632,7 @@ public class MuzimaSyncService {
             }
 
             //update memberships
-            //downloadRemovedCohortMembershipData(cohortUuids);
+            downloadRemovedCohortMembershipData(cohortUuids);
 
             cohortController.markAsUpToDate(cohortUuids);
             cohortController.setSyncStatus(cohortUuids,1);

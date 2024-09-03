@@ -29,6 +29,7 @@ import com.muzima.adapters.RecyclerAdapter;
 import com.muzima.api.model.MuzimaSetting;
 import com.muzima.api.model.Patient;
 import com.muzima.api.model.PatientIdentifier;
+import com.muzima.api.model.Person;
 import com.muzima.api.model.PersonAddress;
 import com.muzima.api.model.PatientTag;
 import com.muzima.api.model.PersonAttribute;
@@ -553,22 +554,26 @@ public abstract class PatientAdapterHelper extends RecyclerAdapter<PatientAdapte
     }
 
     private String getPatientFullName(Patient patient) {
+        if(patient == null){
             return "Null patient person";
-
-            //ToDo: Fix null person
-//        StringBuilder patientFullName = new StringBuilder();
-//        if (!StringUtils.isEmpty(patient.getFamilyName())) {
-//            patientFullName.append(patient.getFamilyName());
-//            patientFullName.append(", ");
-//        }
-//        if (!StringUtils.isEmpty(patient.getGivenName())) {
-//            patientFullName.append(patient.getGivenName());
-//            patientFullName.append(" ");
-//        }
-//        if (!StringUtils.isEmpty(patient.getMiddleName())) {
-//            patientFullName.append(patient.getMiddleName());
-//        }
-//        return patientFullName.toString();
+        }
+        System.out.println("================Person: "+((Person)patient).getDisplayName());
+//
+//
+//            //ToDo: Fix null person
+        StringBuilder patientFullName = new StringBuilder();
+        if (!StringUtils.isEmpty(patient.getFamilyName())) {
+            patientFullName.append(patient.getFamilyName());
+            patientFullName.append(", ");
+        }
+        if (!StringUtils.isEmpty(patient.getGivenName())) {
+            patientFullName.append(patient.getGivenName());
+            patientFullName.append(" ");
+        }
+        if (!StringUtils.isEmpty(patient.getMiddleName())) {
+            patientFullName.append(patient.getMiddleName());
+        }
+        return patientFullName.toString();
     }
 
     private int getGenderImage(String gender) {
