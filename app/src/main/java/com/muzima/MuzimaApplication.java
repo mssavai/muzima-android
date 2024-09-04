@@ -13,6 +13,7 @@ package com.muzima;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.pm.PackageManager;
+import android.util.Base64;
 import android.util.Log;
 
 import androidx.multidex.MultiDexApplication;
@@ -76,6 +77,8 @@ import com.muzima.view.preferences.MuzimaTimer;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
@@ -176,7 +179,7 @@ public class MuzimaApplication extends MultiDexApplication {
 
         try {
             ContextFactory.setProperty(Constants.LUCENE_DIRECTORY_PATH, APP_DIR);
-            muzimaContext = ContextFactory.createContext(this);
+            muzimaContext = ContextFactory.createContext(this, getDatabasePassKey());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -188,6 +191,22 @@ public class MuzimaApplication extends MultiDexApplication {
                                 .setFontAttrId(R.attr.fontPath)
                                 .build()))
                 .build());
+    }
+    private byte[] getDatabasePassKey() throws NoSuchAlgorithmException {
+        String keyString = MuzimaPreferences.getStringPreference(this, "databasePassKey", StringUtils.EMPTY);
+        if(!StringUtils.isEmpty(keyString))
+            return Base64.decode(keyString, Base64.NO_WRAP);
+
+        SecureRandom random = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            random = SecureRandom.getInstanceStrong();
+        }
+        byte[] result = new byte[32];
+        random.nextBytes(result);
+
+        MuzimaPreferences.setStringPreference(this, "databasePassKey", Base64.encodeToString(result, Base64.NO_WRAP));
+
+        return result;
     }
 
     public void checkAndSetLocaleToDeviceLocaleIFDisclaimerNotAccepted() {
