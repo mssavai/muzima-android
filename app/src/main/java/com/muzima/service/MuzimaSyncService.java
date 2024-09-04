@@ -1079,12 +1079,6 @@ public class MuzimaSyncService {
 
     List<String> getPatientUuids(List<Patient> patients) {
         List<String> patientUuids = new ArrayList<>();
-        //ToDO: remove hardcoded strings used in testing
-        patientUuids.add("cfeb3210-e000-11e6-a91f-4485001ec084");
-        patientUuids.add("6334b3fc-e001-11e6-a91f-4485001ec084");
-        patientUuids.add("64d86dd5-e001-11e6-a91f-4485001ec084");
-        patientUuids.add("64dc23fe-e001-11e6-a91f-4485001ec084");
-        patientUuids.add("3f048402-e001-11e6-a91f-4485001ec084");
         for (Patient patient : patients) {
             if(!patientUuids.contains(patient.getUuid())) {
                 patientUuids.add(patient.getUuid());
