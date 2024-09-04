@@ -844,9 +844,7 @@ public class LoginActivity extends BaseActivity {
                     int version = currentMinimumSupportedAppVersion.getVersion();
                     int appVersionCode = BuildConfig.VERSION_CODE;
                     try{
-                        System.out.println("=====================Min Supported Version: "+version);
-                        System.out.println("=====================appVersionCode: "+appVersionCode);
-                        if (appVersionCode < version) {
+                        if (appVersionCode < version || version==0) {
                             showAlertDialog();
                         } else {
                             checkIfNewAppReleaseAvailable(serverUrl);

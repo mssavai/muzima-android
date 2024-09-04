@@ -557,22 +557,6 @@ public class MuzimaSyncService {
         return result;
     }
 
-    public int[] downloadPersonsForCohorts(String[] cohortUuids) {
-        int[] result = new int[2];
-        try {
-            List<Person> persons = personController.downloadPersonsForCohorts(cohortUuids, getDefaultLocation());
-            personController.savePersons(persons);
-            result[0] = SUCCESS;
-        } catch (PersonController.PersonLoadException e) {
-            Log.e(getClass().getSimpleName(), "Exception thrown while downloading persons.", e);
-            result[0] = DOWNLOAD_ERROR;
-        } catch (PersonController.PersonSaveException e) {
-            Log.e(getClass().getSimpleName(), "Exception thrown while saving persons.", e);
-            result[0] = SAVE_ERROR;
-        }
-        return result;
-    }
-
     public int[] downloadPatientsForCohorts(String[] cohortUuids) {
 
         int[] result = new int[4];

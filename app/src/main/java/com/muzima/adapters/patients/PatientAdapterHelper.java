@@ -557,10 +557,6 @@ public abstract class PatientAdapterHelper extends RecyclerAdapter<PatientAdapte
         if(patient == null){
             return "Null patient person";
         }
-        System.out.println("================Person: "+((Person)patient).getDisplayName());
-//
-//
-//            //ToDo: Fix null person
         StringBuilder patientFullName = new StringBuilder();
         if (!StringUtils.isEmpty(patient.getFamilyName())) {
             patientFullName.append(patient.getFamilyName());

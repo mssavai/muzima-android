@@ -110,23 +110,6 @@ public class PersonController {
         }
         return tagColors.get(uuid);
     }
-    public List<Person> downloadPersonsForCohorts(String[] cohortUuids, String defaulLocation) throws PersonLoadException {
-        ArrayList<Person> persons = new ArrayList<>();
-        for (String cohortUuid : cohortUuids) {
-            persons.addAll(downloadPersonsForCohort(cohortUuid, defaulLocation));
-        }
-        return persons;
-    }
-    public List<Person> downloadPersonsForCohort(String cohortUuid, String defaulLocation) throws PersonLoadException {
-        List<Person> persons = new ArrayList<>();
-
-        try {
-            persons = personService.downloadPersonsForCohort(cohortUuid, defaulLocation);
-        } catch (IOException e) {
-            throw new PersonLoadException(e);
-        }
-        return persons;
-    }
 
     /********************************************************************************************************
      *                               METHODS FOR EXCEPTION HANDLING
