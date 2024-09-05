@@ -2870,10 +2870,12 @@ public class MuzimaSyncService {
 
                             boolean hasVisitTags = false;
                             int homeVisitTagCount = 0;
-                            for (PersonTag tag : person.getPersonTags()) {
-                                if(StringUtils.equals(tag.getUuid(), SIM_TAG_UUID) || StringUtils.equals(tag.getUuid(), NAO_TAG_UUID)){
-                                    hasVisitTags = true;
-                                    homeVisitTagCount++;
+                            if(person.getPersonTags() != null) {
+                                for (PersonTag tag : person.getPersonTags()) {
+                                    if (StringUtils.equals(tag.getUuid(), SIM_TAG_UUID) || StringUtils.equals(tag.getUuid(), NAO_TAG_UUID)) {
+                                        hasVisitTags = true;
+                                        homeVisitTagCount++;
+                                    }
                                 }
                             }
 

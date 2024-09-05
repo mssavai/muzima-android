@@ -1073,11 +1073,13 @@ public class FormController {
                 if(parseAsFormData || !formData.getDiscriminator().equals(Constants.FORM_JSON_DISCRIMINATOR_INDIVIDUAL_OBS)){
                     if (isCompleteFormData(formData) || isArchivedFormData(formData)) {
                         List<Encounter> encounters = encounterService.getEncountersByFormDataUuid(formData.getUuid());
-                        for (Encounter encounter : encounters) {
-                            List<Observation> observations = observationService.getObservationsByEncounter(encounter.getEncounterUuid());
-                            observationService.deleteObservations(observations);
+                        if(encounters != null) {
+                            for (Encounter encounter : encounters) {
+                                List<Observation> observations = observationService.getObservationsByEncounter(encounter.getEncounterUuid());
+                                observationService.deleteObservations(observations);
+                            }
+                            encounterService.deleteEncounters(encounters);
                         }
-                        encounterService.deleteEncounters(encounters);
                     }
                     formService.deleteFormData(formData);
                 }
