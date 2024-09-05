@@ -173,7 +173,7 @@ public class RelationshipJsonMapper {
                 addressJSONObject.put("startDate", address.getStartDate());
                 addressJSONObject.put("endDate", address.getEndDate());
                 addressJSONObject.put("preferred", address.getPreferred());
-                addressJSONObject.put("uuid", address.getAddressUuid());
+                addressJSONObject.put("uuid", address.getUuid());
                 addressesJSONArray.put(addressJSONObject);
             }
         }

@@ -153,7 +153,7 @@ public class GenericPatientRegistrationJSONMapper{
                     addressJSONObject.put("startDate",address.getStartDate());
                     addressJSONObject.put("endDate",address.getEndDate());
                     addressJSONObject.put("preferred",address.getPreferred());
-                    addressJSONObject.put("uuid",address.getAddressUuid());
+                    addressJSONObject.put("uuid",address.getUuid());
                     addressesJSONArray.put(addressJSONObject);
                 }
                 patientDetails.put("patient.personaddress",addressesJSONArray);
@@ -629,7 +629,7 @@ public class GenericPatientRegistrationJSONMapper{
         for(PersonAddress demographicsUpdateAddress:demographicsUpdateAddresses){
             boolean preExistingAddressFound = false;
             for(PersonAddress preExistingAddress:patient.getAddresses()){
-                if (StringUtils.equals(demographicsUpdateAddress.getAddressUuid(), preExistingAddress.getAddressUuid())) {
+                if (StringUtils.equals(demographicsUpdateAddress.getUuid(), preExistingAddress.getUuid())) {
                     preExistingAddressFound = true;
                     try{
                         copyPersonAddress(demographicsUpdateAddress, preExistingAddress);

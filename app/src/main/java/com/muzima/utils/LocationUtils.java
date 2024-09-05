@@ -55,7 +55,7 @@ public class LocationUtils {
                 boolean locationFound = false;
                 for(Location location1:locationController.getAllLocations()){
                     for(LocationAttribute locationAttribute: location1.getAttributes()){
-                        if(StringUtils.equalsIgnoreCase(locationAttribute.getAttributeType().getLocationAttributeTypeUuid(),
+                        if(StringUtils.equalsIgnoreCase(locationAttribute.getAttributeType().getUuid(),
                                 KenyaEmr.LocationAttributeType.MASTER_FACILITY_CODE.uuid)){
                             location = location1;
                             locationFound = true;

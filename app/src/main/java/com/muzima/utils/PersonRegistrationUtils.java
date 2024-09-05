@@ -258,9 +258,9 @@ public class PersonRegistrationUtils {
             }
         }
 
-        personAddress.setAddressUuid((String)getFromJsonObject(addressObject,"uuid"));
-        if(personAddress.getAddressUuid() == null){
-            personAddress.setAddressUuid(UUID.randomUUID().toString());
+        personAddress.setUuid((String)getFromJsonObject(addressObject,"uuid"));
+        if(personAddress.getUuid() == null){
+            personAddress.setUuid(UUID.randomUUID().toString());
         }
 
         if(personAddress.isBlank()) {
