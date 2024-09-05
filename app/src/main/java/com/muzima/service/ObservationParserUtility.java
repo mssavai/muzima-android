@@ -192,8 +192,10 @@ class ObservationParserUtility {
         try{
             Form form = formController.getFormByUuid(formUuid);
             if(form != null){
-                encounterTypeName = form.getEncounterType().getEncounterTypeName();
-                encountertypeUuid = form.getEncounterType().getEncounterTypeUuid();
+                if(form.getEncounterType() != null) {
+                    encounterTypeName = form.getEncounterType().getEncounterTypeName();
+                    encountertypeUuid = form.getEncounterType().getEncounterTypeUuid();
+                }
             }
         } catch (FormController.FormFetchException | NullPointerException e) {
             Log.e(getClass().getSimpleName(),"Could not retrieve list of forms",e);
