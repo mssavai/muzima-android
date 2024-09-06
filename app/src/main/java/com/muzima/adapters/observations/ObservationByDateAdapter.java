@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.muzima.MuzimaApplication;
 import com.muzima.R;
 import com.muzima.adapters.RecyclerAdapter;
+import com.muzima.api.model.Observation;
 import com.muzima.api.model.SetupConfigurationTemplate;
 import com.muzima.controller.ConceptController;
 import com.muzima.controller.DerivedObservationController;
@@ -34,7 +35,9 @@ import org.jetbrains.annotations.NotNull;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ObservationByDateAdapter extends RecyclerAdapter<ObservationsByTypeAdapter.ViewHolder> {
     protected Context context;
@@ -51,6 +54,7 @@ public class ObservationByDateAdapter extends RecyclerAdapter<ObservationsByType
     private final Boolean shouldReplaceProviderIdWithNames;
     private final List<ConceptIcons> conceptIcons;
     private final MuzimaApplication muzimaApplication;
+    Map<String, List<Observation>> datesObservations = new LinkedHashMap<>();
 
     public ObservationByDateAdapter(Context context, String patientUuid) {
         this.context = context;
@@ -94,7 +98,7 @@ public class ObservationByDateAdapter extends RecyclerAdapter<ObservationsByType
 
         holder.obsHorizontalListRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         ObsVerticalViewAdapter observationsListAdapter = new ObsVerticalViewAdapter(date, muzimaApplication,
-                applicationLanguage, shouldReplaceProviderIdWithNames, patientUuid, context, conceptIcons);
+                applicationLanguage, shouldReplaceProviderIdWithNames, patientUuid, context, conceptIcons, datesObservations);
 
         holder.obsHorizontalListRecyclerView.setAdapter(observationsListAdapter);
     }
@@ -111,7 +115,7 @@ public class ObservationByDateAdapter extends RecyclerAdapter<ObservationsByType
     @Override
     public void reloadData() {
         cancelBackgroundQueryTask();
-        AsyncTask<Void, ?, ?> backgroundQueryTask = new ObservationsByDateBackgroundTask(this, observationController, patientUuid, derivedObservationController);
+        AsyncTask<Void, ?, ?> backgroundQueryTask = new ObservationsByDateBackgroundTask(this, observationController, patientUuid, derivedObservationController, context);
         BackgroundTaskHelper.executeInParallel(backgroundQueryTask);
         setRunningBackgroundQueryTask(backgroundQueryTask);
     }
@@ -124,13 +128,16 @@ public class ObservationByDateAdapter extends RecyclerAdapter<ObservationsByType
         return backgroundListQueryTaskListener;
     }
 
-    public void add(List<String> date) {
+    public void add(List<String> date, Map<String, List<Observation>> datesObservationsMap) {
         dates = date;
+        datesObservations = datesObservationsMap;
     }
 
     public void clear() {
         if (dates != null)
             dates.clear();
+        if(datesObservations != null)
+            datesObservations.clear();
     }
 
     public void cancelBackgroundQueryTask() {

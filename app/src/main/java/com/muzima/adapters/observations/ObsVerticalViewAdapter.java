@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class ObsVerticalViewAdapter extends RecyclerView.Adapter<ObsVerticalViewAdapter.ViewHolder> {
     private List<Observation> observationList = new ArrayList<>();
@@ -67,7 +68,7 @@ public class ObsVerticalViewAdapter extends RecyclerView.Adapter<ObsVerticalView
 
     public ObsVerticalViewAdapter(String date, MuzimaApplication muzimaApplication, String applicationLanguage,
                                   boolean shouldReplaceProviderIdWithNames, String patientUuid, Context context,
-                                  List<ConceptIcons> conceptIcons) {
+                                  List<ConceptIcons> conceptIcons, Map<String, List<Observation>> datesObservations) {
         this.date = date;
         this.encounterController = muzimaApplication.getEncounterController();
         this.observationController = muzimaApplication.getObservationController();
@@ -77,7 +78,7 @@ public class ObsVerticalViewAdapter extends RecyclerView.Adapter<ObsVerticalView
         this.derivedConceptController = muzimaApplication.getDerivedConceptController();
         this.shouldReplaceProviderIdWithNames = shouldReplaceProviderIdWithNames;
         this.patientUuid = patientUuid;
-        observationList = getObservationForDate(date);
+        observationList = getObservationForDate(date,datesObservations);
         this.context = context;
         this.conceptIcons = conceptIcons;
     }
@@ -156,49 +157,10 @@ public class ObsVerticalViewAdapter extends RecyclerView.Adapter<ObsVerticalView
         }
     }
 
-    public List<Observation> getObservationForDate(String date){
+    public List<Observation> getObservationForDate(String date,  Map<String, List<Observation>> datesObservations){
         observationList = new ArrayList<>();
-        List<String> observationUuids = new ArrayList<>();
-        try {
-            List<Observation> observations = observationController.getObservationsByPatientAndObservationDatetime(patientUuid, DateUtils.parse(date));
-            Collections.sort(observations, obsDateTimeComparator);
-            observationList.addAll(observations);
-
-            List<DerivedObservation> derivedObservations = derivedObservationController.getDerivedObservationsByPatientUuidAndCreationDate(patientUuid,DateUtils.parse(date));
-            Collections.sort(derivedObservations, derivedObsDateTimeComparator);
-            for (DerivedObservation derivedObservation : derivedObservations) {
-                observationUuids.add(derivedObservation.getDerivedObservationUuid());
-                Observation observation = new Observation();
-
-                List<ConceptName> conceptNames = new ArrayList<>();
-                ConceptName conceptName = new ConceptName();
-                conceptName.setName(getDerivedConceptNameFromConceptNamesByLocale(derivedObservation.getDerivedConcept().getDerivedConceptName(), applicationLanguage));
-                conceptName.setLocale(applicationLanguage);
-                conceptNames.add(conceptName);
-
-                Concept concept = new Concept();
-                concept.setConceptUuid(derivedObservation.getDerivedConcept().getDerivedConceptUuid());
-                concept.setConceptNames(new ArrayList<>(conceptNames));
-                concept.setConceptType(derivedObservation.getDerivedConcept().getConceptType());
-
-                observation.setObsUuid(derivedObservation.getDerivedObservationUuid());
-                observation.setPerson(derivedObservation.getPerson());
-                observation.setConcept(concept);
-                observation.setValueCoded(derivedObservation.getValueCoded());
-                observation.setValueDatetime(derivedObservation.getValueDatetime());
-                observation.setValueNumeric(derivedObservation.getValueNumeric());
-                observation.setValueText(derivedObservation.getValueText());
-                observation.setValueBoolean(derivedObservation.isValueBoolean());
-                observation.setObservationDatetime(derivedObservation.getDateCreated());
-
-                observationList.add(observation);
-            }
-        } catch (ObservationController.LoadObservationException e) {
-            Log.e(getClass().getSimpleName(),"Exception encountered while loading Observations ",e);
-        } catch (DerivedObservationController.DerivedObservationFetchException e) {
-            Log.e(getClass().getSimpleName(),"Exception encountered while loading Derived Observations ",e);
-        } catch (ParseException e) {
-            Log.e(getClass().getSimpleName(),"Exception encountered while Parsing data ",e);
+        if(datesObservations.containsKey(date)){
+            observationList = datesObservations.get(date);
         }
         return observationList;
     }
