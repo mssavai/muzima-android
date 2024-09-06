@@ -41,7 +41,7 @@ public class ReportDatasetController {
             List<ReportDataset> reportDatasets = new ArrayList<>();
             for(Integer datasetDefinitionId : datasetDefinitionIds){
                 ReportDataset reportDataset = reportDatasetService.downloadReportDatasetByDefinitionIdAndLastSyncDate(lastSyncDate, datasetDefinitionId);
-                if(reportDataset != null) {
+                if(reportDataset != null && reportDataset.getDataSet()!=null) {
                     reportDatasets.add(reportDataset);
                 }
             }
