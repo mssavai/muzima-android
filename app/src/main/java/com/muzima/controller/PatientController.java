@@ -149,7 +149,6 @@ public class PatientController {
         }
     }
 
-
     public List<Patient> getPatientsForCohorts(String[] cohortUuids) throws PatientLoadException {
         List<Patient> allPatients = new ArrayList<>();
         for (String cohortUuid : cohortUuids) {
