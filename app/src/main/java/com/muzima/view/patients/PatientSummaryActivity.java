@@ -627,13 +627,14 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
 
     private Observation getEncounterDateTimeByPatientUuidAndConceptIdAndEncounterTypeUuid(String patientUuid, int conceptId, String encounterTypeUuid) {
         try {
-              List<Observation> observations = observationController.getObservationsByPatientuuidAndConceptId(patientUuid, conceptId);
-              Collections.sort(observations, observationDateTimeComparator);
+            List<Observation> observations = observationController.getObservationsByPatientuuidAndConceptId(patientUuid, conceptId);
+            Collections.sort(observations, observationDateTimeComparator);
             if (observations.size() > 0) {
                 for (Observation observation:observations) {
-                    EncounterType encounterType = observation.getEncounter().getEncounterType();
-                    if(encounterTypeUuid.equalsIgnoreCase(encounterType.getEncounterTypeUuid())){
-                        return observation;
+                    if(observation.getEncounter() != null) {
+                        if (encounterTypeUuid.equalsIgnoreCase(observation.getEncounter().getEncounterTypeUuid())) {
+                            return observation;
+                        }
                     }
                 }
             }
@@ -651,9 +652,10 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
             Collections.sort(observations, observationDateTimeComparator);
             if (observations.size() > 0) {
                 for (Observation observation: observations) {
-                    EncounterType encounterType = observation.getEncounter().getEncounterType();
-                    if(encounterTypeUuid.equalsIgnoreCase(encounterType.getEncounterTypeUuid())){
-                        return observation;
+                    if(observation.getEncounter() != null) {
+                        if (encounterTypeUuid.equalsIgnoreCase(observation.getEncounter().getEncounterTypeUuid())) {
+                            return observation;
+                        }
                     }
                 }
             }
@@ -670,8 +672,7 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
             Collections.sort(observations, observationDateTimeComparator);
             if (observations.size() > 0) {
                 for (Observation observation:observations) {
-                    EncounterType encounterType = observation.getEncounter().getEncounterType();
-                    if((valueCoded1 == observation.getValueCoded().getConceptid() || valueCoded2 == observation.getValueCoded().getConceptid()) && encounterTypeUuid.equalsIgnoreCase(encounterType.getEncounterTypeUuid())){
+                    if((valueCoded1 == observation.getValueCoded().getConceptid() || valueCoded2 == observation.getValueCoded().getConceptid()) && encounterTypeUuid.equalsIgnoreCase(observation.getEncounter().getEncounterTypeUuid())){
                         return observation;
                     }
                 }
@@ -702,9 +703,11 @@ public class PatientSummaryActivity extends ActivityWithPatientSummaryBottomNavi
             List<Observation> selectedObs = new ArrayList<>(0);
             if (observations.size() > 0) {
                 for (Observation observation: observations) {
-                    int id = observation.getEncounter().getEncounterId();
-                    if(encounterId == id){
-                        selectedObs.add(observation);
+                    if(observation.getEncounter() != null) {
+                        int id = observation.getEncounter().getEncounterId();
+                        if (encounterId == id) {
+                            selectedObs.add(observation);
+                        }
                     }
                 }
             }
