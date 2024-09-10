@@ -1643,9 +1643,11 @@ public class MuzimaSyncService {
 
                     if (!hasAllContactsVisitedTag) {
                         List<Person> relatedPersons = RelationshipViewUtil.getDisplayableRelatedPersonsList(patientUuid, muzimaApplication);
+
                         if (relatedPersons != null) {
                             int contactsVisited = 0;
                             if(cohortMembers.size()>0) {
+
                                 CohortMember cohortMember = cohortMembers.get(0);
                                 Date membershipDate = cohortMember.getMembershipDate();
                                 for (Person person : relatedPersons) {
