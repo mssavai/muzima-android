@@ -83,8 +83,7 @@ public class CohortController {
         try {
             List<Cohort> allCohorts = cohortService.getAllCohorts();
             boolean isDisplayOnlyCohortsInConfig = muzimaSettingController.isDisplayOnlyCohortsInConfigEnabled();
-            boolean isMultipleConfigsSupported = muzimaSettingController.isMultipleConfigsSupported();
-            if(isDisplayOnlyCohortsInConfig || isMultipleConfigsSupported) {
+            if(isDisplayOnlyCohortsInConfig) {
                 List<Cohort> cohortsInConfig = new ArrayList<>();
                 List<String> cohortUuids = getCohortsInConfig();
                 for(Cohort cohort : allCohorts){
