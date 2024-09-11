@@ -704,7 +704,7 @@ public class MuzimaSyncService {
 
             List<String> personUuidList = new ArrayList();
             for (Person person: persons) {
-//                personUuidList.add(person.getUuid());
+               personUuidList.add(person.getUuid());
             }
             result = downloadObservationsForPatientsByPatientUUIDs(personUuidList, replaceExistingObservation);
             if (result[0] != SUCCESS) {
