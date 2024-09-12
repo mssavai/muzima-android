@@ -611,7 +611,7 @@ public class MuzimaSyncService {
                     }
                 }
                 if(patientUuids.size()>0){
-                    //updatePatientTags(patientUuids);
+                    updatePatientTags(patientUuids);
                 }
             }
 
