@@ -102,13 +102,13 @@ public class GenericPatientRegistrationJSONMapper{
                         if(identifier.getIdentifier().equals(patient.getIdentifier())){
                             JSONObject preferredIdentifierJSONObject = new JSONObject();
                             preferredIdentifierJSONObject.put("identifier_value", identifier.getIdentifier());
-                            preferredIdentifierJSONObject.put("identifier_type_uuid", identifier.getIdentifierType().getIdentifierTypeUuid());
+                            preferredIdentifierJSONObject.put("identifier_type_uuid", identifier.getIdentifierType().getUuid());
                             preferredIdentifierJSONObject.put("identifier_type_name", identifier.getIdentifierType().getName());
                             patientDetails.put("patient.medical_record_number", preferredIdentifierJSONObject);
                         } else if (!identifier.getIdentifier().equals(patient.getUuid())) {
                             JSONObject identifierJSONObject = new JSONObject();
                             identifierJSONObject.put("identifier_value", identifier.getIdentifier());
-                            identifierJSONObject.put("identifier_type_uuid", identifier.getIdentifierType().getIdentifierTypeUuid());
+                            identifierJSONObject.put("identifier_type_uuid", identifier.getIdentifierType().getUuid());
                             identifierJSONObject.put("identifier_type_name", identifier.getIdentifierType().getName());
                             identifierJSONArray.put(identifierJSONObject);
                         }
@@ -322,7 +322,7 @@ public class GenericPatientRegistrationJSONMapper{
         Location location = getEncounterLocation();
         for(PatientIdentifier identifier:identifiers){
             identifier.setLocation(location);
-            PatientIdentifier existingIdentifier = patient.getIdentifier(identifier.getIdentifierType().getIdentifierTypeUuid());
+            PatientIdentifier existingIdentifier = patient.getIdentifier(identifier.getIdentifierType().getUuid());
             if(existingIdentifier == null){
                 existingIdentifier = patient.getIdentifier(identifier.getIdentifierType().getName());
             }
@@ -607,7 +607,7 @@ public class GenericPatientRegistrationJSONMapper{
         if(identifierType == null){
             identifierType = new PatientIdentifierType();
             if(!StringUtils.isEmpty(identifierTypeUuid)){
-                identifierType.setIdentifierTypeUuid(identifierTypeUuid);
+                identifierType.setUuid(identifierTypeUuid);
             }
             if(!StringUtils.isEmpty(identifierTypeName)){
                 identifierType.setName(identifierTypeName);

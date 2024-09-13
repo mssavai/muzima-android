@@ -472,7 +472,7 @@ public abstract class PatientAdapterHelper extends RecyclerAdapter<PatientAdapte
                                 identifierTypeUuids.add(uuid);
                             }
                             for(PatientIdentifier patientIdentifier : patientIdentifiers){
-                                if(identifierTypeUuids.contains(patientIdentifier.getIdentifierType().getIdentifierTypeUuid())) {
+                                if(identifierTypeUuids.contains(patientIdentifier.getIdentifierType().getUuid())) {
                                     RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                                     TextView textViews = new TextView(context);
                                     textViews.setText(patientIdentifier.getIdentifierType().getName().concat(" : ").concat(patientIdentifier.getIdentifier()));

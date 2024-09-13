@@ -522,7 +522,7 @@ class HTMLFormDataStore {
             if (patient != null) {
                 PatientIdentifier identifier = patient.getIdentifier(identifierType);
                 if (identifier != null) {
-                    identifierJSONObject.put("identifier_type_uuid", identifier.getIdentifierType().getIdentifierTypeUuid());
+                    identifierJSONObject.put("identifier_type_uuid", identifier.getIdentifierType().getUuid());
                     identifierJSONObject.put("identifier_type_name", identifier.getIdentifierType().getName());
                     identifierJSONObject.put("identifier_value", identifier.getIdentifier());
                 }
