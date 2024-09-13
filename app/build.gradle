@@ -149,7 +149,7 @@ dependencies {
     implementation group: 'com.google.inject', name: 'guice', version: '4.2.3', classifier: 'no_aop'
 
     implementation ("androidx.security:security-crypto:1.0.0")
-    implementation ("net.zetetic:android-database-sqlcipher:4.5.3")
+    implementation ("net.zetetic:sqlcipher-android:4.6.1")
     implementation "androidx.room:room-runtime:2.6.1"
     annotationProcessor "androidx.room:room-compiler:2.6.1"
 
