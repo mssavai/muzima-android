@@ -2969,14 +2969,13 @@ public class MuzimaSyncService {
     }
 
     public void updatePersonTagsByCohortUuids(String[] cohortUuids){
-        //ToDo : Fix tags generation
-//        try {
-//            List<Patient> patients = patientController.getPatientsForCohorts(cohortUuids);
-//            List<String> patientlist = new ArrayList();
-//            patientlist = getPatientUuids(patients);
-//            updatePersonTags(patientlist);
-//        } catch (PatientController.PatientLoadException e) {
-//            Log.d(getClass().getSimpleName(), "Exception thrown while loading patients.", e);
-//        }
+        try {
+            List<Patient> patients = patientController.getPatientsForCohorts(cohortUuids);
+            List<String> patientList = new ArrayList();
+            patientList = getPatientUuids(patients);
+            updatePersonTags(patientList);
+        } catch (PatientController.PatientLoadException e) {
+            Log.d(getClass().getSimpleName(), "Exception thrown while loading patients.", e);
+        }
     }
 }
