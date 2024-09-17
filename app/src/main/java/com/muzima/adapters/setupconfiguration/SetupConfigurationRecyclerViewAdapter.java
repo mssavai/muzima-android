@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
@@ -74,16 +75,16 @@ public class SetupConfigurationRecyclerViewAdapter extends RecyclerView.Adapter<
         String activeConfigUuid = service.getActiveConfigUuid();
         if (selectedConfigsUuids.contains(setupConfiguration.getUuid()) ||
                 !StringUtils.isEmpty(activeConfigUuid) && StringUtils.equals(activeConfigUuid, setupConfiguration.getUuid())) {
-            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_blue));
+            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_blue));
             holder.cardView.setChecked(true);
         } else {
             holder.cardView.setChecked(false);
 
             boolean isLightModeOn = MuzimaPreferences.getBooleanPreference(context, context.getResources().getString(R.string.preference_light_mode), false);;
             if (!isLightModeOn) {
-                holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_black));
+                holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_black));
             } else
-                holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_background));
+                holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_background));
         }
     }
 
@@ -119,14 +120,14 @@ public class SetupConfigurationRecyclerViewAdapter extends RecyclerView.Adapter<
                 selectedConfigsUuids.clear();
 
             selectedConfigsUuids.add(configuration.getUuid());
-            cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_blue));
+            cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_blue));
         } else if (!selected && selectedConfigsUuids.contains(configuration.getUuid())) {
-
+            selectedConfigsUuids.remove(configuration.getUuid());
             boolean isLightModeOn = MuzimaPreferences.getBooleanPreference(context, context.getResources().getString(R.string.preference_light_mode), false);;
             if (!isLightModeOn) {
-                cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_black));
+                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_black));
             } else
-                cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_background));
+                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_background));
         }
     }
 
