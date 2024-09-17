@@ -30,7 +30,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.ViewHolder>{
     private List<Tag> tagList = new ArrayList<>();
 
     public TagsAdapter(Tag[] tagList) {
-//        this.tagList.addAll(Arrays.asList(tagList));
+        this.tagList.addAll(Arrays.asList(tagList));
     }
 
     @NonNull

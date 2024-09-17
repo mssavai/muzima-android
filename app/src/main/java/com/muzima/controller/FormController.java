@@ -217,6 +217,13 @@ public class FormController {
         } catch (IOException e) {
             throw new FormFetchException(e);
         }
+        for (Form form : allForms) {
+            for (Tag tag : form.getTags()) {
+                if (!allTags.contains(tag)) {
+                    allTags.add(tag);
+                }
+            }
+        }
         return allTags;
     }
 
