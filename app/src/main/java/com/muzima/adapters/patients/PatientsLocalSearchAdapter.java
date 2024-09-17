@@ -22,7 +22,6 @@ import com.muzima.model.CohortFilter;
 import com.muzima.model.PatientFilterPageNumberMap;
 import com.muzima.model.location.MuzimaGPSLocation;
 import com.muzima.tasks.MuzimaAsyncTask;
-import com.muzima.utils.Constants;
 import com.muzima.utils.StringUtils;
 
 import java.util.ArrayList;
