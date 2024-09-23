@@ -116,9 +116,9 @@ public abstract class ActivityWithBottomNavigation extends BroadcastListenerActi
                 }
             }
         } catch (ReportDatasetController.ReportDatasetFetchException e) {
-            e.printStackTrace();
+            Log.e(getClass().getSimpleName(),"Encountered an exception while fetching report datasets", e);
         } catch (FormController.FormFetchException e) {
-            e.printStackTrace();
+            Log.e(getClass().getSimpleName(),"Encountered an exception while fetching forms", e);
         }
 
         if(!isReportDatasetAndTemplateAvailable){
