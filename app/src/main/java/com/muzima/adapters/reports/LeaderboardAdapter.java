@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.muzima.MuzimaApplication;
@@ -70,7 +71,13 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
            String providerName = statistic.getProviderName().trim();
            holder.usernameTextView.setText(providerName);
            holder.avatarTextView.setText("" + providerName.charAt(0));
-       }
+
+           if(StringUtils.equals(activeStatisticHeader, context.getString(R.string.provider_name_general)))
+               holder.usernameTextView.setTextColor(ContextCompat.getColor(context, R.color.primary_blue));
+           else
+               holder.usernameTextView.setTextColor(ContextCompat.getColor(context, R.color.primary_black));
+
+           }
 
        holder.avatarImageView.setImageTintList(ColorStateList.valueOf(statistic.getLeaderboardColor()));
 
@@ -80,7 +87,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
            TextView tv = scoreView.findViewById(R.id.score_text_view);
            tv.setText(String.format(Locale.getDefault(), "%d ",statistic.getScoreMap().get(key)));
            if(StringUtils.equals(key, activeStatisticHeader)){
-               tv.setTextColor(context.getResources().getColor(R.color.primary_blue));
+               tv.setTextColor(ContextCompat.getColor(context, R.color.primary_blue));
            }
            holder.pointsTextViewLayout.addView(scoreView);
            TextView divider = new TextView(context);
@@ -162,9 +169,15 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
     }
 
     public boolean sortListBySelectedStatistic(String selectedAbb){
-       visibleReportStatistics = visibleReportStatistics.stream()
-               .sorted(Comparator.comparing(s1->s1.getScoreMap().get(selectedAbb)))
-               .collect(Collectors.toList());
+       if (StringUtils.equals(selectedAbb, context.getString(R.string.provider_name_general)))
+           visibleReportStatistics = visibleReportStatistics.stream()
+                   .sorted(Comparator.comparing(s1->s1.getProviderName()))
+                   .collect(Collectors.toList());
+       else
+           visibleReportStatistics = visibleReportStatistics.stream()
+                   .sorted(Comparator.comparing(s1->s1.getScoreMap().get(selectedAbb)))
+                   .collect(Collectors.toList());
+
        boolean isAscending = StringUtils.equals(activeStatisticHeader, selectedAbb) ?
                !wasPreviouslyAscending : true;
        if(!isAscending)

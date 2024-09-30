@@ -70,7 +70,9 @@ public class LeaderboardFragment extends Fragment {
         });
 
         String activeHeader = leaderboardAdapter.getActiveStatisticHeader();
-        List<String> statisticAbbreviations = leaderboardAdapter.getStatisticHeaderList();
+        List<String> statisticAbbreviations = new ArrayList<>();
+        statisticAbbreviations.add(getString(R.string.provider_name_general));
+        statisticAbbreviations.addAll(leaderboardAdapter.getStatisticHeaderList());
 
         for(String abbreviation : statisticAbbreviations) {
             LinearLayout pointsHeaders = view.findViewById(R.id.points_headers_layout);
